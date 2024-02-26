@@ -1,0 +1,11 @@
+:host {
+  width: 100%;
+  overflow: auto;
+}
+button[mat-icon-button] {
+  display: initial;
+}
+.icon-button{
+  background-color: white !important;
+  color: #DE3163  !important;
+}

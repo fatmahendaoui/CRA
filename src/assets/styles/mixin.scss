@@ -1,0 +1,93 @@
+// extend
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// mixin
+@mixin avatar($width, $height) {
+  position: relative;
+  width: $width;
+  height: $height;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid gainsboro;
+  cursor: pointer;
+  @extend .center;
+
+  img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+
+// sign-in and create domaine
+@mixin auth-card-template() {
+
+    @extend .center;
+    padding: 0 !important;
+    margin: 0 !important;
+
+    .logo {
+      width: 9rem;
+      height: auto;
+      top: 1rem;
+      position: absolute;
+    }
+
+    button {
+      box-shadow: 0 2px 10px -1px #e0e0e0b0;
+      position: relative;
+      color: $secondary;
+      width: 100%;
+      outline: 1px solid #e0e0e0;
+
+    }
+
+    .text-with-icon {
+      @extend .center;
+      gap: 16px;
+      position: relative;
+      mat-icon{
+        color: #E11D74;
+      }
+    }
+
+
+  mat-card-content {
+    min-height: 12rem;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 1;
+
+    h2 {
+      font-size: 1.8rem;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    h3 {
+      color: $secondary;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+  }
+
+  mat-card-header,
+  mat-card-footer {
+    @extend .center;
+    width: 100%;
+    z-index: 2;
+    min-height: 5rem;
+  }
+
+  mat-card-footer {
+    padding: 1rem;
+  }
+}

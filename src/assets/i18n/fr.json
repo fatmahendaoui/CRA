@@ -1,0 +1,198 @@
+{
+  "layout": {
+    "menu": {
+      "users": "Gestion des utilisateurs",
+      "settings": "Paramètres",
+      "sign-out": "Se déconnecter"
+    }
+  },
+  "common": {
+    "form": {
+      "required": "Ce champ est requis",
+      "email": "Le format de l'email est invalide",
+      "empty-file": "Selectionnez un fichier"
+    },
+    "role": {
+      "user": "Utilisateur",
+      "admin": "Administrateur"
+    },
+    "close": "Fermer",
+    "activate": "Compte activé",
+    "deactivate": "Compte désactivé",
+    "start-now": {
+      "title": "Compte désactivé ",
+      "message": "Veuillez ajouter un compte de service pour télécharger vos fichiers"
+    },
+    "contact-admin": {
+      "title": "Compte non activé",
+      "message": "Veuillez contacter votre administration pour charger le service des comptes !"
+    },
+    "submit": "Envoyer",
+    "update": "Mettre à jour",
+    "remove": "Supprimer",
+    "confirm": "Confirmer",
+    "cancel": "Annuler",
+    "loading": "Merci de patienter...",
+    "required": "Ce champ est obligatoire",
+    "back_to_home": "Retour à l'accueil",
+    "please_retry": "Merci de réessayer ultérieurement",
+    "domaine": "Choisir un autre domaine"
+  },
+  "loading": {
+    "default": "Chargement en cours, Merci de patienter..."
+  },
+  "features": {
+    "dashbord":{
+      "dashbordvide":"Veuillez choisir votre projet",
+      "dashbordvideuser":"Veuillez choisir un utilisateur",
+      "Project":"Projet",
+      "user":"Utilisateur"
+
+    }, 
+    "users": {
+      "title": "Gestion des utilisateurs",
+      "search": "Rechercher...",
+      "add": "Ajouter un utilisateur",
+      "table": {
+        "email": "Email",
+        "actions": "Actions",
+        "role": "Rôle",
+        "added_at": "Ajouté le",
+        "identifier": "Identifiant",
+        "nom": "Nom d'utilisateur"
+      },
+      "add-dialog": {
+        "title": "Ajouter un utilisateur",
+        "email": "Email",
+        "role": "Rôle",
+        "action": "Ajouter"
+      },
+      "success": {
+        "title": "L'utilisateur est invité avec succès",
+        "message": "Un email à été envoyé à cet utilisateur"
+      },
+      "error": {
+        "title": "Oops",
+        "message": "Cet utilisateur existe !"
+      },
+      "dialog": {
+        "confirmation": "Êtes-vous sûr de vouloir supprimer cet utilisateur ?",
+        "title": {
+          "edit": "Modifier un utilisateur",
+          "create": "Ajouter un utilisateur"
+        },
+        "error": {
+          "configuration": "Une erreur est survenue lors de la récupération de la configuration",
+          "remove": "Une erreur est survenue lors de la suppression du cet utilisateur",
+          "create": "Une erreur est survenue lors de la création du cet utilisateur",
+          "update": "Une erreur est survenue lors de la mise à jour du cet utilisateur"
+        },
+        "loading": {
+          "create": "Création d'utilisateur",
+          "update": "Mise à jour d'utilisateur",
+          "remove": "Suppression d'utilisateur"
+        }
+      }
+    },
+    "projects": {
+      "title": "Gestion des projet",
+      "search": "Rechercher...",
+      "add": "Ajouter un projet",
+      "filter": "filtre",
+      "table": {
+        "name": "Nom de projet",
+        "actions": "Actions",
+        "role": "Rôle",
+        "added_at": "Ajouté le",
+        "identifier": "Identifiant"
+      },
+      "add-dialog": {
+        "title": "Ajouter un projet",
+        "name": "Nom de projet",
+        "users": "Les utilisateurs",
+        "action": "Ajouter",
+        "update":"Modifier"
+      },
+      "success": {
+        "title": "Le projet est ajouté avec succès",
+        "message": "Un email à été envoyé à cet projet",
+        "update": "Le projet est modifié avec succès"
+      },
+      "button": {
+        "save": "Sauvegarder",
+        "approved": "Accepter",
+        "reject": "Rejeter",
+        "Envoye": "Envoyé"
+      },
+      "error": {
+        "title": "Oops",
+        "message": "Cet utilisateur existe !"
+      },
+      "dialog": {
+        "confirmation": "Êtes-vous sûr de vouloir supprimer cet utilisateur ?",
+        "title": {
+          "edit": "Modifier un utilisateur",
+          "create": "Ajouter un utilisateur"
+        },
+        "error": {
+          "configuration": "Une erreur est survenue lors de la récupération de la configuration",
+          "remove": "Une erreur est survenue lors de la suppression du cet utilisateur",
+          "create": "Une erreur est survenue lors de la création du cet utilisateur",
+          "update": "Une erreur est survenue lors de la mise à jour du cet utilisateur"
+        },
+        "loading": {
+          "create": "Création d'utilisateur",
+          "update": "Mise à jour d'utilisateur",
+          "remove": "Suppression d'utilisateur"
+        },
+        "success": {
+          "title": "Enregistré avec succès",
+          "message": " Un email a été envoyé à l'administrateur"
+        },
+        "warning": {
+          "message": "Le total de jours travaillés est fixé à 8 heures par jour."
+        }
+      }
+    },
+    "day_off": {
+      "add-dialig-title": "Ajouter un jour",
+      "title": "jour de congé",
+      "titre": "Time Sheet à valider",
+      "confirmation": "Êtes-vous sûr de vouloir supprimer cet jour ?",
+      "success": "Le jour est ajouté avec succès",
+      "Disponible": "Disponible",
+      "Maladie": "Maladie",
+      "Vacances": "congé",
+      "update":"Le jour férié est modifié avec succès",
+      "name": "Nom"
+    },
+    "settings": {
+      "title": "Paramètres",
+      "email": "Vous avez déjà un compte service avec client email",
+      "service-account": {
+        "title": "Configurer service account",
+        "submit": "Envoyer le service account"
+      },
+      "languages": {
+        "title": "Langue de l'application"
+      },
+      "success": {
+        "title": "Service de compte téléchargé avec succès ",
+        "message": "Vous pouvez télécharger vos fichiers maintenant"
+      },
+      "error": {
+        "title": "Oops",
+        "message": "Il y a une erreur vérifiez votre fichier JSON"
+      }
+    },
+    "timeshet":{
+      "j":"j",
+      "h":"h",
+      "heures":"heures",
+      "jours":"jours",
+      "total":"Total Mensuel"
+
+
+    }
+  }
+}

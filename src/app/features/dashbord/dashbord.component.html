@@ -1,0 +1,96 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<div class="cra">
+    <div class="col-12 header-timesheet">
+        <div class="filter-table">
+            <div class="year">
+                <button mat-mini-fab color="primary" (click)="getYear(false)">
+                    <mat-icon>navigate_before</mat-icon>
+                </button>
+                <h3>{{ year }}</h3>
+                <button mat-mini-fab color="primary" (click)="getYear(true)">
+                    <mat-icon>navigate_next</mat-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<mat-tab-group>
+    <mat-tab label="Project by month">
+        <div id="chart" *ngIf="data">
+            <apx-chart [tooltip]="chartOptions.tooltip" [series]="chartOptions.series" [chart]="chartOptions.chart"
+                [dataLabels]="chartOptions.dataLabels" [colors]="chartOptions.colors" [stroke]="chartOptions.stroke"
+                [plotOptions]="chartOptions.plotOptions" [xaxis]="chartOptions.xaxis"
+                [title]="chartOptions.title"></apx-chart>
+        </div>
+        <ng-container *ngIf="currentProject && loader==false">
+            <app-loader>Chargement ...</app-loader>
+        </ng-container>
+        <ng-container *ngIf="!data">
+            <app-loader>Chargement ...</app-loader>
+        </ng-container>
+    </mat-tab>
+    <mat-tab label="User By Month by project">
+        <div class="cra" *ngIf="data">
+            <div class="col-12 header-timesheet">
+                <div class="filter-table">
+                    <mat-form-field appearance="outline">
+                        <mat-label>
+                            {{ 'features.dashbord.Project' | transloco }}
+                        </mat-label>
+                        <mat-select [(ngModel)]="currentProject" (ngModelChange)="fetchProjects()">
+                            <ng-container *ngFor="let element of data">
+                                <mat-option *ngIf="element.name !== 'Total'"
+                                    [value]="element.name">{{element.name}}</mat-option>
+                            </ng-container>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="!dataUser && data">
+            <div class="error-page">
+                <p> {{ 'features.dashbord.dashbordvide' | transloco }} .</p>
+            </div>
+        </div>
+        <div id="chart" *ngIf="dataUser">
+            <apx-chart [tooltip]="chartOptions.tooltip" [series]="chartOptionsuser.series"
+                [chart]="chartOptionsuser.chart" [dataLabels]="chartOptionsuser.dataLabels"
+                [colors]="chartOptionsuser.colors" [stroke]="chartOptionsuser.stroke"
+                [plotOptions]="chartOptionsuser.plotOptions" [xaxis]="chartOptionsuser.xaxis"
+                [title]="chartOptionsuser.title"></apx-chart>
+        </div>
+    </mat-tab>
+    <mat-tab label="Project By Month by user">
+
+        <div class="cra" *ngIf="data">
+            <div class="col-12 header-timesheet">
+                <div class="filter-table">
+                    <mat-form-field appearance="outline">
+                        <mat-label>
+                            {{ 'features.dashbord.user' | transloco }}
+                        </mat-label>
+                        <mat-select [(ngModel)]="currentuser" (ngModelChange)="fetchUser()">
+                            <mat-option *ngFor="let element of listuser" [value]="element">{{element}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="!dataProject && data">
+            <div class="error-page">
+                <p> {{ 'features.dashbord.dashbordvideuser' | transloco }} .</p>
+            </div>
+        </div>
+
+        <div id="chart" *ngIf="dataProject">
+            <apx-chart [tooltip]="chartOptions.tooltip" [series]="chartOptionsproject.series"
+                [chart]="chartOptionsproject.chart" [dataLabels]="chartOptionsproject.dataLabels"
+                [colors]="chartOptionsproject.colors" [stroke]="chartOptionsproject.stroke"
+                [plotOptions]="chartOptionsproject.plotOptions" [xaxis]="chartOptionsproject.xaxis"
+                [title]="chartOptionsproject.title"></apx-chart>
+        </div>
+    </mat-tab>
+</mat-tab-group>

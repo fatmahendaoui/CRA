@@ -1,0 +1,211 @@
+@use '../../assets/styles/mixin.scss' as avatar;
+
+mat-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: white;
+
+  .logo-chips{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    @media screen and (max-width: 600px) {
+      width: 100%;
+    }
+    @media screen and (max-width: 472px) {
+      justify-content: center;
+      flex-direction: column;
+      .type-chip{
+        font-size: 0.7rem;
+      }
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    position: relative;
+
+    .mat-toolbar-row,
+    .mat-toolbar-single-row {
+      padding: 5px;
+    }
+
+    .user-avatar-trigger{
+      margin-right: 0;
+    }
+  }
+}
+
+  ::ng-deep .mat-toolbar-row {
+    position: relative;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    @media screen and (max-width: 600px) {
+      height: auto;
+    }
+  }
+
+  .max-width-container {
+    max-width: 1280px;
+    margin: auto;
+  }
+
+  .layout-container {
+    display: block;
+    padding: 24px 16px;
+    margin-top: 56px;
+    height: auto;
+    background: #fdfdfd;
+
+    @media screen and (min-width: 600px) {
+      margin-top: 64px;
+    }
+
+    @media screen and (max-width: 472px) {
+      margin-top: 0;
+    }
+  }
+
+  .brand {
+    height: 62px;
+    width: auto;
+    cursor: pointer;
+    background-color: white;
+    padding: 8px 16px;
+    border-radius: 16px;
+
+    @media screen and (max-width: 600px) {
+      max-height: 55px;
+    }
+
+    @media screen and (max-width: 472px) {
+      display: block;
+      margin: auto;
+    }
+  }
+
+  .user-avatar-trigger {
+    @include avatar.avatar(40px, 40px);
+    margin-right: 0.5rem;
+
+    img {
+      min-width: 40px;
+    }
+  }
+
+  .user-metadata {
+    min-width: 256px;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    font-size: .75rem;
+  }
+
+  .user-container-metadata {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    @media screen and (max-width: 600px) {
+      margin: 0.5rem 0;
+      width: 100%;
+      justify-content: space-between;
+      .user-name {
+        span {
+          display: none;
+        }
+      }
+    }
+  }
+
+  .mat-toolbar-row,
+  .mat-toolbar-single-row {
+    padding: 0 16px 0 0;
+  }
+
+  ::ng-deep .customize {
+    min-width: 13.5rem;
+
+    button {
+      mat-icon {
+        scale: 0.8;
+        color: #E11D74 !important;
+      }
+
+    }
+  }
+
+  .user-name {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    color: #898989;
+    font-size: medium;
+    font-family: "Poppins", sans-serif !important;
+    cursor: pointer;
+  }
+
+
+  .language-select {
+    display: inline-block;
+    @media screen and (max-width: 472px) {
+      margin: 0 !important;
+    }
+  }
+
+  .language-select mat-form-field {
+    width: 8rem;
+    border: 1px solid #E11D74;
+    border-radius: 6px;
+    @media screen and (max-width: 472px) {
+      width: 7rem;
+    }
+  }
+
+  ::ng-deep .mat-mdc-select-value {
+    color: #ea0d6dec;
+    font-size: 0.9rem;
+  }
+
+  .user-avatar-trigger {
+    padding: 0;
+  }
+
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #E11D74;
+    color: #fff;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // chips css
+  .type-chip {
+    padding: 0.1rem 0.2rem;
+    border-radius: 0.3rem;
+    font-size: 0.875rem;
+    height: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 10rem;
+  }
+
+  .yes {
+    background-color: #e4ffe2;
+    color: #46eb6a;
+  }
+
+
+  .no {
+    background-color: #ffdede;
+    color: #ff0000;
+  }

@@ -1,0 +1,257 @@
+.cra {
+  // max-width: 103rem;
+  margin: auto;
+  overflow: auto;
+}
+
+
+.header-timesheet {
+  display: flex;
+  align-items: center;
+}
+
+.chips {
+  background-color: #c8b1ba;
+  width: auto;
+  margin: auto 1rem auto 1rem;
+}
+
+.header-timesheet {
+  padding: 2rem 1.3rem 0.5rem 0rem;
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
+
+  .filter-table {
+    margin-right: 20px;
+  }
+
+  .filter-table .justify-end {
+    margin-right: 20px;
+    justify-content: flex-end;
+    display: flex;
+  }
+
+  .filter-table-end {
+    margin-right: 20px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  h2,
+  h3 {
+    margin: 0;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+  }
+
+  .year,
+  .name-month {
+    display: flex;
+    width: 11rem;
+    justify-content: space-between;
+    background: #ededed;
+    margin-right: 0.5rem;
+    border-radius: 0.3rem;
+    // height: 2rem;
+
+    button {
+      background: rgb(100 77 156);
+      box-shadow: none;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      mat-icon {
+        color: white;
+      }
+    }
+  }
+
+  .add-project {
+    #addnewproject {
+      max-width: 19.5rem;
+    }
+
+    .form-group {
+      display: flex;
+
+      button {
+        margin-left: 0.5rem;
+        background: #e11d74;
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+.timesheet-content {
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: start;
+  justify-items: center;
+  align-items: center;
+
+  .table-cra {
+    // padding: 0.4rem;
+    // height: calc(100vh - 12.3rem);
+    overflow: auto;
+  }
+
+  .col-projects {
+    background: #e11d74;
+    color: white;
+  }
+
+  .name-project,
+  .total {
+    min-width: 6rem;
+    min-height: 2.5rem;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    padding-left: 0.5rem;
+  }
+
+  .col-total {
+    background: #e11d74;
+    color: white;
+    font-weight: 700;
+  }
+
+  .nb-total {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // background: white;
+    background: #eeeeee;
+    border: 0.1rem solid #e2e2e2;
+    width: 2rem;
+    height: 2rem;
+    margin: auto;
+    border-radius: 0.3rem;
+    font-size: 1rem;
+  }
+
+  .col-nb-total {
+    border-top: 0.015rem solid #e2e2e2;
+    background: #eeeeee;
+  }
+
+  .totaldays {
+    position: sticky;
+    right: 0;
+    z-index: 2;
+    // background: #de3163;
+    // min-width: 2rem;
+    // color: white;
+    background: white;
+    min-width: 4.5rem;
+    text-align: center;
+    }
+
+  table {
+
+    thead {
+      th:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        // background-color: #E2E2E2;
+      }
+
+      th {
+        .days {
+          width: 3.5rem;
+
+          .day-name,
+          .day-number {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            // border-right: 0.1rem solid #E11D74;
+          }
+
+          .day-name {
+            max-width: 5rem !important;
+            overflow: hidden;
+            font-size: 0.75rem !important;
+            font-weight: 500;
+            color: white;
+            background: rgb(225 29 116);
+          }
+
+          .day-number {
+            font-size: 0.9rem !important;
+            font-weight: 400;
+            color: white;
+            background: rgb(225 29 116);
+          }
+        }
+      }
+    }
+
+    tbody {
+      td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        // background-color: #E2E2E2;
+      }
+
+      td {
+        vertical-align: middle;
+
+        .div-heure {
+          margin: 0.5rem;
+
+          .input-heure {
+            width: 3rem;
+            height: 2rem;
+            padding: 0.2rem;
+            display: flex;
+            justify-content: center;
+            text-align: center;
+
+          }
+        }
+      }
+    }
+  }
+}
+
+.width36 {
+  width: 36% !important;
+}
+
+.form {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  margin-right: 0.5em;
+}
+
+::ng-deep .mat-mdc-chip {
+  width: 8%;
+}
+
+.input {
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}

@@ -1,0 +1,196 @@
+{
+  "layout": {
+    "menu": {
+      "users": "Manage users",
+      "settings": "Settings",
+      "sign-out": "Sign out"
+    }
+  },
+  "common": {
+    "form": {
+      "required": "Field required",
+      "email": "Email format is invalid",
+      "empty-file": "Select a file"
+    },
+    "role": {
+      "user": "User",
+      "admin": "Administrator"
+    },
+    "close": "Close",
+    "activate": "Account activated",
+    "deactivate": "Account deactivated",
+    "start-now": {
+      "title": "Account deactivated",
+      "message": "Please add your account service to upload your files"
+    },
+    "contact-admin": {
+      "title": "Account deactivated",
+      "message": "Please contact your administration to upload the account service !"
+    },
+    "submit": "Send",
+    "update": "Update",
+    "remove": "Remove",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "loading": "Please wait...",
+    "required": "This field is required",
+    "back_to_home": "Back to home",
+    "please_retry": "Please retry later",
+    "domaine": "Choose another domaine"
+  },
+  "loading": {
+    "default": "Loading in progress, please Wait..."
+  },
+  "features": {
+    "dashbord":{
+      "dashbordvide":"Please Choose your Poject",
+      "dashbordvideuser":"Please Choose User",
+      "Project":"Poject",
+      "user":"User"
+
+    }, 
+    "users": {
+      "title": "Users",
+      "search": "Search...",
+      "add": "Add user",
+      "table": {
+        "email": "Email",
+        "actions": "Actions",
+        "role": "Role",
+        "added_at": "Created on",
+        "identifier": "Identifier",
+        "nom": "User name"
+      },
+      "add-dialog": {
+        "title": "Add user",
+        "email": "User email",
+        "role": "Role",
+        "action": "Create"
+      },
+      "success": {
+        "title": "The user is successfully invited",
+        "message": "An email was sent to this user"
+      },
+      "error": {
+        "title": "Oops",
+        "message": "This user exist!"
+      },
+      "dialog": {
+        "confirmation": "Are you sure you want to delete this user ?",
+        "title": {
+          "edit": "Modify user",
+          "create": "Add user"
+        },
+        "error": {
+          "configuration": "An error occurred while retrieving the configuration",
+          "remove": "An error occurred while removing the user",
+          "create": "An error occurred while creating the user",
+          "update": "An error occurred while updating the user"
+        },
+        "loading": {
+          "create": "User creation",
+          "update": "Update user",
+          "remove": "Delete user"
+        }
+      }
+    },
+    "projects": {
+      "title": "Projects",
+      "search": "Search...",
+      "filter": "filter",
+      "add": "Add project",
+      "table": {
+        "name": "Project name",
+        "actions": "Actions",
+        "role": "Role",
+        "added_at": "Created on",
+        "identifier": "Identifier"
+      },
+      "add-dialog": {
+        "title": "Add project",
+        "name": "Project name",
+        "users": "Users",
+        "action": "Create",
+        "update": "Update"
+      },
+      "success": {
+        "title": "The project is successfully added",
+        "message": "An email was sent to this user",
+        "update": "The project is successfully updated"
+      },
+      "button": {
+        "save": "Save",
+        "approved": "Approve",
+        "reject": "Reject",
+        "Envoye": "Submit"
+      },
+      "error": {
+        "title": "Oops",
+        "message": "This user exist!"
+      },
+      "dialog": {
+        "confirmation": "Are you sure you want to delete this user ?",
+        "title": {
+          "edit": "Modify user",
+          "create": "Add user"
+        },
+        "error": {
+          "configuration": "An error occurred while retrieving the configuration",
+          "remove": "An error occurred while removing the user",
+          "create": "An error occurred while creating the user",
+          "update": "An error occurred while updating the user"
+        },
+        "loading": {
+          "create": "User creation",
+          "update": "Update user",
+          "remove": "Delete user"
+        },
+        "success": {
+          "title": "Saved successfully",
+          "message": "An email was sent to admin"
+        },
+        "warning": {
+          "message": "The total number of days worked is set at 8 hours per day"
+        }
+      }
+    },
+    "day_off": {
+      "add-dialig-title": "Add Day",
+      "title": "Days off",
+      "titre": "Time Sheet to validate",
+      "confirmation": "Are you sure you want to delete this day ?",
+      "success": "The day is successfully added",
+      "Disponible": "Available",
+      "Maladie": "Sickness",
+      "Vacances": "Holiday",
+      "update": "Holiday is successfully changed",
+      "name": "Name"
+    },
+    "settings": {
+      "title": "Settings",
+      "email": "You already have a service account with client email",
+      "service-account": {
+        "title": "Upload service account",
+        "submit": "Upload service account"
+      },
+      "languages": {
+        "title": "Languages"
+      },
+      "success": {
+        "title": "Successfully uploaded account service",
+        "message": "You can upload your files now"
+      },
+      "error": {
+        "title": "Oops",
+        "message": "There is an error check your JSON file!"
+      }
+    },
+    "timeshet":{
+      "j":"d",
+      "h":"h",
+      "heures":"hours",
+      "jours":"days",
+      "total":"Monthly Total"
+    }
+  }
+}
