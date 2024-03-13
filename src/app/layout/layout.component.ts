@@ -11,6 +11,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { ProfileService } from '../services/profile.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatBadgeModule } from '@angular/material/badge';
 
 @Component({
   standalone: true,
@@ -29,9 +30,11 @@ import { MatSelectChange, MatSelectModule } from '@angular/material/select';
     MatFormFieldModule,
     MatSelectModule,
     NgClass,
+    MatBadgeModule
   ],
 })
 export class LayoutComponent implements OnInit, OnDestroy {
+  // Subject pour la gestion de la destruction du composant
   private readonly isDestroy$ = new Subject<void>();
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);
@@ -40,72 +43,78 @@ export class LayoutComponent implements OnInit, OnDestroy {
   domaineName: string | undefined;
   status: boolean;
   userRole: string;
-  private unsubscribe: () => void; // Declare the unsubscribe function
-  today:Date=new Date();
-
-
+  today: Date = new Date();
   private readonly transloco = inject(TranslocoService);
   public defaultLanguage = this.transloco.getActiveLang();
-
   public user: User | null;
 
+
   public ngOnInit(): void {
+    // Récupérer le rôle de l'utilisateur depuis le service de profil utilisateur
     this.profileService.getUserRole().then((res) => {
       this.userRole = res;
     });
+
+    // Observer les changements d'état d'authentification de l'utilisateur
     this.auth.onAuthStateChanged((user) => {
-      this.user = user;
+      this.user = user; // Mettre à jour l'utilisateur actuel
     });
+
+    // Vérifier l'accès de l'utilisateur
     this.checkUserAccess();
   }
 
-
-
+  // Méthode pour obtenir la première lettre de l'email de l'utilisateur
   getFirstLetter(email: string): string {
     return email ? email.charAt(0).toUpperCase() : '';
   }
 
-  navigateToSettings() {
-    this.router.navigate(['/settings']);
-  }
-
-  public ngOnDestroy(): void {
-    this.isDestroy$.next();
-    this.isDestroy$.complete();
-    if (this.unsubscribe) {
-      this.unsubscribe();
+  // Méthode pour obtenir l'URL de l'image de l'utilisateur si disponible
+  getUserImage(user: User): string | null {
+    if (user && user.photoURL) {
+      return user.photoURL; // Retourner l'URL de l'image si disponible
+    } else {
+      return null; // Retourner null sinon
     }
   }
 
-  public async signOut() {
-    await this.auth.signOut();
-    this.router.navigate(['/sign-in']);
+  // Méthode pour naviguer vers les paramètres de l'utilisateur
+  navigateToSettings() {
+    this.router.navigate(['/settings']); // Redirection vers la page de paramètres
   }
 
+  // Méthode appelée lors de la destruction du composant
+  public ngOnDestroy(): void {
+    this.isDestroy$.next(); // Émettre un événement de destruction
+    this.isDestroy$.complete(); // Compléter la destruction
+  }
+
+  // Méthode pour se déconnecter de l'application
+  public async signOut() {
+    await this.auth.signOut(); // Déconnexion de l'utilisateur
+    this.router.navigate(['/sign-in']); // Redirection vers la page de connexion
+  }
+
+  // Méthode pour vérifier l'accès de l'utilisateur
   public async checkUserAccess() {
-    // check if the user exist in bqds-user is an admin using the profileService
+    // Vérifier si l'utilisateur est un administrateur en utilisant le service de profil
     const queryResult = await this.profileService.checkAdmin(
       this.auth.currentUser!.uid
     );
 
-    // Check if the query result has any documents and if the user's role is "admin"
+    // Vérifier si le résultat de la requête contient des documents et si le rôle de l'utilisateur est "admin"
     this.isAdmin =
       queryResult.docs.length > 0 &&
       queryResult.docs[0].data()['role'] === 'admin';
 
-    // Check if userData exists and if the user's role is "admin"
-    this.isAdmin = this.isAdmin;
-
-    // Return the value of isAdmin
+    // Retourner la valeur de isAdmin
     return this.isAdmin;
   }
 
+  // Méthode appelée lors du changement de langue
   public onSelectionChange(change: MatSelectChange): void {
     const { value } = change;
-    this.transloco.setActiveLang(value);
-
-    localStorage.setItem('current_language', value);
+    this.transloco.setActiveLang(value); // Définir la langue active
+    localStorage.setItem('current_language', value); // Sauvegarder la langue sélectionnée dans le stockage local
   }
 }
-
-

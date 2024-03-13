@@ -1,93 +1,153 @@
-.cra {
-  // max-width: 103rem;
-  margin: auto;
-  overflow: auto;
-}
+.row {
+  .cra {
+    max-width: 103rem;
+    margin: auto;
+    overflow: auto;
 
+/*-------------- header-filter -----------------*/
+    .header-filter {
+      margin-bottom: 30px; 
+      .filter-table-end {
+        margin-left: auto;
+        display: flex;
+        justify-content: flex-end;
+        color: white; // Couleur du texte
+      }
 
-.header-timesheet {
+      mat-toolbar {
+        background-color: white;
+        box-shadow: none;
+        margin-top: 0px;
+        display: flex;
+        align-items: center;
+        position: relative; // Ajout pour positionner correctement le dégradé
+
+        img {
+          width: 40px;
+          height: 40px;
+        }
+
+        // Ajout du dégradé entre la barre d'outils et le formulaire
+        &::after {
+          content: "";
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 2px;
+          background: linear-gradient(to right, #E50060 40%, #193f77 100%);
+        }
+      }
+      
+      .select {
+        .mat-mdc-form-field-wrapper {
+          border-color: #E50060; // Couleur de la bordure
+        }
+      }
+
+      .mat-form-field {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #E50060;
+        font-size: medium;
+        font-weight: bold;
+        background-color: #fff;
+        border: none;
+      }
+
+      .chips {
+        margin: auto 1rem;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+        color: white;
+        padding: 4px 8px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .name-month,.name-year,.name-week {
+        display: flex;
+        width: 11rem;
+        justify-content: space-between;
+        background: none;
+        margin-right: 0.5rem;
+        border-radius: 0.3rem;
+        text-align: center;
+        color: #E50060;
+        align-items: center;
+
+        span {
+          display: flex;
+          align-items: center;
+          border-bottom: 2px solid #F286B4;
+          flex-grow: 1;
+        }
+
+        .text-center {
+          flex-grow: 1;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        h3 {
+          text-align: center;
+          color: #E50060;
+          margin: 0;
+        }
+
+        button {
+          background: none;
+          box-shadow: none;
+          margin: auto;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          mat-icon {
+            color: #E50060;
+            font-size: 30px;
+          }
+        }
+      }
+    }
+
+/*-------------- Description -----------------*/
+.form {
+  padding: 16px;
   display: flex;
-  align-items: center;
-}
-
-.chips {
-  background-color: #c8b1ba;
-  width: auto;
-  margin: auto 1rem auto 1rem;
-}
-
-.header-timesheet {
-  padding: 2rem 1.3rem 0.5rem 0rem;
-  justify-content: space-between;
-  display: flex;
-  align-items: center;
-
-  .filter-table {
-    margin-right: 20px;
+  flex-direction: row; 
+  background-color: #fff;
+  margin-top: 8px; 
+  .textarea{
+    height: 69px;
+ } 
+  .description {
+    flex-grow: 1; 
+    margin-right: 8px;   
+    border-color: #E50060;
+/*
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);*/ 
   }
 
-  .filter-table .justify-end {
-    margin-right: 20px;
-    justify-content: flex-end;
+  .button-container {
     display: flex;
-  }
-
-  .filter-table-end {
-    margin-right: 20px;
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  h2,
-  h3 {
-    margin: 0;
-    height: 2.5rem;
-    display: flex;
-    align-items: center;
-    font-size: 0.9rem;
-  }
-
-  .year,
-  .name-month {
-    display: flex;
-    width: 11rem;
-    justify-content: space-between;
-    background: #ededed;
-    margin-right: 0.5rem;
-    border-radius: 0.3rem;
-    // height: 2rem;
+    flex-direction: column; 
+    align-items: center; 
 
     button {
-      background: rgb(100 77 156);
-      box-shadow: none;
-      margin: auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      mat-icon {
-        color: white;
-      }
-    }
-  }
-
-  .add-project {
-    #addnewproject {
-      max-width: 19.5rem;
-    }
-
-    .form-group {
-      display: flex;
-
-      button {
-        margin-left: 0.5rem;
-        background: #e11d74;
-        box-shadow: none;
-      }
+      margin-bottom: 4px; 
+      margin-right: 4px; 
     }
   }
 }
-
+  }
+}
+/*--------------- Table-TimeSheet -----------------*/
 .timesheet-content {
   width: 100%;
   height: auto;
@@ -97,15 +157,23 @@
   align-items: center;
 
   .table-cra {
-    // padding: 0.4rem;
-    // height: calc(100vh - 12.3rem);
-    overflow: auto;
+    //padding: 0.4rem;
+    //height: calc(100vh - 12.3rem);
+    overflow-x: auto;
   }
+.sticky-header{
+  position: sticky;
+}
+.Projects{
+  overflow-y: auto;
+}
+.col-projects {
+  background: white;
+  color: #193F77;
+  border-radius: 0.3rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* You can adjust the shadow as needed */
+}
 
-  .col-projects {
-    background: #e11d74;
-    color: white;
-  }
 
   .name-project,
   .total {
@@ -115,6 +183,10 @@
     justify-content: start;
     align-items: center;
     padding-left: 0.5rem;
+    width: 10rem; 
+    overflow-y: auto; 
+    max-height: 10rem; 
+    font-weight: bold;
   }
 
   .col-total {
@@ -133,8 +205,9 @@
     width: 2rem;
     height: 2rem;
     margin: auto;
-    border-radius: 0.3rem;
+    border-radius: 0.6rem;
     font-size: 1rem;
+
   }
 
   .col-nb-total {
@@ -148,7 +221,7 @@
     z-index: 2;
     // background: #de3163;
     // min-width: 2rem;
-    // color: white;
+    color: #193F77;
     background: white;
     min-width: 4.5rem;
     text-align: center;
@@ -167,12 +240,16 @@
       th {
         .days {
           width: 3.5rem;
-
+          border-radius: 0.3rem;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
           .day-name,
           .day-number {
             margin: 0;
             display: flex;
             justify-content: center;
+            color: #193F77;
+            background: white;
+            font-weight: bold;
             // border-right: 0.1rem solid #E11D74;
           }
 
@@ -181,15 +258,12 @@
             overflow: hidden;
             font-size: 0.75rem !important;
             font-weight: 500;
-            color: white;
-            background: rgb(225 29 116);
+          
           }
 
           .day-number {
             font-size: 0.9rem !important;
             font-weight: 400;
-            color: white;
-            background: rgb(225 29 116);
           }
         }
       }
@@ -223,25 +297,7 @@
     }
   }
 }
-
-.width36 {
-  width: 36% !important;
-}
-
-.form {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-}
-
-button {
-  margin-right: 0.5em;
-}
-
-::ng-deep .mat-mdc-chip {
-  width: 8%;
-}
-
+/*-------------- Firefox -----------------*/
 .input {
 
   input::-webkit-outer-spin-button,
@@ -251,7 +307,9 @@ button {
   }
 
   /* Firefox */
+
   input[type="number"] {
     -moz-appearance: textfield;
   }
 }
+

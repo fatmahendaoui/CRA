@@ -8,100 +8,47 @@ mat-toolbar {
   z-index: 1000;
   background-color: white;
 
-  .logo-chips{
+  /* Utilisation de gradient pour la bordure */
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(to right, #E50060 40%, #193f77 100%);
+  }
+
+  .logo-chips {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    @media screen and (max-width: 600px) {
+
+    .brand {
+      height: 62px;
+      width: auto;
+      cursor: pointer;
+      background-color: white;
+      padding: 8px 16px;
+      border-radius: 16px;
+
+      @media screen and (max-width: 760px) {
+        max-height: 55px;
+      }
+    }
+
+    @media screen and (max-width: 760px) {
       width: 100%;
     }
-    @media screen and (max-width: 472px) {
+
+    @media screen and (max-width: 760px) {
       justify-content: center;
       flex-direction: column;
-      .type-chip{
+
+      .type-chip {
         font-size: 0.7rem;
       }
     }
-  }
-
-  @media screen and (max-width: 600px) {
-    position: relative;
-
-    .mat-toolbar-row,
-    .mat-toolbar-single-row {
-      padding: 5px;
-    }
-
-    .user-avatar-trigger{
-      margin-right: 0;
-    }
-  }
-}
-
-  ::ng-deep .mat-toolbar-row {
-    position: relative;
-    flex-wrap: wrap;
-    justify-content: space-between;
-
-    @media screen and (max-width: 600px) {
-      height: auto;
-    }
-  }
-
-  .max-width-container {
-    max-width: 1280px;
-    margin: auto;
-  }
-
-  .layout-container {
-    display: block;
-    padding: 24px 16px;
-    margin-top: 56px;
-    height: auto;
-    background: #fdfdfd;
-
-    @media screen and (min-width: 600px) {
-      margin-top: 64px;
-    }
-
-    @media screen and (max-width: 472px) {
-      margin-top: 0;
-    }
-  }
-
-  .brand {
-    height: 62px;
-    width: auto;
-    cursor: pointer;
-    background-color: white;
-    padding: 8px 16px;
-    border-radius: 16px;
-
-    @media screen and (max-width: 600px) {
-      max-height: 55px;
-    }
-
-    @media screen and (max-width: 472px) {
-      display: block;
-      margin: auto;
-    }
-  }
-
-  .user-avatar-trigger {
-    @include avatar.avatar(40px, 40px);
-    margin-right: 0.5rem;
-
-    img {
-      min-width: 40px;
-    }
-  }
-
-  .user-metadata {
-    min-width: 256px;
-    display: flex;
-    flex-direction: column;
-    line-height: 1.2;
-    font-size: .75rem;
   }
 
   .user-container-metadata {
@@ -110,10 +57,11 @@ mat-toolbar {
     align-items: center;
     gap: 8px;
 
-    @media screen and (max-width: 600px) {
+    @media screen and (max-width: 760px) {
       margin: 0.5rem 0;
       width: 100%;
       justify-content: space-between;
+
       .user-name {
         span {
           display: none;
@@ -122,90 +70,205 @@ mat-toolbar {
     }
   }
 
-  .mat-toolbar-row,
-  .mat-toolbar-single-row {
-    padding: 0 16px 0 0;
+  @media screen and (max-width: 760px) {
+    position: relative;
+
+    .mat-toolbar-row,
+    .mat-toolbar-single-row {
+      padding: 5px;
+    }
+
+    .user-avatar-trigger {
+      margin-right: 0;
+    }
+  }
+}
+
+.custom-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #E50060;
+  font-size: medium;
+  font-weight: bold;
+  background-color: #fff;
+  border: none;
+
+  img {
+    width: 30px;
+    height: 30px;
+    max-width: 100%;
+    max-height: 100%;
+  }
+}
+
+::ng-deep .mat-toolbar-row {
+  position: relative;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  @media screen and (max-width: 760px) {
+    height: auto;
+  }
+}
+
+.max-width-container {
+  max-width: 1350px;
+  margin: auto;
+}
+
+.layout-container {
+  display: block;
+  padding: 12px 9px;
+  margin-top: 56px;
+  height: auto;
+ //background: #fdfdfd;
+
+  @media screen and (min-width: 760px) {
+    margin-top: 64px;
   }
 
-  ::ng-deep .customize {
-    min-width: 13.5rem;
+  @media screen and (max-width: 760px) {
+    margin-top: 0;
+  }
+}
 
-    button {
-      mat-icon {
-        scale: 0.8;
-        color: #E11D74 !important;
+.brand {
+  height: 62px;
+  width: auto;
+  cursor: pointer;
+  background-color: white;
+  padding: 8px 16px;
+  border-radius: 16px;
+
+  @media screen and (max-width: 760px) {
+    max-height: 55px;
+  }
+
+  @media screen and (max-width: 472px) {
+    display: block;
+    margin: auto;
+  }
+}
+
+.user-avatar-trigger {
+  @include avatar.avatar(40px, 40px);
+  margin-right: 0.5rem;
+
+  img {
+    min-width: 40px;
+  }
+}
+
+.user-metadata {
+  display: flex;
+  flex-direction: column;
+  font-size: .85rem;
+}
+
+.user-container-metadata {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  @media screen and (max-width: 760px) {
+    margin: 0.5rem 0;
+    width: 100%;
+    justify-content: space-between;
+
+    .user-name {
+      span {
+        display: none;
       }
-
     }
   }
+}
 
-  .user-name {
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    color: #898989;
-    font-size: medium;
-    font-family: "Poppins", sans-serif !important;
-    cursor: pointer;
-  }
+.mat-toolbar-row,
+.mat-toolbar-single-row {
+  padding: 0 16px 0 0;
+}
 
+::ng-deep .customize {
+  min-width: 13.5rem;
 
-  .language-select {
-    display: inline-block;
-    @media screen and (max-width: 472px) {
-      margin: 0 !important;
+  button {
+    mat-icon {
+      scale: 0.8;
+      color: #E11D74 !important;
     }
-  }
 
-  .language-select mat-form-field {
-    width: 8rem;
-    border: 1px solid #E11D74;
-    border-radius: 6px;
-    @media screen and (max-width: 472px) {
-      width: 7rem;
-    }
   }
+}
 
-  ::ng-deep .mat-mdc-select-value {
-    color: #ea0d6dec;
-    font-size: 0.9rem;
+.user-name {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  color: #898989;
+  font-size: medium;
+  font-family: "Poppins", sans-serif !important;
+  cursor: pointer;
+}
+
+.select {
+  display: inline-block;
+  
+  @media screen and (max-width: 472px) {
+    margin: 0 !important;
   }
+}
 
-  .user-avatar-trigger {
-    padding: 0;
+.select mat-form-field {
+  width: 8rem;
+
+  @media screen and (max-width: 472px) {
+    width: 7rem;
   }
+}
 
-  .user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: #E11D74;
-    color: #fff;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+::ng-deep .mat-mdc-select-value {
+  font-size: 0.9rem;
+  gap: 8px;
+  color: #E50060;
+  font-size: medium;
+  font-weight: bold;
+}
 
-  // chips css
-  .type-chip {
-    padding: 0.1rem 0.2rem;
-    border-radius: 0.3rem;
-    font-size: 0.875rem;
-    height: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 10rem;
-  }
+.user-avatar-trigger {
+  padding: 0;
+}
 
-  .yes {
-    background-color: #e4ffe2;
-    color: #46eb6a;
-  }
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #E11D74;
+  color: #fff;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+.type-chip {
+  padding: 0.1rem 0.2rem;
+  border-radius: 0.3rem;
+  font-size: 0.875rem;
+  height: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 10rem;
+}
 
-  .no {
-    background-color: #ffdede;
-    color: #ff0000;
-  }
+.yes {
+  background-color: #e4ffe2;
+  color: #46eb6a;
+}
+
+.no {
+  background-color: #ffdede;
+  color: #ff0000;
+}

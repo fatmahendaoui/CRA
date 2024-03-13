@@ -1,100 +1,108 @@
 <div class="row">
   <div class="cra">
-    <div class=" header-timesheet">
-      <div class="filter-table">
 
-
-        <mat-form-field subscriptSizing="dynamic" appearance="outline">
-          <mat-select [(ngModel)]="currentUser" (ngModelChange)="fetchProjects()" [disabled]="!IsAdmin">
-            <mat-option *ngFor="let element of users" [value]="element.uid">{{element.displayName}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="filter-table-end justify-end">
-        <mat-chip-option class="chips" *ngIf="status && status != 'Improved'" color="accent"
-          disabled>{{status}}</mat-chip-option>
-        <mat-chip-option class="chips" *ngIf="!status" color="accent" disabled>On going</mat-chip-option>
-        <mat-chip-option class="chips" *ngIf="status == 'Improved'" color="accent" disabled>Approved</mat-chip-option>
-
-        <div class="year">
-          <button mat-mini-fab color="primary" (click)="getYear(false)">
-            <mat-icon>navigate_before</mat-icon>
-          </button>
-          <h3>{{ year }}</h3>
-          <button mat-mini-fab color="primary" (click)="getYear(true)">
-            <mat-icon>navigate_next</mat-icon>
-          </button>
+    <!-- ---------------------header-filtre-------------------------  -->
+    <div class="header-filter">
+      <mat-toolbar>
+        <img src="../../../../../assets/images/TimeSheet.png">
+        <div class="filter-table">
+          <div class="select">
+            <span class="mat-form-field">
+              <mat-form-field subscriptSizing="dynamic" appearance="outline">
+                <mat-select [(ngModel)]="currentUser" (ngModelChange)="fetchProjects()" [disabled]="!IsAdmin">
+                  <mat-option *ngFor="let element of users" [value]="element.uid">{{element.displayName}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </span>
+          </div>
+        </div>
+        <div class="filter-table-end">
+          <mat-chip class="chips" *ngIf="status && status != 'Improved'" style="background-color: #EA3380;"
+            disabled><span style="color: white;">{{status}}</span></mat-chip>
+          <mat-chip class="chips" *ngIf="!status" style="background-color: #EA3380;" disabled><span
+              style="color: white;">On going</span></mat-chip>
+          <mat-chip class="chips" *ngIf="status == 'Improved'" style="background-color: #EA3380;" disabled><span
+              style="color: white;">Approved </span></mat-chip>
         </div>
         <div class="name-month">
           <button mat-mini-fab color="primary" (click)="getMonth(false)">
             <mat-icon>navigate_before</mat-icon>
           </button>
-          <h3>{{ nameMonth }}</h3>
+          <span class="text-center">
+            <h3>{{ nameMonth }}</h3>
+          </span>
           <button mat-mini-fab color="primary" (click)="getMonth(true)">
             <mat-icon>navigate_next</mat-icon>
           </button>
         </div>
-      </div>
 
-
-
+        <div class="name-year">
+          <button mat-mini-fab color="primary" (click)="getYear(false)">
+            <mat-icon>navigate_before</mat-icon>
+          </button>
+          <span class="text-center">
+            <h3>{{ year }}</h3>
+          </span>
+          <button mat-mini-fab color="primary" (click)="getYear(true)">
+            <mat-icon>navigate_next</mat-icon>
+          </button>
+        </div>
+      </mat-toolbar>
     </div>
 
+    <!-- ---------------------Table Timesheet-------------------------  -->
     <div class="timesheet-content">
       <div class="table-responsive table-cra">
         <table class="table table-sm table-bordered1" *ngIf="resultTimesheet">
           <thead class="sticky-header">
-            <tr>
-              <th >
+            <tr >
+              <th>
               </th>
+              <ng-container *ngFor="let week of weeks">
               <th *ngFor="let day of resultTimesheet; let dayIndex = index">
-                <div class="days" 
-                [ngClass]="{'width36': isWeekendDay(day.year, this.month2, day.day) || this.day_offs.includes(day.day)}">
-                  <p class="day-name" 
+                <div class="days"
+                  [ngClass]="{'width36': isWeekendDay(day.year, this.month2, day.day) || this.day_offs.includes(day.day)}">
+                  <p class="day-name"
                     [ngStyle]="{'background': isWeekendDay(day.year, this.month2, day.day) || this.day_offs.includes(day.day)  ? '#e1e1e194' :  '',
                   'color': isWeekendDay(day.year, this.month2, day.day) || this.day_offs.includes(day.day)  ? 'transparent' :  ''}">{{
                     day.nameDay }}</p>
-                  <p class="day-number" [ngClass]="{ 'disabled-input': isWeekend }"    
+                  <p class="day-number" [ngClass]="{ 'disabled-input': isWeekend }"
                     [ngStyle]="{'background': isWeekendDay(day.year, this.month2, day.day) || this.day_offs.includes(day.day)  ? '#e1e1e194' :  '',
                   'color': isWeekendDay(day.year, this.month2, day.day) || this.day_offs.includes(day.day)  ? 'transparent' :  ''}">{{ day.day }}
                   </p>
                 </div>
               </th>
-              <th  class="totaldays" style="right: -1px !important;"> {{ 'features.timeshet.total' | transloco }}
+              </ng-container>
+              <th class="totaldays" style="right: -1px !important;"> {{ 'features.timeshet.total' | transloco }}
               </th>
               <!-- transparent -->
             </tr>
           </thead>
-          <tbody>
+          <tbody class="Projects">
             <ng-container *ngFor="let project of tabProject; let projectIndex = index">
               <tr>
-                
+
                 <td class="col-projects" style="border-bottom: 0.01rem solid white;"
-                  [ngStyle]="{'background-color': project.name == 'Disponible' || project.name == 'Maladie' || project.name == 'Vacances' ? 'rgb(100 77 156)' :  ''}">
-                  <div class="name-project"
-                    *ngIf="project.name != 'Disponible' && project.name != 'Maladie' && project.name != 'Vacances'">{{
-                    project.name }}</div>
-                  <div class="name-project" *ngIf="project.name == 'Disponible'"> {{ 'features.day_off.Disponible' |
-                    transloco }}</div>
-                  <div class="name-project" *ngIf="project.name == 'Maladie'"> {{ 'features.day_off.Maladie' | transloco
-                    }}</div>
-                  <div class="name-project" *ngIf="project.name == 'Vacances'"> {{ 'features.day_off.Vacances' |
-                    transloco }}</div>
-
-
-                </td>
+                [ngStyle]="{'background-color': project.name == 'Disponible' || project.name == 'Maladie' || project.name == 'Vacances' ? '#193F77' : '', 'color': project.name == 'Disponible' || project.name == 'Maladie' || project.name == 'Vacances' ? 'white' : ''}">
+                <div class="name-project" *ngIf="project.name != 'Disponible' && project.name != 'Maladie' && project.name != 'Vacances'">{{ project.name }}</div>
+                <div class="name-project" *ngIf="project.name == 'Disponible'">{{ 'features.day_off.Disponible' | transloco }}</div>
+                <div class="name-project" *ngIf="project.name == 'Maladie'">{{ 'features.day_off.Maladie' | transloco }}</div>
+                <div class="name-project" *ngIf="project.name == 'Vacances'">{{ 'features.day_off.Vacances' | transloco }}</div>
+            </td>
+            
                 <td *ngFor="let day of project.days; let dayIndex = index">
-                  
-                  <div class="form-group div-heure"  *ngIf="!isWeekendDay(day.year, this.month2, day.day) && !this.day_offs.includes(day.day)">
-                    <input type="number" class="form-control input-heure input" 
+
+                  <div class="form-group div-heure"
+                    *ngIf="!isWeekendDay(day.year, this.month2, day.day) && !this.day_offs.includes(day.day)">
+                    <input type="number" class="form-control input-heure input"
                       (input)="getInputValeur($event.target.value, day)" [value]="day.inputValue || ''" min="0"
                       [disabled]="isWeekendDay(day.year, this.month2, day.day) || this.day_offs.includes(day.day)"
                       [(ngModel)]="day.nbHeure" (change)="changetotal()" />
                   </div>
                 </td>
                 <td class="totaldays" *ngIf="project.days">
-                  {{ calculateDaysFromHours(calculateTotalHours(project.days)) }} 
+                  {{ calculateDaysFromHours(calculateTotalHours(project.days)) }}
 
                 </td>
               </tr>
@@ -105,55 +113,56 @@
                 <div class="name-project">Total Hours</div>
               </td>
               <td *ngFor="let day of resultTimesheet; let dayIndex = index">
-                <div class="form-group div-heure"  *ngIf="!isWeekendDay(day.year, this.month2, day.day) && !this.day_offs.includes(day.day)">
+                <div class="form-group div-heure"
+                  *ngIf="!isWeekendDay(day.year, this.month2, day.day) && !this.day_offs.includes(day.day)">
                   <input type="number" class="form-control input-heure input" [(ngModel)]="day.nbHeure"
-                    [value]="totalHours[dayIndex] || ''" [disabled]="true" [ngStyle]="{'background':   day.nbHeure != 8 && day.nbHeure != 0 ? '#e11d74' :  '',
+                    [value]="totalHours[dayIndex] || ''" [disabled]="true" [ngStyle]="{'background':   day.nbHeure != 8 && day.nbHeure != 0 ? '#E50060' :  '',
                 'color':   day.nbHeure != 8 && day.nbHeure != 0 ? 'white' :  ''}" />
                 </div>
               </td>
-              <td class="totaldays" *ngIf="tabProject">{{calculateDaysFromHours(calculateTotalHoursInmonth())}} 
+              <td class="totaldays" *ngIf="tabProject">{{calculateDaysFromHours(calculateTotalHoursInmonth())}}
               </td>
             </tr>
           </tbody>
-
-
-
-
         </table>
         <app-loader *ngIf="!resultTimesheet">Chargement ...</app-loader>
       </div>
     </div>
-  </div>
-  <div class="form">
-    <mat-form-field appearance="outline">
-      <mat-label>
-        Description
-      </mat-label>
-      <textarea matInput [(ngModel)]="description" type="text"></textarea>
-    </mat-form-field>
-    <div>
-      <button mat-flat-button color="primary"
-        *ngIf="IsAdmin && (status =='On going' || !status || status =='Improved' ) " (click)="Save()">
-        {{ 'features.projects.button.save' | transloco }}
-      </button>
-
-      <button mat-flat-button color="primary" *ngIf="!IsAdmin && (status =='On going' || !status)" (click)="Save()">
-        {{ 'features.projects.button.save' | transloco }}
-      </button>
 
 
-      <button mat-flat-button color="primary" *ngIf=" (status =='On going' || !status)"
-        (click)="Savewithemail();Save()">
-        {{ 'features.projects.button.Envoye' | transloco }}
-      </button>
-      <button *ngIf="IsAdmin && status =='Submitted'" mat-flat-button color="primary"
-        (click)="status ='Improved' ; changeStatus(); sendmail('Approved')">
-        {{ 'features.projects.button.approved' | transloco }}
-      </button>
-      <button *ngIf="IsAdmin && status =='Submitted'" mat-flat-button color="primary"
-        (click)="status ='On going' ; changeStatus(); sendmail('Rejected')">
-        {{ 'features.projects.button.reject' | transloco }}
-      </button>
+    <!-- ---------------------Description-------------------------  -->
+    <div class="form">
+      <mat-form-field appearance="outline" class="description">
+        <mat-label style="color: #193F77;">
+          Description
+        </mat-label>
+        <textarea class="textarea" matInput [(ngModel)]="description" type="text"></textarea>
+      </mat-form-field>
+      <div class="button-container">
+        <button mat-flat-button color="primary"
+          *ngIf="IsAdmin && (status =='On going' || !status || status =='Improved' ) " (click)="Save()">
+          {{ 'features.projects.button.save' | transloco }}
+        </button>
+
+        <button mat-flat-button color="primary" *ngIf="!IsAdmin && (status =='On going' || !status)" (click)="Save()">
+          {{ 'features.projects.button.save' | transloco }}
+        </button>
+
+
+        <button mat-flat-button color="primary" *ngIf=" (status =='On going' || !status)"
+          (click)="Savewithemail();Save()">
+          {{ 'features.projects.button.Envoye' | transloco }}
+        </button>
+        <button *ngIf="IsAdmin && status =='Submitted'" mat-flat-button color="primary"
+          (click)="status ='Improved' ; changeStatus(); sendmail('Approved')">
+          {{ 'features.projects.button.approved' | transloco }}
+        </button>
+        <button *ngIf="IsAdmin && status =='Submitted'" mat-flat-button color="primary"
+          (click)="status ='On going' ; changeStatus(); sendmail('Rejected')">
+          {{ 'features.projects.button.reject' | transloco }}
+        </button>
+      </div>
     </div>
   </div>
+
 </div>

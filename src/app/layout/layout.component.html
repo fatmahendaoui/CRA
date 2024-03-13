@@ -1,70 +1,84 @@
+<!-- Barre de navigation -->
 <mat-toolbar class="mat-elevation-z1">
   <mat-toolbar-row class="max-width-container">
 
     <div class="logo-chips">
       <img routerLink="/dashbord" class="brand" src="./assets/images/logo.png" alt="Logo" role="presentation">
     </div>
+    <div class="user-container-metadata" *ngIf="user">
+      <button class="custom-icon" style="color: #E50060;" routerLink="/dashbord" *ngIf="isAdmin">
+        <img src="../../assets/images/house.png"> Dashboard</button>
 
-      <div class="user-container-metadata" *ngIf="user">
-        <mat-icon style="color: #E11D74;" routerLink="/dashbord"  *ngIf="isAdmin">home</mat-icon>
-        <div class="language-select">
-          <mat-form-field appearance="outline">
-            <mat-select (selectionChange)="onSelectionChange($event)" [value]="defaultLanguage">
-              <mat-option value="en">English</mat-option>
-              <mat-option value="fr">Français</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
-
-        <div class="user-name" [matMenuTriggerFor]="menu">
-
-          <button mat-icon-button class="user-avatar-trigger">
-            <mat-avatar class="user-avatar">
-              {{ getFirstLetter(user?.email) }}
-            </mat-avatar>
-          </button>
-
-        </div>
-
-        <mat-menu #menu="matMenu" class="customize">
-          <button mat-menu-item disabled>
-            <div class="user-metadata">
-              <strong>{{ user.displayName }}</strong>
-              <span>{{ domaineName }} Workspace</span>
-            </div>
-          </button>
-          <button mat-menu-item routerLink="users" *ngIf="isAdmin">
-            <mat-icon>group</mat-icon>
-            {{ 'layout.menu.users' | transloco }}
-          </button>
-          <button mat-menu-item routerLink="projects" *ngIf="isAdmin">
-            <mat-icon>add</mat-icon>
-            List Project
-          </button>
-          <button mat-menu-item routerLink="day_off" *ngIf="isAdmin">
-            <mat-icon>calendar_today</mat-icon>
-            List Day Off
-          </button>
-
-          <button mat-menu-item routerLink="toValide" *ngIf="isAdmin">
-            <mat-icon>done_outline</mat-icon>
-            {{ 'features.day_off.titre' | transloco }}
-          </button>
-
-          <button  mat-menu-item [routerLink]="'timesheet/'+auth.currentUser.uid+'/'+today" >
-            <mat-icon>build</mat-icon>
-            Timesheet
-          </button>
-          <button mat-menu-item (click)="signOut()">
-            <mat-icon>logout</mat-icon>
-            {{ 'layout.menu.sign-out' | transloco }}
-          </button>
-        </mat-menu>
+      <!-- Menu de sélection de langue -->
+      <div class="select">
+        <button class="custom-icon" style="color: #E50060;" *ngIf="isAdmin">
+          <img src="../../assets/images/Lang.png" alt="language">
+          <mat-select  subscriptSizing="dynamic" (selectionChange)="onSelectionChange($event)" [value]="defaultLanguage" style="min-width: 3rem;">
+            <mat-option value="en">En</mat-option>
+            <mat-option value="fr">Fr</mat-option>
+          </mat-select></button>
       </div>
+      <!-- Notification icon -->
+      <button mat-icon-button *ngIf="isAdmin" >
+        <span matBadge="12" [matBadgeColor]="'#E50060'" >
+          <img src="../../assets/images/bell.png" alt="notification">
+        </span>
+      </button>
+      
+      <!-- Avatar de l'utilisateur avec menu contextuel -->
+      <div class="user-name" [matMenuTriggerFor]="menu" style="background-color: #fff;">
+        <button mat-menu-item style="background-color: #fff;">
+          <div class="user-metadata" style="text-align: end;">
+            <strong style="color: #E50060;">{{ user?.displayName }}</strong>
+            <span style="font-size: 0.68rem; color: #193F77;">{{ domaineName }} Workspace</span>
+          </div>
+        </button>
+        <button mat-icon-button class="user-avatar-trigger">
+          <mat-avatar class="user-avatar">
+            <!-- Utilisation de la fonction getUserImage pour obtenir l'URL de l'image de l'utilisateur -->
+            <img *ngIf="getUserImage( user)" [src]="getUserImage(user)" alt="User Avatar">
+            {{ !getUserImage(user) ? getFirstLetter(user?.email) : '' }}
+          </mat-avatar>
+        </button>
+      </div>
+      
+
+      <!-- Menu contextuel de l'utilisateur -->
+      <mat-menu #menu="matMenu" class="customize">
+        <!-- Options du menu en fonction du rôle de l'utilisateur -->
+        <button mat-menu-item routerLink="users" *ngIf="isAdmin">
+          <mat-icon>group</mat-icon>
+          <!-- Traduction de "Utilisateurs" -->
+          {{ 'layout.menu.users' | transloco }}
+        </button>
+        <button mat-menu-item routerLink="projects" *ngIf="isAdmin">
+          <mat-icon>add</mat-icon>
+          List Project
+        </button>
+        <button mat-menu-item routerLink="day_off" *ngIf="isAdmin">
+          <mat-icon>calendar_today</mat-icon>
+          List Day Off
+        </button>
+
+        <button mat-menu-item routerLink="toValide" *ngIf="isAdmin">
+          <mat-icon>done_outline</mat-icon>
+          {{ 'features.day_off.titre' | transloco }}
+        </button>
+
+        <button mat-menu-item [routerLink]="'timesheet/'+auth.currentUser.uid+'/'+today">
+          <mat-icon>build</mat-icon>
+          Timesheet
+        </button>
+        <button mat-menu-item (click)="signOut()">
+          <mat-icon>logout</mat-icon>
+          {{ 'layout.menu.sign-out' | transloco }}
+        </button>
+      </mat-menu>
+    </div>
   </mat-toolbar-row>
 </mat-toolbar>
 
+<!-- Contenu principal de l'application -->
 <div class="layout-container max-width-container">
   <router-outlet></router-outlet>
 </div>
