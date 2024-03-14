@@ -18,14 +18,15 @@ import { RouterModule, Routes } from '@angular/router';
 import { UsersService } from '../users/services/users.service';
 import { MatSelectModule } from '@angular/material/select';
 import { Day_offService } from '../day_offs/services/day_off.service';
-import {MatChipsModule} from '@angular/material/chips';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 const routes: Routes = [
   {
     path: ':uid/:date',
     component: TimesheetComponent
   }
-  ];
+];
 
 
 @NgModule({
@@ -50,10 +51,11 @@ const routes: Routes = [
     FormsModule,
     MatChipsModule,
     RouterModule.forChild(routes),
+    MatToolbarModule
 
   ],
   providers: [
-    DateService, ProjectService ,UsersService,Day_offService// Provide any services that belong to this module
+    DateService, ProjectService, UsersService, Day_offService// Provide any services that belong to this module
   ],
   exports: [
     TimesheetComponent // Export components, directives, or pipes for use in other modules

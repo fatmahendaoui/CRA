@@ -39,8 +39,8 @@ $cra-theme: mat.define-light-theme((color: (primary: $cra-primary,
 
 
 body {
-  background-color: #fdfdfd;
-  margin: 0 !important;
+  background-color: rgba(25, 63, 119, 0.02); 
+    margin: 0 !important;
   padding: 0 !important;
 }
 
@@ -61,7 +61,7 @@ body{
 /**
  * Override Material Design Components styles
  */
-.dense-form-field , .language-select{
+.dense-form-field , .select{
   margin: 0.5rem;
   .mat-mdc-form-field-infix {
     padding-top: 4px !important;
@@ -72,7 +72,8 @@ body{
     // min-height: 32px;
   }
 }
-.language-select{
+.select{
+
   .mat-mdc-form-field-infix {
     min-height: 32px;
   }

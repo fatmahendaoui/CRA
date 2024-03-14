@@ -10,11 +10,27 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
 import { Day_offService } from 'src/app/features/day_offs/services/day_off.service';
 
+// Définir une interface pour représenter un jour
+interface Day {
+  year: number;
+  month: number;
+  day: number;
+  nameDay: string;
+  isWeekend: boolean; // Ajoutez la propriété isWeekend
+}
+
+// Définir une interface pour représenter une semaine
+interface Week {
+  days: Day[];
+}
+
+
 @Component({
   selector: 'app-timesheet',
   templateUrl: './timesheet.component.html',
   styleUrls: ['./timesheet.component.scss']
 })
+
 export class TimesheetComponent implements OnInit {
 
   projectName: string = '';
@@ -31,6 +47,9 @@ export class TimesheetComponent implements OnInit {
 
   days: string[] = DaysOfWeek; // Use DaysOfWeek from constants
   month: string[] = Months; // Use Months from constants
+
+  // Dans votre composant, initialisez une variable pour stocker les semaines
+  weeks: Week[] = [];
 
   theDate: Date;
   nameMonth: string;
@@ -87,8 +106,10 @@ export class TimesheetComponent implements OnInit {
 
   ngOnInit(): void {
     this.getTimesheet();
+    this.splitDaysIntoWeeks(this.resultTimesheet); // Call the function to split days into weeks
   }
 
+  // get by month
   getMonth(op: boolean): void {
     const newMonth = op ? this.month2 + 1 : this.month2 - 1;
     let newYear = this.year;
@@ -102,14 +123,16 @@ export class TimesheetComponent implements OnInit {
     const wrappedMonth = (newMonth + 12) % 12;
 
     this.updateMonthYear(wrappedMonth, newYear);
+    this.updateMonthYear(newMonth, newYear);
     this.filterprojects();
   }
-
+  // get by year
   getYear(op: boolean): void {
     const newYear = this.year + (op ? 1 : -1);
     this.updateMonthYear(this.month2, newYear);
     this.filterprojects();
   }
+
   async Save() {
     try {
       this.tabProject.forEach((project) => {
@@ -245,18 +268,29 @@ export class TimesheetComponent implements OnInit {
 
   private generateTimesheet(year: number, month: string, numberOfDays: number): TimesheetItem[] {
     const timesheet: TimesheetItem[] = [];
+    let currentWeek: TimesheetItem[] = [];
+
     for (let i = 1; i <= numberOfDays; i++) {
-      timesheet.push({
-        project: this.projectName,
-        year: year,
-        month: month,
-        day: i,
-        nameDay: this.getNameDate(year, this.month2, i),
-        numberDay: numberOfDays,
-        nbHeure: '',
-        nbTotal: '',
-        projectTotal: '',
-      });
+      // Vérifiez si le jour est un jour de week-end ou un jour férié avant de l'ajouter
+      if (!this.isWeekendDay(year, this.monthToNumber(month), i) && !this.day_offs.includes(i)) {
+        currentWeek.push({
+          project: this.projectName,
+          year: year,
+          month: month,
+          day: i,
+          nameDay: this.getNameDate(year, this.monthToNumber(month), i),
+          numberDay: numberOfDays,
+          nbHeure: '',
+          nbTotal: '',
+          projectTotal: '',
+        });
+      }
+
+      // Si le jour est un samedi ou le dernier jour du mois, ajoutez la semaine actuelle au timesheet
+      if (currentWeek.length === 5 || i === numberOfDays) {
+        timesheet.push(...currentWeek);
+        currentWeek = []; // Réinitialiser la semaine
+      }
     }
 
     return timesheet;
@@ -344,7 +378,7 @@ export class TimesheetComponent implements OnInit {
         for (const key in project) {
           const MonthNumber = this.monthToNumber(this.getmonth(key));
           if (MonthNumber == this.month2 && this.year == this.getyear(key)) {
-            project.days = project[key];
+            project.days = project[key].filter((day) => !this.isWeekendDay(day.year, this.month2, day.day) && !this.day_offs.includes(day.day));
             for (let index = 0; index < project.days.length; index++) {
               const element = project.days[index] === 0 ? '' : project.days[index] || '';
               element.nbHeure = element.nbHeure === 0 ? '' : element.nbHeure || '';
@@ -409,17 +443,17 @@ export class TimesheetComponent implements OnInit {
   }
   calculateDaysFromHours(totalHours) {
     const hoursInADay = 8;
-    let final:string='';
+    let final: string = '';
     const daysEquivalent = Math.floor(totalHours / hoursInADay);
     const remainingHours = totalHours % hoursInADay;
     if (remainingHours > 0 && daysEquivalent > 0) {
-      final=`${daysEquivalent} `+this.transloco.translate('features.timeshet.j')+` & ${remainingHours} `+this.transloco.translate('features.timeshet.h');
+      final = `${daysEquivalent} ` + this.transloco.translate('features.timeshet.j') + ` & ${remainingHours} ` + this.transloco.translate('features.timeshet.h');
     } else {
-      if (daysEquivalent <= 0  && remainingHours > 0) {
-        final=`${remainingHours} `+this.transloco.translate('features.timeshet.heures');
+      if (daysEquivalent <= 0 && remainingHours > 0) {
+        final = `${remainingHours} ` + this.transloco.translate('features.timeshet.heures');
       } else {
-        if(remainingHours <= 0 && daysEquivalent > 0){
-          final=`${daysEquivalent} `+this.transloco.translate('features.timeshet.jours');;
+        if (remainingHours <= 0 && daysEquivalent > 0) {
+          final = `${daysEquivalent} ` + this.transloco.translate('features.timeshet.jours');;
         }
       }
     }
@@ -482,4 +516,36 @@ export class TimesheetComponent implements OnInit {
     return Months.indexOf(monthName); // Assuming Months array contains month names
   }
 
+  getISOWeek(date: Date): number {
+    const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+    const pastDaysOfYear = (date.getTime() - firstDayOfYear.getTime()) / 86400000;
+    return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+  }
+
+  // Fonction pour diviser les jours en semaines
+  splitDaysIntoWeeks(days: TimesheetItem[]): void {
+    const weeks: Week[] = [];
+    let currentWeek: Week = { days: [] };
+
+    days.forEach((day, index) => {
+      // Convert TimesheetItem to Day
+      const convertedDay: Day = {
+        year: day.year,
+        month: this.monthToNumber(day.month),
+        day: day.day,
+        nameDay: day.nameDay,
+        isWeekend: (day as any).isWeekend
+      };
+      currentWeek.days.push(convertedDay);
+      // If the day is a Sunday or the last day of the month
+      if (day.nameDay === 'Sunday' || index === days.length - 1) {
+        weeks.push(currentWeek);
+        currentWeek = { days: [] }; // Reset the week
+      }
+    });
+
+    this.weeks = weeks;
+  }
+
 }
+
