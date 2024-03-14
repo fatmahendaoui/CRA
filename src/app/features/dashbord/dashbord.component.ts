@@ -32,15 +32,41 @@ export class DashbordComponent implements OnInit {
   month2: number;
   year: number;
   theDate: Date;
+  searchUser: string = '';
+  filteredUsers: string[] = [];
+  projectFilter: string = '';
+  
+
   ngOnInit() {
+    
+    this.filteredUsers = this.listuser;
     this.theDate = new Date();
     if (this.theDate) {
       this.month2 = this.theDate.getMonth();
       this.year = this.theDate.getFullYear();
     }
-    this.getallProjectwithsommeNumber()
+    this.listuser = [];
+    // Assurez-vous que filteredUsers est également initialisé avec la liste complète des utilisateurs
+    this.filteredUsers = this.listuser;
+    
+
+    this.getallProjectwithsommeNumber();
   }
   listuser: any[] = [];
+
+  filterUsers() {
+    // Filter the list of users based on the search query
+    this.filteredUsers = this.listuser.filter(user =>
+        user.toLowerCase().includes(this.searchUser.toLowerCase())
+    );
+  }
+
+   get filteredProjects(): any[] {
+        return this.data.filter(project =>
+            project.name.toLowerCase().includes(this.projectFilter.toLowerCase())
+        );
+    }
+
 
   getallProjectwithsommeNumber() {
     this.data = null;
@@ -149,7 +175,7 @@ export class DashbordComponent implements OnInit {
               opts.w.config.dataLabels.style.fontWeight = '600'
               opts.w.config.dataLabels.style.fontFamily = undefined
             }
-            return val;
+            return val.toString().replace('.', ',');
           },
           style: {
             colors: ["#000000"]
@@ -170,6 +196,7 @@ export class DashbordComponent implements OnInit {
 
     })
   }
+  
 
   processProjects(projects) {
     let processedProjects: any = [];
@@ -217,6 +244,7 @@ export class DashbordComponent implements OnInit {
     this.loader = false;
     let result: any = [];
     this.dataUser = null;
+    
     result = this.calculateHoursWorkedByMonth(this.allvalues, this.currentProject, this.year);
     this.dataUser = result;
     this.chartOptionsuser = {
@@ -258,7 +286,7 @@ export class DashbordComponent implements OnInit {
               opts.w.config.dataLabels.style.fontWeight = '600'
               opts.w.config.dataLabels.style.fontFamily = undefined
             }
-            return val;
+            return val.toString().replace('.', ',');
           },
           style: {
             colors: ["#000000"]
@@ -325,7 +353,7 @@ export class DashbordComponent implements OnInit {
               opts.w.config.dataLabels.style.fontWeight = '600'
               opts.w.config.dataLabels.style.fontFamily = undefined
             }
-            return val;
+            return val.toString().replace('.', ',');
           },
           style: {
             colors: ["#000000"]
