@@ -32,16 +32,16 @@ mat-toolbar {
       padding: 8px 16px;
       border-radius: 16px;
 
-      @media screen and (max-width: 760px) {
+      @media screen and (max-width: 774px) {
         max-height: 55px;
       }
     }
 
-    @media screen and (max-width: 760px) {
+    @media screen and (max-width: 774px) {
       width: 100%;
     }
 
-    @media screen and (max-width: 760px) {
+    @media screen and (max-width: 774px) {
       justify-content: center;
       flex-direction: column;
 
@@ -57,7 +57,7 @@ mat-toolbar {
     align-items: center;
     gap: 8px;
 
-    @media screen and (max-width: 760px) {
+    @media screen and (max-width: 774px) {
       margin: 0.5rem 0;
       width: 100%;
       justify-content: space-between;
@@ -70,7 +70,7 @@ mat-toolbar {
     }
   }
 
-  @media screen and (max-width: 760px) {
+  @media screen and (max-width: 774px) {
     position: relative;
 
     .mat-toolbar-row,
@@ -107,7 +107,7 @@ mat-toolbar {
   flex-wrap: wrap;
   justify-content: space-between;
 
-  @media screen and (max-width: 760px) {
+  @media screen and (max-width: 774px) {
     height: auto;
   }
 }
@@ -124,11 +124,11 @@ mat-toolbar {
   height: auto;
  //background: #fdfdfd;
 
-  @media screen and (min-width: 760px) {
+  @media screen and (min-width: 774px) {
     margin-top: 64px;
   }
 
-  @media screen and (max-width: 760px) {
+  @media screen and (max-width: 774px) {
     margin-top: 0;
   }
 }
@@ -141,7 +141,7 @@ mat-toolbar {
   padding: 8px 16px;
   border-radius: 16px;
 
-  @media screen and (max-width: 760px) {
+  @media screen and (max-width: 774px) {
     max-height: 55px;
   }
 
@@ -172,7 +172,7 @@ mat-toolbar {
   align-items: center;
   gap: 8px;
 
-  @media screen and (max-width: 760px) {
+  @media screen and (max-width: 774px) {
     margin: 0.5rem 0;
     width: 100%;
     justify-content: space-between;

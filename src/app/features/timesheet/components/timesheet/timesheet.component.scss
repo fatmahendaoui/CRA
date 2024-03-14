@@ -4,9 +4,10 @@
     margin: auto;
     overflow: auto;
 
-/*-------------- header-filter -----------------*/
+    /*-------------- header-filter -----------------*/
     .header-filter {
-      margin-bottom: 30px; 
+      margin-bottom: 10px;
+
       .filter-table-end {
         margin-left: auto;
         display: flex;
@@ -38,7 +39,7 @@
           background: linear-gradient(to right, #E50060 40%, #193f77 100%);
         }
       }
-      
+
       .select {
         .mat-mdc-form-field-wrapper {
           border-color: #E50060; // Couleur de la bordure
@@ -68,7 +69,8 @@
         align-items: center;
       }
 
-      .name-month,.name-year,.name-week {
+      .name-month,
+      .name-year {
         display: flex;
         width: 11rem;
         justify-content: space-between;
@@ -114,65 +116,48 @@
         }
       }
     }
-
-/*-------------- Description -----------------*/
-.form {
-  padding: 16px;
-  display: flex;
-  flex-direction: row; 
-  background-color: #fff;
-  margin-top: 8px; 
-  .textarea{
-    height: 69px;
- } 
-  .description {
-    flex-grow: 1; 
-    margin-right: 8px;   
-    border-color: #E50060;
-/*
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);*/ 
-  }
-
-  .button-container {
-    display: flex;
-    flex-direction: column; 
-    align-items: center; 
-
-    button {
-      margin-bottom: 4px; 
-      margin-right: 4px; 
-    }
-  }
-}
-  }
-}
 /*--------------- Table-TimeSheet -----------------*/
 .timesheet-content {
   width: 100%;
   height: auto;
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   justify-items: center;
   align-items: center;
+  margin-bottom: 4px;
+
+  // height: calc(100vh - 50px);
+  .vide {
+    position: sticky;
+    top: 0; // Fix the header at the top
+    z-index: 2;
+    background-color: rgb(250, 251, 252);
+  }
 
   .table-cra {
-    //padding: 0.4rem;
-    //height: calc(100vh - 12.3rem);
-    overflow-x: auto;
+    overflow: auto; // Add vertical scrolling
+    max-height: calc(100vh - 18.3rem); // Adjust this according to your layout
   }
-.sticky-header{
-  position: sticky;
-}
-.Projects{
-  overflow-y: auto;
-}
-.col-projects {
-  background: white;
-  color: #193F77;
-  border-radius: 0.3rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* You can adjust the shadow as needed */
-}
+
+  .sticky-header {
+    position: sticky;
+    top: 0; // Fix the header at the top
+    z-index: 2;
+
+  }
+
+  .Projects {
+    overflow-y: auto;
+    max-height: calc(100vh - 12.3rem);
+  }
+
+  .col-projects {
+    background: white;
+    color: #193F77;
+    border-radius: 0.3rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* You can adjust the shadow as needed */
+  }
 
 
   .name-project,
@@ -180,19 +165,21 @@
     min-width: 6rem;
     min-height: 2.5rem;
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     align-items: center;
     padding-left: 0.5rem;
-    width: 10rem; 
-    overflow-y: auto; 
-    max-height: 10rem; 
+    width: 10rem;
+    overflow-y: auto;
+    max-height: 10rem;
     font-weight: bold;
+
   }
 
   .col-total {
     background: #e11d74;
     color: white;
     font-weight: 700;
+
   }
 
   .nb-total {
@@ -218,14 +205,20 @@
   .totaldays {
     position: sticky;
     right: 0;
-    z-index: 2;
+    z-index: 1;
     // background: #de3163;
     // min-width: 2rem;
     color: #193F77;
     background: white;
     min-width: 4.5rem;
     text-align: center;
-    }
+    overflow: auto; // Add vertical scrolling
+    max-height: calc(100vh - 12.3rem);
+    white-space: nowrap;
+    border-radius: 0.1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* You can adjust the shadow as needed */
+  }
 
   table {
 
@@ -238,18 +231,23 @@
       }
 
       th {
+        border-radius: 0.25rem;
+
         .days {
           width: 3.5rem;
-          border-radius: 0.3rem;
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          border-radius: 0.15rem;
+          background-color: white;
+
           .day-name,
           .day-number {
             margin: 0;
             display: flex;
             justify-content: center;
             color: #193F77;
-            background: white;
+            //background: white;
             font-weight: bold;
+
             // border-right: 0.1rem solid #E11D74;
           }
 
@@ -258,7 +256,7 @@
             overflow: hidden;
             font-size: 0.75rem !important;
             font-weight: 500;
-          
+
           }
 
           .day-number {
@@ -279,24 +277,105 @@
 
       td {
         vertical-align: middle;
-
+        background:white;
         .div-heure {
-          margin: 0.5rem;
+          margin: 0.3rem;
+          width: 3rem;
+          height: 1.6rem;
+          color: #E50060;
 
           .input-heure {
-            width: 3rem;
-            height: 2rem;
+            width: 100%;
+            height: 100%;
             padding: 0.2rem;
             display: flex;
             justify-content: center;
             text-align: center;
+            border-radius: 0.3rem;
+            border: none;
+            color: #496793;
+            font-weight: bold;
 
           }
+
+          &.border-empty {
+            border: 2px solid #879BB8;
+            color: #496793;
+            border-radius: 0.3rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+
+          &.border-filled {
+            border: 2px solid #E50060;
+            color: #E50060;
+            border-radius: 0.3rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+          }
+        }
+      }
+
+    }
+  }
+  /*--------------- scroll : Table-TimeSheet -----------------*/
+::-webkit-scrollbar-thumb {
+  background-color: #e64c8c;
+  border-radius: 10px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #FFFFFF;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: #e64c8c #FFFFFF;
+}
+
+} 
+
+    /*-------------- Description -----------------*/
+    .form {
+      padding: 16px;
+      display: flex;
+      flex-direction: row;
+      background-color: #fff;
+      margin-top: 8px;
+
+      .textarea {
+        height: 69px;
+      }
+
+      .description {
+        flex-grow: 1;
+        margin-right: 8px;
+        border-color: #E50060;
+        /*
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);*/
+      }
+
+      .button-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        button {
+          margin-bottom: 4px;
+          margin-right: 4px;
         }
       }
     }
   }
 }
+
+
+
+
+
+
 /*-------------- Firefox -----------------*/
 .input {
 
@@ -312,4 +391,3 @@
     -moz-appearance: textfield;
   }
 }
-

@@ -57,7 +57,7 @@
         <table class="table table-sm table-bordered1" *ngIf="resultTimesheet">
           <thead class="sticky-header">
             <tr >
-              <th>
+              <th class="vide">
               </th>
               <ng-container *ngFor="let week of weeks">
               <th *ngFor="let day of resultTimesheet; let dayIndex = index">
@@ -91,9 +91,12 @@
                 <div class="name-project" *ngIf="project.name == 'Vacances'">{{ 'features.day_off.Vacances' | transloco }}</div>
             </td>
             
-                <td *ngFor="let day of project.days; let dayIndex = index">
+                <td *ngFor="let day of project.days; let dayIndex = index"  >
 
-                  <div class="form-group div-heure"
+                  <div class="form-group div-heure" [ngClass]="{
+                    'border-empty': !day.nbHeure,
+                    'border-filled': day.nbHeure
+                 }"
                     *ngIf="!isWeekendDay(day.year, this.month2, day.day) && !this.day_offs.includes(day.day)">
                     <input type="number" class="form-control input-heure input"
                       (input)="getInputValeur($event.target.value, day)" [value]="day.inputValue || ''" min="0"
