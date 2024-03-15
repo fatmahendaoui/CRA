@@ -12,6 +12,35 @@
   overflow: auto;
 }
 
+.filter-field {
+  width: 100%;
+}
+
+.filter-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.mat-form-field-flex {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.mat-form-field-infix {
+  padding-right: 0; /* Pour retirer l'espacement par défaut entre le champ de saisie et le bouton */
+}
+
+.form-field-content {
+  display: flex;
+  align-items: center;
+}
+
+.custom-select {
+  margin-left: 10px; /* Ajustez la marge selon vos besoins */
+}
+
+
 .header-timesheet {
   display: flex;
   flex-direction: column;
@@ -79,6 +108,7 @@
         background: #e11d74;
         box-shadow: none;
       }
+      
     }
   }
 }

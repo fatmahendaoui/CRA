@@ -8,6 +8,7 @@ import { HasDomaineGuard } from './guards/has-domaine.guard';
 import { UsersComponent } from './features/users/users.component';
 import { NgModule } from '@angular/core';
 import { DashbordComponent } from './features/dashbord/dashbord.component';
+import { DemandecongeComponent } from './features/demandeconge/demandeconge/demandeconge.component';
 
 export const routes: Routes = [
   {
@@ -91,6 +92,11 @@ export const routes: Routes = [
           import('./features/day_offs/day_offfs.component').then(
             ({ day_offComponent }) => day_offComponent
           ),
+      },
+      {
+        path: 'demande-conge', // Définissez le chemin de la route
+        canActivate: [() => isAuthenticated()], // Ajoutez une garde si nécessaire
+        component: DemandecongeComponent // Définissez le composant à charger pour cette route
       },
     ],
   },

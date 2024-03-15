@@ -35,17 +35,20 @@
         <div class="cra" *ngIf="data">
             <div class="col-12 header-timesheet">
                 <div class="filter-table">
-                    <mat-form-field appearance="outline">
-                        <mat-label>
-                            {{ 'features.dashbord.Project' | transloco }}
-                        </mat-label>
-                        <mat-select [(ngModel)]="currentProject" (ngModelChange)="fetchProjects()">
-                            <ng-container *ngFor="let element of data">
-                                <mat-option *ngIf="element.name !== 'Total'"
-                                    [value]="element.name">{{element.name}}</mat-option>
-                            </ng-container>
-                        </mat-select>
+                    
+                    <mat-form-field appearance="outline" class="filter-field">
+                       
+                        <div class="filter-wrapper">
+                            <input matInput type="text" placeholder="Search Project" [(ngModel)]="projectFilter" (ngModelChange)="applyProjectFilter()">
+                            <mat-select [(ngModel)]="currentProject" (ngModelChange)="fetchProjects()">
+                                <ng-container *ngFor="let element of filteredProjects">
+                                    <mat-option [value]="element.name">{{element.name}}</mat-option>
+                                </ng-container>
+                            </mat-select>
+                        </div>
                     </mat-form-field>
+                    
+                    
                 </div>
             </div>
         </div>
@@ -62,23 +65,30 @@
                 [title]="chartOptionsuser.title"></apx-chart>
         </div>
     </mat-tab>
-    <mat-tab label="Project By Month by user">
 
+
+    <mat-tab label="Project By Month by user">
         <div class="cra" *ngIf="data">
             <div class="col-12 header-timesheet">
                 <div class="filter-table">
-                    <mat-form-field appearance="outline">
-                        <mat-label>
-                            {{ 'features.dashbord.user' | transloco }}
-                        </mat-label>
-                        <mat-select [(ngModel)]="currentuser" (ngModelChange)="fetchUser()">
-                            <mat-option *ngFor="let element of listuser" [value]="element">{{element}}
-                            </mat-option>
-                        </mat-select>
+                    <mat-form-field appearance="outline" class="filter-field">
+                        <div class="form-field-content">
+                            <input matInput type="text" placeholder="Search User" [(ngModel)]="searchUser" (keyup)="filterUsers()">
+
+                            <mat-select [(ngModel)]="currentuser" (ngModelChange)="fetchUser()" class="custom-select">
+                                <mat-option *ngFor="let element of filteredUsers" [value]="element">{{element}}</mat-option>
+                            </mat-select>
+                        </div>
                     </mat-form-field>
                 </div>
             </div>
         </div>
+    
+    
+    
+    
+    
+    
         <div *ngIf="!dataProject && data">
             <div class="error-page">
                 <p> {{ 'features.dashbord.dashbordvideuser' | transloco }} .</p>
