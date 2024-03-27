@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DemandecongeComponent } from './demandeconge.component';
+import { AddcongeComponent } from './addconge.component';
 
-describe('DemandecongeComponent', () => {
-  let component: DemandecongeComponent;
-  let fixture: ComponentFixture<DemandecongeComponent>;
+describe('AddcongeComponent', () => {
+  let component: AddcongeComponent;
+  let fixture: ComponentFixture<AddcongeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DemandecongeComponent ]
+      declarations: [ AddcongeComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DemandecongeComponent);
+    fixture = TestBed.createComponent(AddcongeComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
