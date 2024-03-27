@@ -9,6 +9,7 @@ import { displayAlertwarning, handleResponseSuccessWithAlerts } from 'src/app/co
 import { ActivatedRoute, Params } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
 import { Day_offService } from 'src/app/features/day_offs/services/day_off.service';
+import { ProfileService } from 'src/app/services/profile.service';
 
 // Définir une interface pour représenter un jour
 interface Day {
@@ -73,6 +74,7 @@ export class TimesheetComponent implements OnInit {
   constructor(
     private dateService: DateService,
     private projectService: ProjectService,
+    private profileService: ProfileService
   ) {
     this.route.params.subscribe((params: Params) => {
       this.currentUser = params['uid'];
@@ -371,7 +373,7 @@ export class TimesheetComponent implements OnInit {
   }
   filterprojects() {
     this.day_offs = []
-    this.day_offService.fetchAllKeyDay_off(this.nameMonth, this.year).then(day_offs => {
+    this.day_offService.fetchAllKeyDay_off(this.nameMonth, this.year,this.profileService.profile.idDomaine).then(day_offs => {
       this.day_offs = day_offs;
       this.init_total()
       this.tabProject.forEach((project) => {
@@ -461,10 +463,12 @@ export class TimesheetComponent implements OnInit {
     return final;
   }
   async changeStatus(): Promise<void> {
+    const idDomaine = await this.profileService.getIdDomaine();
     try {
       let data = {
         'description': this.description,
         'status': this.status,
+        'idDomaine': idDomaine,
       }
       this.projectService.updatestatusbyUidandMonth(this.currentUser, this.nameMonth, this.year, data);
       this.description = ''
