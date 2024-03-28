@@ -159,18 +159,21 @@ export class ProjectService {
     });
 
     for (const item of docs) {
-      for (const key in item) {
-        if (item[key].status === status) {
-          // await the return value of the getuserbyid() function before pushing the item to the submittedStatusItems array.
-          const user = await this.getuserbyid(item.id);
-          submittedStatusItems.push({ month: key, id: item.id, user });
+      const user = await this.getuserbyid(item.id);
+      if (user.idDomaine == this.profileService.profile.idDomaine) {
+        for (const key in item) {
+          if (item[key].status === status) {
+            // await the return value of the getuserbyid() function before pushing the item to the submittedStatusItems array.
+            const user = await this.getuserbyid(item.id);
+            submittedStatusItems.push({ month: key, id: item.id, user });
+          }
         }
       }
     }
 
     return submittedStatusItems;
   }
-  async getongoingDateShipCRAs(status,date) {
+  async getongoingDateShipCRAs(status, date) {
     let submittedStatusItems: any[] = [];
 
     const querySnapshot = await getDocs(
@@ -186,17 +189,19 @@ export class ProjectService {
     });
 
     for (const item of docs) {
-      if(item[date]){
-        for (const key in item) {
-          if (key == date && item[key].status === status) {
-            // await the return value of the getuserbyid() function before pushing the item to the submittedStatusItems array.
-            const user = await this.getuserbyid(item.id);
-            submittedStatusItems.push({ month: key, id: item.id, user });
+      const user = await this.getuserbyid(item.id);
+      if (user.idDomaine == this.profileService.profile.idDomaine) {
+        if (item[date]) {
+          for (const key in item) {
+            if (key == date && item[key].status === status) {
+              // await the return value of the getuserbyid() function before pushing the item to the submittedStatusItems array.
+              const user = await this.getuserbyid(item.id);
+              submittedStatusItems.push({ month: key, id: item.id, user });
+            }
           }
+        } else {
+          submittedStatusItems.push({ month: date, id: item.id, user });
         }
-      }else{
-        const user = await this.getuserbyid(item.id);
-        submittedStatusItems.push({ month: date, id: item.id, user });
       }
     }
 

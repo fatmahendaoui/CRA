@@ -58,22 +58,22 @@ export class ProfileService {
 
   public async checkUserSubCollection(uid) {
     const qr = await this.checkDomain();
-      if(qr.docs.length > 0){
-          // Get the first matching domain document
-    const domaineDoc = qr.docs[0];
-    const domainRef = doc(this.firestore, 'domaine_CRA', domaineDoc.id);
+    if(qr.docs.length > 0){
+      // Get the first matching domain document
+      const domaineDoc = qr.docs[0];
+      const domainRef = doc(this.firestore, 'domaine_CRA', domaineDoc.id);
 
-    // Query the 'users' subcollection to check if the user exists
-    const subcollectionSnapshot = await getDocs(collection(domainRef, 'users'));
+      // Query the 'users' subcollection to check if the user exists
+      const subcollectionSnapshot = await getDocs(collection(domainRef, 'users'));
 
-    const userDocs = subcollectionSnapshot.docs;
+      const userDocs = subcollectionSnapshot.docs;
 
-    // Check if any documents were found in the subcollection 'users' where 'id' matches the given 'uid'
-    const userExists = userDocs.some((userDoc) => userDoc.data()['id'] === uid);
-    return userExists;
-      }else{
-        return false ;
-      }
+      // Check if any documents were found in the subcollection 'users' where 'id' matches the given 'uid'
+      const userExists = userDocs.some((userDoc) => userDoc.data()['id'] === uid);
+      return userExists;
+    }else{
+      return false ;
+    }
   }
 
   public async checkAdmin(uid) {
@@ -86,21 +86,21 @@ export class ProfileService {
 
   public async getUser(user) {
     const qr = await this.checkDomain();
-   if(qr.docs.length > 0){
-     // Get the first matching domain document
-     const domaineDoc = qr.docs[0];
+    if(qr.docs.length > 0){
+      // Get the first matching domain document
+      const domaineDoc = qr.docs[0];
 
-     // Create a reference to the 'users' subcollection within the domain document
-     const domainRef = doc(this.firestore, 'domaine_CRA', domaineDoc.id);
-     const subcollectionSnapshot = await getDocs(collection(domainRef, 'users'));
-     const userDocs = subcollectionSnapshot.docs;
+      // Create a reference to the 'users' subcollection within the domain document
+      const domainRef = doc(this.firestore, 'domaine_CRA', domaineDoc.id);
+      const subcollectionSnapshot = await getDocs(collection(domainRef, 'users'));
+      const userDocs = subcollectionSnapshot.docs;
 
-     // Find the user document that matches the user's UID
-     const userData = userDocs.find(
-       (userDoc) => userDoc.data()['id'] === user?.uid
-     );
-     return userData;
-   }
+      // Find the user document that matches the user's UID
+      const userData = userDocs.find(
+        (userDoc) => userDoc.data()['id'] === user?.uid
+      );
+      return userData;
+    }
   }
 
   async getUserRole(){
@@ -112,5 +112,16 @@ export class ProfileService {
     const currentUser = queryResult.docs[0].data();
 
     return currentUser['role'];
+  }
+
+  async getIdDomaine() {
+    const user = await this.auth.currentUser;
+    if (user) {
+      const profile = await this.fetchProfile(user);
+      return profile.idDomaine;
+    } else {
+      // Handle the case where no user is logged in
+      return null;
+    }
   }
 }
