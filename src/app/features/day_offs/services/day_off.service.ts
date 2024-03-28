@@ -87,7 +87,6 @@ export class Day_offService {
 
                   // Convertissez le timestamp en millisecondes en ajoutant les secondes converties
                   const milliseconds = timestamp.seconds * 1000;
-
                   // Créez une instance de Date en utilisant le timestamp en millisecondes
                   const date: any = new Date(milliseconds);
                   console.log(li);
