@@ -1,0 +1,43 @@
+  
+  .form-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  .form-field {
+    width: 45%; /* Ajustez selon vos besoins */
+    display: flex;
+    align-items: center;
+  }
+  
+  
+
+  
+  .full-width {
+    width: 100%;
+  }
+  
+  .buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+
+.form-container {
+  background-color: #ffffff; 
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Ombre légère */
+}
+
+
+.mat-form-field-flex {
+  flex: 1;
+  margin-right: 10px; /* Ajoutez une marge entre les champs de saisie */
+}
+
+.mat-datepicker-toggle-button {
+  margin-left: 10px; /* Ajoutez une marge à gauche du bouton de date */
+}

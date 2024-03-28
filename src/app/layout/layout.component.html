@@ -18,13 +18,17 @@
             <mat-option value="fr">Fr</mat-option>
           </mat-select></button>
       </div>
+
+
+
       <!-- Notification icon -->
-      <button mat-icon-button *ngIf="isAdmin" >
-        <span matBadge="12" [matBadgeColor]="'#E50060'" >
-          <img src="../../assets/images/bell.png" alt="notification">
-        </span>
-      </button>
+      <a [routerLink]="['conge/add']">
+        <mat-icon color="primary">work_off</mat-icon>
+      </a>
       
+
+
+
       <!-- Avatar de l'utilisateur avec menu contextuel -->
       <div class="user-name" [matMenuTriggerFor]="menu" style="background-color: #fff;">
         <button mat-menu-item style="background-color: #fff;">

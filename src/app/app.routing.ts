@@ -8,7 +8,10 @@ import { HasDomaineGuard } from './guards/has-domaine.guard';
 import { UsersComponent } from './features/users/users.component';
 import { NgModule } from '@angular/core';
 import { DashbordComponent } from './features/dashbord/dashbord.component';
-import { DemandecongeComponent } from './features/demandeconge/demandeconge/demandeconge.component';
+import { AddcongeComponent } from './features/conges/components/addconge/addconge.component';
+
+
+
 
 export const routes: Routes = [
   {
@@ -84,6 +87,15 @@ export const routes: Routes = [
         loadChildren: () => import('./features/timesheet/timesheet.module')
           .then(({ TimesheetModule }) => TimesheetModule)
       },
+
+
+
+      {
+        path: 'conge',
+        loadChildren: () => import('./features/conges/conge.module')
+          .then(({ CongeModule }) => CongeModule)
+      },
+
       {
         path: 'day_off',
         canActivate: [() => isAdmin()],
@@ -93,11 +105,9 @@ export const routes: Routes = [
             ({ day_offComponent }) => day_offComponent
           ),
       },
-      {
-        path: 'demande-conge', // Définissez le chemin de la route
-        canActivate: [() => isAuthenticated()], // Ajoutez une garde si nécessaire
-        component: DemandecongeComponent // Définissez le composant à charger pour cette route
-      },
+      
+    
+     
     ],
   },
 

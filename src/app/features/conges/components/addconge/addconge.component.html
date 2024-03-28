@@ -1,0 +1,94 @@
+<h1 class="titre1" style="text-align: left;">Demandes de congés</h1>
+<br>
+<br>
+
+
+<form class="form-container" (ngSubmit)="onSubmit()">
+  <!-- Première ligne -->
+  <h1 class="titre2" style="text-align: left;">Créer une demande</h1>
+
+
+  
+  <div class="form-row">
+
+    
+    <mat-form-field class="form-field">
+        <mat-label>Nature de congé</mat-label>
+        <mat-select [(ngModel)]="natureConge" name="natureConge" class="mat-select-bordered custom-select">
+            <mat-option value="Congé Payé">Congé Payé</mat-option>
+            <mat-option value="Congé de maladie (1 jour)">Congé de maladie (1 jour)</mat-option>
+            <mat-option value="Autorisation de sortie (1h ou 2h avant la fin de la journée/ 1 fois par mois)">
+                Autorisation de sortie (1h ou 2h avant la fin de la journée/ 1 fois par mois)
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="form-field" *ngIf="natureConge !== 'Autorisation de sortie (1h ou 2h avant la fin de la journée/ 1 fois par mois)'">
+        <mat-label>Durée de congé</mat-label>
+        <mat-select [(ngModel)]="dureeConge" name="dureeConge" class="custom-select">
+            <mat-option value="Demi journée - le matin">Demi journée - le matin</mat-option>
+            <mat-option value="Demi journée - l'après midi">Demi journée - l'après midi</mat-option>
+            <mat-option value="Journée entière">Journée entière</mat-option>
+            <mat-option value="Plus d'1 jour">Plus d'1 jour (Merci de mentionner le nombre de jour souhaité dans la rubrique autre)</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="form-field" *ngIf="natureConge === 'Autorisation de sortie (1h ou 2h avant la fin de la journée/ 1 fois par mois)'">
+        <mat-label>Durée de congé</mat-label>
+        <mat-select [(ngModel)]="dureeConge" name="dureeConge" class="custom-select">
+            <mat-option value="Autorisation de sortie - Début de journée">Autorisation de sortie - Début de journée</mat-option>
+            <mat-option value="Autorisation de sortie - fin de journée">Autorisation de sortie - fin de journée</mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+
+  
+  
+
+  <!-- Deuxième ligne -->
+<div class="form-row">
+  <mat-form-field class="form-field">
+    <mat-label>Date</mat-label>
+    <ng-container *ngIf="natureConge === 'Congé Payé' || dureeConge === 'Plus d\'1 jour'">
+      <input matInput [matDatepicker]="picker1" placeholder="Date de début" [(ngModel)]="dateDebut" name="dateDebut" (focus)="picker1.open()">
+      <mat-datepicker #picker1></mat-datepicker>
+      <span *ngIf="dureeConge === 'Plus d\'1 jour'">-</span>
+      <input *ngIf="dureeConge === 'Plus d\'1 jour'" matInput [matDatepicker]="picker2" placeholder="Date de fin" [(ngModel)]="dateFin" name="dateFin" (focus)="picker2.open()">
+      <mat-datepicker #picker2></mat-datepicker>
+      <button mat-icon-button (click)="picker1.open()">
+        <mat-icon>date_range</mat-icon>
+      </button>
+    </ng-container>
+    <ng-container *ngIf="!(natureConge === 'Congé Payé' || dureeConge === 'Plus d\'1 jour')">
+      <input matInput [matDatepicker]="picker1" placeholder="Date de début" [(ngModel)]="dateDebut" name="dateDebut" (focus)="picker1.open()">
+      <mat-datepicker #picker1></mat-datepicker>
+      <button mat-icon-button (click)="picker1.open()">
+        <mat-icon>date_range</mat-icon>
+      </button>
+    </ng-container>
+  </mat-form-field>
+</div>
+
+  
+  
+  
+  
+
+  <!-- Commentaires -->
+  <mat-form-field class="full-width">
+    <mat-label>Commentaires</mat-label>
+    <textarea matInput placeholder="Entrez vos commentaires" [(ngModel)]="commentaires" name="commentaires"></textarea>
+  </mat-form-field>
+
+  <!-- Zone d'upload de fichier -->
+  <div *ngIf="natureConge === 'Congé de maladie (1 jour)'">
+    <input type="file" (change)="onFileSelected($event)">
+  </div>
+  
+  
+
+  <!-- Boutons -->
+  <div class="buttons">
+    <button mat-raised-button color="primary" type="submit">Sauvegarder</button>
+  </div>
+</form>

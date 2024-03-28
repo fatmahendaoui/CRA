@@ -1,5 +1,8 @@
 @use "@angular/material" as mat;
 
+
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
 @include mat.core();
 
 $primary: #DE3163;
@@ -69,6 +72,7 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
+    
     // min-height: 32px;
   }
 }
@@ -216,7 +220,7 @@ h2{
   width: 3rem;
   height: 2rem;
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
   color: #E11D74;
 }
@@ -280,5 +284,11 @@ table{
 .glyphicon {
   margin-right: 5px;
 }
+::ng-deep .mat-option {
+  background-color: transparent !important;
+}
+
+
+
 
 

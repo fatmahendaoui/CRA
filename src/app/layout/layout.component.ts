@@ -12,6 +12,8 @@ import { ProfileService } from '../services/profile.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatBadgeModule } from '@angular/material/badge';
+import { AngularFireModule } from '@angular/fire/compat';
+
 
 @Component({
   standalone: true,
@@ -30,7 +32,9 @@ import { MatBadgeModule } from '@angular/material/badge';
     MatFormFieldModule,
     MatSelectModule,
     NgClass,
-    MatBadgeModule
+    MatBadgeModule,
+    AngularFireModule,
+    
   ],
 })
 export class LayoutComponent implements OnInit, OnDestroy {
