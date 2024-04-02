@@ -1,0 +1,137 @@
+mat-card{
+      padding-top: 5px ;
+      padding-left: 25px;
+      padding-right: 25px;
+     /*border-radius: 7px;*/
+    .form-container {
+
+        /*Titre du formulaire*/
+      mat-toolbar {
+        background-color: white;
+        display: flex;
+        align-items: center;
+        position: relative; 
+        padding: 0;
+        margin-top: 0; /* Adjusted from margin-top: 0%; */
+        &::after {
+          content: "";
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 2px;
+          background: linear-gradient(to right, #E50060 40%, #193f77 100%);
+        }
+        h1 {
+          margin: 0;
+        }
+      }
+
+      /*premier ligne */
+      .form-row-1 {
+      display: flex;
+      margin-top: 15px;
+    justify-content: space-between 5px;
+    width: 100%;
+        .Type-conge ,  .Duree-conge  {
+          flex-grow: 1;
+          & + .Duree-conge {
+            margin-left: 40px; // Ajoute un espace de 6px à gauche de .Duree-conge
+          }
+      
+          mat-form-field{
+            width: 100%;
+          }
+        }  
+      }
+      
+      .form-row-2 {
+      
+        mat-form-field {
+          width: 100%;
+          display: flex;
+          margin-bottom: 10px;
+      
+          input {
+          color: #E50060;
+          font-weight: bold; // Semi-bold
+
+          }
+      
+          button {
+            color: #E50060;
+            
+          }
+        }
+      }
+
+      .Type-conge h3,
+      .Duree-conge h3,
+      .form-row-2 h3 {
+        color: #193F77;
+        font-family: Roboto, sans-serif;
+        letter-spacing: normal;
+        margin-bottom: 6px;
+        font-weight: 600; // Semi-bold
+      }
+      .add-file {
+        display: flex;
+        margin-top: 20px;
+        width: 30%;
+        border: 1px double #193f77;
+        border-radius: 6px;
+        padding: 2px;
+        font-size: 20px;
+        color: #193F77;
+        margin-bottom: 20px;
+
+        input[type="file"]::-webkit-file-upload-button {
+          background: #193f77;
+          color: #fff;
+          padding: 8px 18px;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+        }
+      }
+      
+      
+    }
+   
+
+    /*------Commentaire-------*/
+    .form-Comment {
+      display: flex;
+      flex-direction: row;
+      background-color: #fff;
+      font-weight: 600; // Semi-bold
+
+      textarea{
+        height: 50px;
+      }
+      margin-top: 40px;
+
+      .Commentaire {
+        flex-grow: 1;
+        margin-right: 20px;
+
+       
+
+      
+        /*
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);*/
+      }
+
+      .buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        button {
+          margin-bottom: 4px;
+          margin-right: 4px;
+        }
+      }
+    }
+   } 

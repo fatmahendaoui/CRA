@@ -1,94 +1,118 @@
-<h1 class="titre1" style="text-align: left;">Demandes de congés</h1>
-<br>
-<br>
+<!-- Titre -->
+<div class="btn-add">
+  <h1>
+    {{ 'features.conge.title' | transloco }}
+  </h1>
+</div>
+<!-- Formulaire de création de congé -->
+<mat-card>
+  <form class="form-container" (ngSubmit)="onSubmit()">
+    <!-- Titre du formulaire -->
+    <mat-toolbar>
+      <h1>
+        {{ 'features.conge.titre' | transloco }}
+      </h1>
+    </mat-toolbar>
 
-
-<form class="form-container" (ngSubmit)="onSubmit()">
-  <!-- Première ligne -->
-  <h1 class="titre2" style="text-align: left;">Créer une demande</h1>
-
-
-  
-  <div class="form-row">
-
-    
-    <mat-form-field class="form-field">
-        <mat-label>Nature de congé</mat-label>
-        <mat-select [(ngModel)]="natureConge" name="natureConge" class="mat-select-bordered custom-select">
-            <mat-option value="Congé Payé">Congé Payé</mat-option>
-            <mat-option value="Congé de maladie (1 jour)">Congé de maladie (1 jour)</mat-option>
+    <!-- premier ligne -->
+    <div class="form-row-1">
+      <!-- Type de congé -->
+      <div class="Type-conge">
+        <h3>{{ 'features.conge.nature' | transloco }}</h3>
+        <mat-form-field class="mat-mdc-form-field" appearance="outline">
+          <mat-select [(ngModel)]="natureConge" name="natureConge" class="mat-mdc-select-value">
+            <!-- Options pour le type de congé -->
+            <mat-option value="Congé Payé">{{ 'features.conge.paid_leave' | transloco }}</mat-option>
+            <mat-option value="Congé de maladie (1 jour)">{{ 'features.conge.sick_leave' | transloco }}</mat-option>
             <mat-option value="Autorisation de sortie (1h ou 2h avant la fin de la journée/ 1 fois par mois)">
-                Autorisation de sortie (1h ou 2h avant la fin de la journée/ 1 fois par mois)
+              {{ 'features.conge.exit_permission' | transloco }}
             </mat-option>
-        </mat-select>
-    </mat-form-field>
+          </mat-select>
+        </mat-form-field>
+      </div>
 
-    <mat-form-field class="form-field" *ngIf="natureConge !== 'Autorisation de sortie (1h ou 2h avant la fin de la journée/ 1 fois par mois)'">
-        <mat-label>Durée de congé</mat-label>
-        <mat-select [(ngModel)]="dureeConge" name="dureeConge" class="custom-select">
-            <mat-option value="Demi journée - le matin">Demi journée - le matin</mat-option>
-            <mat-option value="Demi journée - l'après midi">Demi journée - l'après midi</mat-option>
-            <mat-option value="Journée entière">Journée entière</mat-option>
-            <mat-option value="Plus d'1 jour">Plus d'1 jour (Merci de mentionner le nombre de jour souhaité dans la rubrique autre)</mat-option>
-        </mat-select>
-    </mat-form-field>
 
-    <mat-form-field class="form-field" *ngIf="natureConge === 'Autorisation de sortie (1h ou 2h avant la fin de la journée/ 1 fois par mois)'">
-        <mat-label>Durée de congé</mat-label>
-        <mat-select [(ngModel)]="dureeConge" name="dureeConge" class="custom-select">
-            <mat-option value="Autorisation de sortie - Début de journée">Autorisation de sortie - Début de journée</mat-option>
-            <mat-option value="Autorisation de sortie - fin de journée">Autorisation de sortie - fin de journée</mat-option>
-        </mat-select>
-    </mat-form-field>
-</div>
+      <!-- Durée de congé en fonction du type de congé sélectionné -->
+      <div class="Duree-conge">
+        <h3>{{ 'features.conge.leave_duration' | transloco }}</h3>
+        <mat-form-field class="mat-mdc-form-field" appearance="outline"
+          *ngIf="natureConge !== 'Autorisation de sortie (1h ou 2h avant la fin de la journée/ 1 fois par mois)'">
+          <mat-select [(ngModel)]="dureeConge" name="dureeConge" class="mat-mdc-select-value">
+            <!-- Options pour la durée de congé -->
+            <mat-option value="Demi journée - le matin">{{ 'features.conge.half_day_morning' | transloco }}</mat-option>
+            <mat-option value="Demi journée - l'après midi">{{ 'features.conge.half_day_afternoon' | transloco
+              }}</mat-option>
+            <mat-option value="Journée entière">{{ 'features.conge.full_day' | transloco }}</mat-option>
+            <mat-option value="Plus d'1 jour">{{ 'features.conge.more_than_1_day' | transloco }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!-- Option supplémentaire pour la durée de congé pour un type de congé spécifique -->
+        <mat-form-field class="mat-mdc-form-field" appearance="outline"
+          *ngIf="natureConge === 'Autorisation de sortie (1h ou 2h avant la fin de la journée/ 1 fois par mois)'">
+          <mat-select [(ngModel)]="dureeConge" name="dureeConge" class="custom-select">
+            <mat-option value="Autorisation de sortie - Début de journée">{{ 'features.conge.exit_permission_start' |
+              transloco }}</mat-option>
+            <mat-option value="Autorisation de sortie - fin de journée">{{ 'features.conge.exit_permission_end' |
+              transloco }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
 
-  
-  
 
-  <!-- Deuxième ligne -->
-<div class="form-row">
-  <mat-form-field class="form-field">
-    <mat-label>Date</mat-label>
-    <ng-container *ngIf="natureConge === 'Congé Payé' || dureeConge === 'Plus d\'1 jour'">
-      <input matInput [matDatepicker]="picker1" placeholder="Date de début" [(ngModel)]="dateDebut" name="dateDebut" (focus)="picker1.open()">
-      <mat-datepicker #picker1></mat-datepicker>
-      <span *ngIf="dureeConge === 'Plus d\'1 jour'">-</span>
-      <input *ngIf="dureeConge === 'Plus d\'1 jour'" matInput [matDatepicker]="picker2" placeholder="Date de fin" [(ngModel)]="dateFin" name="dateFin" (focus)="picker2.open()">
-      <mat-datepicker #picker2></mat-datepicker>
-      <button mat-icon-button (click)="picker1.open()">
-        <mat-icon>date_range</mat-icon>
-      </button>
-    </ng-container>
-    <ng-container *ngIf="!(natureConge === 'Congé Payé' || dureeConge === 'Plus d\'1 jour')">
-      <input matInput [matDatepicker]="picker1" placeholder="Date de début" [(ngModel)]="dateDebut" name="dateDebut" (focus)="picker1.open()">
-      <mat-datepicker #picker1></mat-datepicker>
-      <button mat-icon-button (click)="picker1.open()">
-        <mat-icon>date_range</mat-icon>
-      </button>
-    </ng-container>
-  </mat-form-field>
-</div>
 
-  
-  
-  
-  
+    </div>
 
-  <!-- Commentaires -->
-  <mat-form-field class="full-width">
-    <mat-label>Commentaires</mat-label>
-    <textarea matInput placeholder="Entrez vos commentaires" [(ngModel)]="commentaires" name="commentaires"></textarea>
-  </mat-form-field>
+    <!-- Deuxième ligne -->
+    <div class="form-row-2">
+      <h3>{{ 'features.conge.date' | transloco }}</h3>
+      <!-- Afficher le sélecteur de plage de dates si la durée du congé est supérieure à un jour -->
+      <ng-container *ngIf="dureeConge === 'Plus d\'1 jour'">
+        <mat-form-field class="mat-mdc-form-field" subscriptSizing="dynamic" appearance="outline">
+          <mat-date-range-input [rangePicker]="picker1">
+            <input matStartDate autocomplete="false" matInput placeholder="Start date" [(ngModel)]="dateDebut"
+              name="dateDebut" (focus)="picker.open()" />
+            <input matEndDate matInput placeholder="End date" [(ngModel)]="dateFin" name="dateFin"
+              (focus)="picker.open()" />
+          </mat-date-range-input>
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker1></mat-date-range-picker>
+        </mat-form-field>
+      </ng-container>
+      <!-- Si la durée du congé est d'un jour ou moins, afficher les champs de saisie de date individuels -->
+      <ng-container *ngIf="dureeConge !== 'Plus d\'1 jour'">
+        <mat-form-field class="mat-mdc-form-field" subscriptSizing="dynamic" appearance="outline">
+          <!-- Champ de saisie de la date de début -->
+          <input matInput [matDatepicker]="picker1" placeholder="Date de début" [(ngModel)]="dateDebut" name="dateDebut"
+            (focus)="picker1.open()" />
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+      </ng-container>
+    </div>
 
-  <!-- Zone d'upload de fichier -->
-  <div *ngIf="natureConge === 'Congé de maladie (1 jour)'">
-    <input type="file" (change)="onFileSelected($event)">
-  </div>
-  
-  
 
-  <!-- Boutons -->
-  <div class="buttons">
-    <button mat-raised-button color="primary" type="submit">Sauvegarder</button>
-  </div>
-</form>
+
+    <!-- Zone de téléchargement de fichier pour un congé de maladie -->
+    <div class="add-file" *ngIf="natureConge === 'Congé de maladie (1 jour)'">
+      <input type="file" (change)="onFileChange($event)">
+    </div>
+
+
+
+    <!-- Commentaires -->
+    <div class="form-Comment">
+      <mat-form-field appearance="outline" class="Commentaire">
+        <mat-label style="color: #E50060"> {{ 'features.conge.comment' | transloco }}</mat-label>
+        <!-- Zone de texte pour saisir les commentaires -->
+        <textarea matInput placeholder="{{ 'features.conge.enter_comments' | transloco }}" [(ngModel)]="commentaires"
+          name="commentaires"></textarea>
+      </mat-form-field>
+      <!-- Bouton de sauvegarde -->
+      <div class="buttons">
+        <button mat-flat-button color="primary" type="submit"> {{ 'features.projects.button.save' | transloco
+          }}</button>
+      </div>
+    </div>
+
+  </form>
+</mat-card>

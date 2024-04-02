@@ -191,8 +191,24 @@
       "heures":"heures",
       "jours":"jours",
       "total":"Total Mensuel"
-
-
+    },
+    "conge": {
+      "title": "Demandes de congé",
+      "titre": "Créer une demande",
+      "nature": "Nature de congé",
+      "paid_leave": "Congé Payé",
+      "sick_leave": "Congé de maladie",
+      "exit_permission": "Autorisation de sortie",
+      "leave_duration": "Durée de congé",
+      "half_day_morning": "Demi journée - le matin",
+      "half_day_afternoon": "Demi journée - l'après midi",
+      "full_day": "Journée entière",
+      "more_than_1_day": "Plus d'1 jour",
+      "date": "Date",
+      "exit_permission_start": "Début de journée",
+      "exit_permission_end": "fin de journée",
+      "enter_comments": "Entrez vos commentaires",
+      "comment": "Commentaires"
     }
   }
 }
