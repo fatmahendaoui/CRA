@@ -193,6 +193,10 @@
       "total":"Total Mensuel"
 
 
-    }
+    },
+    
+      "listconge.title": "Titre de la liste des congés"
   }
-}
+
+    }
+  

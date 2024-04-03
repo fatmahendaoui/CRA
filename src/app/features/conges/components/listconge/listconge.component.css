@@ -1,0 +1,64 @@
+.conge-row {
+    border-bottom: 1px solid #db5252;
+  }
+  .header-row th {
+    color: #E50060;
+  }
+  .conge-row td {
+    color: #193F77;
+  }
+  .page-container {
+    background-color: #193F7714;
+    padding: 20px; /* Pour ajouter de l'espace autour du contenu */
+  }
+  body {
+    background-color: #193F7714;
+   
+  }
+  
+  .conge-table {
+    background-color: white; /* Couleur de fond de la table */
+    /* Autres styles de la table */
+  }
+  .chip {
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  
+  .chip-awaiting {
+    background-color: #FFF2E5;
+    color: #FF9814;
+    padding: 8px 12px;
+    border-radius: 10px
+  }
+  
+  .chip-approved {
+    background-color: #baf2d5;
+    color: #18C46E;
+    padding: 8px 12px;
+    border-radius: 10px
+  }
+  
+  .chip-rejected {
+    background-color: #FFEBEC;
+    color: #FD5D63ff;
+    padding: 10px 20px;
+    border-radius: 10px
+
+  }
+
+
+
+
+  .table-container {
+    margin: 0 auto; 
+    width: 100%; 
+  }
+  .conge-row:not(:last-child) {
+  border-bottom: 1px solid black;
+}

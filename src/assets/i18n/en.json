@@ -191,6 +191,9 @@
       "heures":"hours",
       "jours":"days",
       "total":"Monthly Total"
+    },
+    
+      "listconge.title": "Title of the leave list"
     }
+    
   }
-}

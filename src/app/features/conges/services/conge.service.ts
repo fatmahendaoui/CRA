@@ -9,6 +9,9 @@ import { DocumentSnapshot, DocumentData } from 'firebase/firestore';
   providedIn: 'root'
 })
 export class CongeService {
+  getConges() {
+    throw new Error('Method not implemented.');
+  }
   
   private firestore;
   private currentUser: User | null;
