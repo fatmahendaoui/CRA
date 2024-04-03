@@ -194,6 +194,24 @@
     },
     
       "listconge.title": "Title of the leave list"
+
+    "conge": {
+      "title": "Leave Request",
+      "titre": "Create a Request",
+      "nature": "Nature of leave",
+      "paid_leave": "Paid Leave",
+      "sick_leave": "Sick Leave ",
+      "exit_permission": "Exit Permission ",
+      "leave_duration": "Leave Duration",
+      "half_day_morning": "Half Day - Morning",
+      "half_day_afternoon": "Half Day - Afternoon",
+      "full_day": "Full Day",
+      "more_than_1_day": "More than 1 Day",
+      "date": "Date",
+      "exit_permission_start": "Start of day",
+      "exit_permission_end": "End of day",
+      "enter_comments": "Enter your comments",
+      "comment": "Comments"
     }
     
   }

@@ -2,8 +2,10 @@ import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, addDoc, doc, getDoc } from 'firebase/firestore';
 import { environment } from 'src/environments/environment';
-import { getAuth, User } from 'firebase/auth'; 
+import { getAuth, User } from 'firebase/auth';
 import { DocumentSnapshot, DocumentData } from 'firebase/firestore';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { serverTimestamp, updateDoc } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -12,14 +14,13 @@ export class CongeService {
   getConges() {
     throw new Error('Method not implemented.');
   }
-  
   private firestore;
   private currentUser: User | null;
   private authInitialized: boolean = false;
 
-  constructor() { 
+  constructor() {
     const app = initializeApp(environment.firebaseConfig);
-    this.firestore = getFirestore(app); 
+    this.firestore = getFirestore(app);
     this.currentUser = null;
     this.initializeAuthListener();
   }
@@ -31,16 +32,20 @@ export class CongeService {
       this.authInitialized = true; // Indique que l'initialisation est terminée
     });
   }
-  
-  async addConge(conge): Promise<void> {
+
+  async addConge(conge): Promise<string | undefined> {
     try {
       const congeCollectionRef = collection(this.firestore, 'conge123');
-      await addDoc(congeCollectionRef, conge);
-      console.log('Congé ajouté avec succès');
+      const newConge = { ...conge, status: 0 };
+      const docRef = await addDoc(congeCollectionRef, conge);
+      console.log('Congé ajouté avec succès, ID:', docRef.id);
+      return docRef.id; // Retourne l'ID du document ajouté
     } catch (error) {
       console.error('Erreur lors de l\'ajout du congé dans Firestore :', error);
+      return undefined;
     }
   }
+
 
   //hazit lid domain m table membership
 
@@ -53,7 +58,7 @@ export class CongeService {
         }, 100); // Attendre 100 millisecondes avant de réessayer
         return;
       }
-      
+
       if (this.currentUser) {
         try {
           const userDocRef = doc(this.firestore, 'membership_CRA', this.currentUser.uid);
@@ -71,5 +76,15 @@ export class CongeService {
         reject('Aucun utilisateur connecté.');
       }
     });
+  }
+
+  async updateCongeWithFileURLAndCongeId(downloadURL: string, congeId: string): Promise<void> {
+    try {
+      const congeDocRef = doc(this.firestore, 'conge123', congeId);
+      await updateDoc(congeDocRef, { url_sertif: downloadURL });
+      console.log('URL de téléchargement ajoutée au document Congé.');
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout de l\'URL de téléchargement au document Congé :', error);
+    }
   }
 }

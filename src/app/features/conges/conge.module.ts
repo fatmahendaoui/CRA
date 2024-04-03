@@ -14,8 +14,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { AngularFireModule } from '@angular/fire/compat';
+import { environment } from 'src/environments/environment';
 
 import { AddcongeComponent } from './components/addconge/addconge.component';
 import { ListcongeComponent } from './components/listconge/listconge.component';
@@ -48,6 +54,13 @@ const routes: Routes = [
     MatNativeDateModule,
     MatRadioModule,
     MatIconModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MatSelectModule,
+    MatIconModule,
+    MatToolbarModule,
+    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireStorageModule
   ]
 })
 export class CongeModule { }
