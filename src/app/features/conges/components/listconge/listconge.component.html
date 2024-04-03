@@ -1,0 +1,57 @@
+<div class="page-container">
+  <h1>Liste des congés</h1>
+
+  <br>
+  <br>
+  <br>
+  <div class="table-container">
+    <table class="conge-table">
+      <thead>
+        <tr class="header-row">
+          <th></th>
+          <th></th>
+          <th>Date de début</th>
+          <th>Date de fin</th>
+          <th>Durée</th>
+          <th>Nature</th>
+          <th>Statut</th>
+          <th>Commentaires</th>
+          <th>Fichier</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let conge of conges" class="conge-row">
+          <td style="padding: 10px;">
+            <img *ngIf="conge.photourl" [src]="conge.photourl" alt="Photo" style="max-width: 50px; max-height: 50px; border-radius: 50%;">
+          </td>
+          <td style="padding: 10px;">{{ conge.displayName }}</td>
+          <td style="padding: 10px;">{{ conge.dateDebut.toDate() | date: 'dd/MM/yyyy' }}</td>
+          <td style="padding: 10px;">{{ conge.dateFin.toDate() | date: 'dd/MM/yyyy' }}</td>
+          <td style="padding: 10px;">{{ conge.duree }}</td>
+          <td style="padding: 10px;">{{ conge.nature }}</td>
+          <td style="padding: 10px;">
+            <div class="chip">
+              <span *ngIf="conge.status === 0" class="chip-awaiting">En attente</span>
+              <span *ngIf="conge.status === 1" class="chip-approved">Approuvé</span>
+              <span *ngIf="conge.status === 2" class="chip-rejected">Refusé</span>
+            </div>
+          </td>
+          <td style="padding: 10px;">{{ conge.commentaires }}</td>
+          <td style="padding: 10px;">
+            <a *ngIf="conge.url_sertif" [href]="conge.url_sertif" download>
+              <mat-icon color="warn">insert_drive_file</mat-icon> 
+            </a>
+          </td>
+          
+          <td style="padding: 10px;">
+            <i class="fas fa-check-circle" (click)="validerConge(conge)"></i>
+            <i class="fas fa-times-circle" (click)="refuserConge(conge)"></i>
+            <mat-icon (click)="validerConge(conge)">done_outline</mat-icon>
+            <mat-icon (click)="refuserConge(conge)">clear</mat-icon>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

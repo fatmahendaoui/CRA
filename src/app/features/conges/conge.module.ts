@@ -1,16 +1,15 @@
 import { NgModule } from '@angular/core';
-import { AsyncPipe, CommonModule, JsonPipe, NgFor, NgIf } from '@angular/common';
-import { AddcongeComponent } from './components/addconge/addconge.component';
+import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
-import { LoaderComponent } from 'src/app/components/loader.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
-import { RouterModule, Routes } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -24,6 +23,9 @@ import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { AngularFireModule } from '@angular/fire/compat';
 import { environment } from 'src/environments/environment';
 
+import { AddcongeComponent } from './components/addconge/addconge.component';
+import { ListcongeComponent } from './components/listconge/listconge.component';
+
 const routes: Routes = [
   {
     path: 'add',
@@ -31,28 +33,27 @@ const routes: Routes = [
   }
 ];
 
-
 @NgModule({
-  declarations: [AddcongeComponent],
-  imports: [NgIf,
-    NgFor,
-    AsyncPipe,
-    JsonPipe,
+  declarations: [AddcongeComponent, ListcongeComponent ],
+  imports: [
+    CommonModule,
+    HttpClientModule,
+    ReactiveFormsModule,
+    FormsModule,
+    RouterModule.forChild(routes),
+    TranslocoModule,
     MatCardModule,
     MatInputModule,
     MatButtonModule,
     MatFormFieldModule,
     MatBottomSheetModule,
     MatProgressSpinnerModule,
-    LoaderComponent,
-    TranslocoModule,
-    RouterModule.forChild(routes),
     MatSelectModule,
     MatOptionModule,
-    HttpClientModule,
-    CommonModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatRadioModule,
+    MatIconModule,
     ReactiveFormsModule,
     FormsModule,
     MatSelectModule,
@@ -60,8 +61,6 @@ const routes: Routes = [
     MatToolbarModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireStorageModule
-
-
   ]
 })
 export class CongeModule { }

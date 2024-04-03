@@ -191,6 +191,9 @@
       "heures":"heures",
       "jours":"jours",
       "total":"Total Mensuel"
+
+    },
+    
     },
     "conge": {
       "title": "Demandes de congé",
@@ -211,4 +214,6 @@
       "comment": "Commentaires"
     }
   }
-}
+
+    }
+  

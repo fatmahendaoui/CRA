@@ -9,7 +9,7 @@ import { UsersComponent } from './features/users/users.component';
 import { NgModule } from '@angular/core';
 import { DashbordComponent } from './features/dashbord/dashbord.component';
 import { AddcongeComponent } from './features/conges/components/addconge/addconge.component';
-
+import { ListcongeComponent } from './features/conges/components/listconge/listconge.component';
 
 
 
@@ -95,6 +95,8 @@ export const routes: Routes = [
         loadChildren: () => import('./features/conges/conge.module')
           .then(({ CongeModule }) => CongeModule)
       },
+
+      { path: 'listconge', component: ListcongeComponent },
 
       {
         path: 'day_off',
