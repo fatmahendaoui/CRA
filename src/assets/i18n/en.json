@@ -192,9 +192,6 @@
       "jours":"days",
       "total":"Monthly Total"
     },
-    
-      "listconge.title": "Title of the leave list"
-
     "conge": {
       "title": "Leave Request",
       "titre": "Create a Request",
@@ -213,5 +210,5 @@
       "enter_comments": "Enter your comments",
       "comment": "Comments"
     }
-    
   }
+}
