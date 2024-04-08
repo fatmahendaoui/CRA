@@ -101,7 +101,7 @@ export class ListcongeComponent<T> implements OnInit {
     }
   }
 
-  
+
   // Méthode de filtrage des congés en fonction de l'état sélectionné
   filterByStatus(status: string): void {
     if (status === 'all') {
@@ -124,23 +124,32 @@ export class ListcongeComponent<T> implements OnInit {
         return -1;
     }
   }
- 
+
 
   async validerConge(conge: any): Promise<void> {
     const firestore = getFirestore();
     const congDocRef = doc(firestore, 'conge123', conge.id);
 
     try {
-      await updateDoc(congDocRef, { status: 1 });
-      console.log('Congé validé avec succès.');
-      this.showSuccessAlert('Congé accepté');
-      conge.status = 1;
-      conge.statusLabel = 'Approuvé';
+      const { isConfirmed } = await Swal.fire({
+        title: this.translocoService.translate('features.conge.validate_confirm'),
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: this.translocoService.translate('common.confirm'),
+        cancelButtonText: this.translocoService.translate('common.cancel')
+      });
 
-      // Mettre à jour les congés filtrés pour retirer le congé approuvé
-      this.filteredConges = this.filteredConges.filter(c => c.id !== conge.id);
-      this.dataSource.data = this.filteredConges;
+      if (isConfirmed) {
+        await updateDoc(congDocRef, { status: 1 });
+        console.log('Congé validé avec succès.');
+        this.showSuccessAlert('Congé accepté');
+        conge.status = 1;
+        conge.statusLabel = 'Approuvé';
 
+        // Mettre à jour les congés filtrés pour retirer le congé approuvé
+        this.filteredConges = this.filteredConges.filter(c => c.id !== conge.id);
+        this.dataSource.data = this.filteredConges;
+      }
     } catch (error) {
       console.error('Erreur lors de la validation du congé:', error);
     }
@@ -153,22 +162,22 @@ export class ListcongeComponent<T> implements OnInit {
 
     try {
       const { value: commentaire } = await Swal.fire({
-        title: 'Ajouter un commentaire',
+        title: this.translocoService.translate('features.conge.enter_comment'),
         input: 'textarea',
         inputPlaceholder: 'Ajouter un commentaire ',
         showCancelButton: true,
-        confirmButtonText: 'Ok',
-        cancelButtonText: 'Annuler'
+        confirmButtonText: this.translocoService.translate('common.confirm'),
+        cancelButtonText: this.translocoService.translate('common.cancel')
       });
 
       // Vérifier si un commentaire a été saisi
       if (commentaire == '' || commentaire) {
         const { isConfirmed } = await Swal.fire({
-          title: 'Êtes-vous sûr de vouloir refuser ce congé ?',
+          title: this.translocoService.translate('features.conge.reject_confirm'),
           icon: 'warning',
           showCancelButton: true,
-          confirmButtonText: 'Ok',
-          cancelButtonText: 'Annuler'
+          confirmButtonText: this.translocoService.translate('common.confirm'),
+          cancelButtonText: this.translocoService.translate('common.cancel')
         });
 
         // Mettre à jour le statut du congé seulement si l'utilisateur confirme
@@ -177,10 +186,10 @@ export class ListcongeComponent<T> implements OnInit {
           console.log('Congé refusé avec succès.');
           conge.status = 2;
           conge.statusLabel = 'Refusé';
-
           // Mettre à jour les congés filtrés pour retirer le congé refusé
           this.filteredConges = this.filteredConges.filter(c => c.id !== conge.id);
           this.dataSource.data = this.filteredConges;
+
         }
       }
     } catch (error) {
@@ -191,14 +200,27 @@ export class ListcongeComponent<T> implements OnInit {
 
 
   async showSuccessAlert(message: string): Promise<void> {
-    await Swal.fire('Succès', message, 'success');
+    await Swal.fire({
+      title: this.translocoService.translate('common.success'),
+      text: message,
+      icon: 'success',
+      confirmButtonText: this.translocoService.translate('common.close'), // Texte du bouton de confirmation
+
+    });
   }
 
   async showRefuseAlert(message: string): Promise<void> {
-    await Swal.fire('Erreur', message, 'error');
+    await Swal.fire({
+      title: this.translocoService.translate('common.error'),
+      text: message,
+      icon: 'error',
+      confirmButtonText: this.translocoService.translate('common.close'), // Texte du bouton de confirmation
+
+    });
   }
 
-  
+
+
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -216,13 +238,13 @@ export class ListcongeComponent<T> implements OnInit {
   openFile(url: string): void {
     window.open(url, '_blank');
   }
-  Congerefuser(conge: any) {
+  async Congerefuser(conge: any) {
     // Utiliser SweetAlert2 pour afficher le commentaire
     Swal.fire({
-      title: 'Commentaires',
       text: conge.commentaire,
-      icon: 'info',
-      confirmButtonText: 'Fermer'
+      icon: 'warning',
+      showConfirmButton: false,
     });
+
   }
 }

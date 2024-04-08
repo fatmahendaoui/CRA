@@ -32,6 +32,9 @@
     "remove": "Supprimer",
     "confirm": "Confirmer",
     "cancel": "Annuler",
+    "success": "Succès",
+    "error": "Erreur",
+    "error_occurred": "Une erreur s'est produite",
     "loading": "Merci de patienter...",
     "required": "Ce champ est obligatoire",
     "back_to_home": "Retour à l'accueil",
@@ -208,7 +211,10 @@
       "exit_permission_start": "Début de journée",
       "exit_permission_end": "fin de journée",
       "enter_comments": "Entrez vos commentaires",
-      "comment": "Commentaires"
+      "comment": "Commentaires",
+      "validate_confirm": "Êtes-vous sûr de vouloir accepter ce congé ?",
+    "reject_confirm": "Êtes-vous sûr de vouloir refuser ce congé ?",
+    "enter_comment": "Ajouter un commentaire"
     },
     "liste_conge":{
       "title": "Liste des congés",

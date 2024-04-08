@@ -19,6 +19,7 @@
       "admin": "Administrator"
     },
     "close": "Close",
+
     "activate": "Account activated",
     "deactivate": "Account deactivated",
     "start-now": {
@@ -30,10 +31,13 @@
       "message": "Please contact your administration to upload the account service !"
     },
     "submit": "Send",
+    "success": "Success",
     "update": "Update",
     "remove": "Remove",
     "confirm": "Confirm",
     "cancel": "Cancel",
+    "error": "Error",
+    "error_occurred": "An error occurred",
     "loading": "Please wait...",
     "required": "This field is required",
     "back_to_home": "Back to home",
@@ -210,7 +214,10 @@
       "exit_permission_start": "Start of day",
       "exit_permission_end": "End of day",
       "enter_comments": "Enter your comments",
-      "comment": "Comments"
+      "comment": "Comments",
+      "validate_confirm": "Are you sure you want to accept this leave?",
+      "reject_confirm": "Are you sure you want to reject this leave?",
+      "enter_comment": "Add a comment"
     },
     "liste_conge":{
       "title": "List of leave",

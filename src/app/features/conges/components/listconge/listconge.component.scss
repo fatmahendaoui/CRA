@@ -115,3 +115,18 @@
 
 
   }
+  ::ng-deep .swal2-confirm {
+    background-color: #E50060 !important; // Couleur de fond du bouton de confirmation
+    color: #FFFFFF !important; // Couleur du texte du bouton de confirmation
+    border: none !important; // Supprimer la bordure
+    padding: 10px 20px !important; // Espacement interne
+    border-radius: 5px !important; // Bordure arrondie
+  }
+  
+  ::ng-deep .swal2-cancel {
+    background-color: #193F77 !important; // Couleur de fond du bouton de confirmation
+    color: #FFFFFF !important; // Couleur du texte du bouton de confirmation
+    border: none !important; // Supprimer la bordure
+    padding: 10px 20px !important; // Espacement interne
+    border-radius: 5px !important; // Bordure arrondie
+  }

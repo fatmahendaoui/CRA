@@ -12,10 +12,9 @@
         <div class="filter-table">
           <span class="mat-form-field">
             <mat-form-field subscriptSizing="dynamic" appearance="outline">
-              <mat-select [value]="'awaiting'" [(ngModel)]="selectedStatus"
-                (ngModelChange)="filterByStatus(selectedStatus)">
+              <mat-select [(ngModel)]="selectedStatus" (ngModelChange)="filterByStatus(selectedStatus)">
                 <mat-option value="all"> {{ 'features.liste_conge.all' | transloco }} </mat-option>
-                <mat-option value="awaiting"> {{ 'features.liste_conge.awaiting' | transloco }} </mat-option>
+                <mat-option value="awaiting">{{ 'features.liste_conge.awaiting' | transloco }}</mat-option>
                 <mat-option value="approved"> {{ 'features.liste_conge.approved' | transloco }} </mat-option>
                 <mat-option value="rejected"> {{ 'features.liste_conge.rejected' | transloco }} </mat-option>
               </mat-select>
@@ -68,7 +67,7 @@
       </ng-container>
       <!-- Colonne de la duree du congé -->
       <ng-container matColumnDef="duree">
-        <th mat-header-cell *matHeaderCellDef>  {{ 'features.liste_conge.duration' | transloco }} </th>
+        <th mat-header-cell *matHeaderCellDef> {{ 'features.liste_conge.duration' | transloco }} </th>
         <td mat-cell *matCellDef="let conge"> {{ conge.duree }} </td>
       </ng-container>
 
