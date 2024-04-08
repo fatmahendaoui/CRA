@@ -3,8 +3,8 @@
     "menu": {
       "users": "Gestion des utilisateurs",
       "settings": "Paramètres",
-      "sign-out": "Se déconnecter"
-    }
+      "sign-out": "Se déconnecter",
+      "leaveToValidate": "Congé à Valider"    }
   },
   "common": {
     "form": {
@@ -209,8 +209,19 @@
       "exit_permission_end": "fin de journée",
       "enter_comments": "Entrez vos commentaires",
       "comment": "Commentaires"
+    },
+    "liste_conge":{
+      "title": "Liste des congés",
+      "day":"jour(s)",
+      "all": "Tout",
+      "awaiting": "En attente",
+      "approved": "Approuvé",
+      "rejected": "Refusé",
+      "duration": "Durée",
+      "comment": "Commentaires",
+      "status": "Statut",
+      "actions": "Actions"
     }
   }
-
     }
   

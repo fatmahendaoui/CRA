@@ -3,7 +3,9 @@
     "menu": {
       "users": "Manage users",
       "settings": "Settings",
-      "sign-out": "Sign out"
+      "sign-out": "Sign out",
+      "leaveToValidate": "Leave to Validate"
+
     }
   },
   "common": {
@@ -209,6 +211,20 @@
       "exit_permission_end": "End of day",
       "enter_comments": "Enter your comments",
       "comment": "Comments"
+    },
+    "liste_conge":{
+      "title": "List of leave",
+      "day":"Day(s)",
+      "all": "All",
+      "awaiting": "Awaiting",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "duration": "Duration",
+      "comment": "Comments",
+      "status": "Status",
+      "actions": "Actions"
+
+
     }
   }
 }

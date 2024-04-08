@@ -24,7 +24,7 @@
             <!-- Options pour le type de congé -->
             <mat-option value="Congé Payé">{{ 'features.conge.paid_leave' | transloco }}</mat-option>
             <mat-option value="Congé de maladie (1 jour)">{{ 'features.conge.sick_leave' | transloco }}</mat-option>
-            <mat-option value="Autorisation de sortie (1h ou 2h avant la fin de la journée/ 1 fois par mois)">
+            <mat-option value="Autorisation de sortie ">
               {{ 'features.conge.exit_permission' | transloco }}
             </mat-option>
           </mat-select>
@@ -36,7 +36,7 @@
       <div class="Duree-conge">
         <h3>{{ 'features.conge.leave_duration' | transloco }}</h3>
         <mat-form-field class="mat-mdc-form-field" appearance="outline"
-          *ngIf="natureConge !== 'Autorisation de sortie (1h ou 2h avant la fin de la journée/ 1 fois par mois)'">
+          *ngIf="natureConge !== 'Autorisation de sortie '">
           <mat-select [(ngModel)]="dureeConge" name="dureeConge" class="mat-mdc-select-value">
             <!-- Options pour la durée de congé -->
             <mat-option value="Demi journée - le matin">{{ 'features.conge.half_day_morning' | transloco }}</mat-option>
@@ -48,11 +48,11 @@
         </mat-form-field>
         <!-- Option supplémentaire pour la durée de congé pour un type de congé spécifique -->
         <mat-form-field class="mat-mdc-form-field" appearance="outline"
-          *ngIf="natureConge === 'Autorisation de sortie (1h ou 2h avant la fin de la journée/ 1 fois par mois)'">
+          *ngIf="natureConge === 'Autorisation de sortie '">
           <mat-select [(ngModel)]="dureeConge" name="dureeConge" class="custom-select">
-            <mat-option value="Autorisation de sortie - Début de journée">{{ 'features.conge.exit_permission_start' |
+            <mat-option value="Début de journée">{{ 'features.conge.exit_permission_start' |
               transloco }}</mat-option>
-            <mat-option value="Autorisation de sortie - fin de journée">{{ 'features.conge.exit_permission_end' |
+            <mat-option value="Fin de journée">{{ 'features.conge.exit_permission_end' |
               transloco }}</mat-option>
           </mat-select>
         </mat-form-field>
