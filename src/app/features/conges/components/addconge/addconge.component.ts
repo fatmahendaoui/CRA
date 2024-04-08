@@ -62,8 +62,8 @@ export class AddcongeComponent implements OnInit {
 
         nombreHeures = 8 * nombreJours;
         break;
-      case "Autorisation de sortie - Début de journée":
-      case "Autorisation de sortie - fin de journée":
+      case "Début de journée":
+      case "fin de journée":
         this.dateDebut = this.dateFin;
         nombreHeures = 4; // demi journe=4heures 
         break;

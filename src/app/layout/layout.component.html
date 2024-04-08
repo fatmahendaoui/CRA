@@ -13,7 +13,8 @@
       <div class="select">
         <button class="custom-icon" style="color: #E50060;" *ngIf="isAdmin">
           <img src="../../assets/images/Lang.png" alt="language">
-          <mat-select  subscriptSizing="dynamic" (selectionChange)="onSelectionChange($event)" [value]="defaultLanguage" style="min-width: 3rem;">
+          <mat-select subscriptSizing="dynamic" (selectionChange)="onSelectionChange($event)" [value]="defaultLanguage"
+            style="min-width: 3rem;">
             <mat-option value="en">En</mat-option>
             <mat-option value="fr">Fr</mat-option>
           </mat-select></button>
@@ -25,7 +26,7 @@
       <a [routerLink]="['conge/add']">
         <mat-icon color="primary">work_off</mat-icon>
       </a>
-      
+
 
 
 
@@ -45,7 +46,7 @@
           </mat-avatar>
         </button>
       </div>
-      
+
 
       <!-- Menu contextuel de l'utilisateur -->
       <mat-menu #menu="matMenu" class="customize">
@@ -76,9 +77,7 @@
 
 
         <button mat-menu-item routerLink="/listconge">
-          <mat-icon>assignment_turned_in</mat-icon>
-          
-          Congé à Valider
+          <mat-icon>assignment_turned_in</mat-icon> {{ 'layout.menu.leaveToValidate' | transloco }}
         </button>
 
 

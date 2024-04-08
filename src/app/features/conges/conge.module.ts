@@ -20,9 +20,11 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { AngularFireModule } from '@angular/fire/compat';
 import { environment } from 'src/environments/environment';
-
 import { AddcongeComponent } from './components/addconge/addconge.component';
 import { ListcongeComponent } from './components/listconge/listconge.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 const routes: Routes = [
   {
@@ -32,7 +34,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [AddcongeComponent, ListcongeComponent ],
+  declarations: [AddcongeComponent, ListcongeComponent],
   imports: [
     CommonModule,
     HttpClientModule,
@@ -55,6 +57,10 @@ const routes: Routes = [
     MatSelectModule,
     MatIconModule,
     MatToolbarModule,
+    MatTableModule,
+    MatTooltipModule, // Include MatTooltipModule
+    MatSelectModule,
+    MatPaginatorModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireStorageModule
   ]
