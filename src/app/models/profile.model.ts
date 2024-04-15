@@ -2,6 +2,7 @@ export interface Profile {
   uid: string;
   email: string;
   role: UserRole;
+  notify: boolean;
   created_on: string;
   displayName: string;
   idDomaine: string;

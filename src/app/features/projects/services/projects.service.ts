@@ -160,11 +160,10 @@ export class ProjectService {
 
     for (const item of docs) {
       const user = await this.getuserbyid(item.id);
-      if (user.idDomaine == this.profileService.profile.idDomaine) {
+      if (user && user.idDomaine == this.profileService.profile.idDomaine) {
         for (const key in item) {
           if (item[key].status === status) {
             // await the return value of the getuserbyid() function before pushing the item to the submittedStatusItems array.
-            const user = await this.getuserbyid(item.id);
             submittedStatusItems.push({ month: key, id: item.id, user });
           }
         }
@@ -190,12 +189,10 @@ export class ProjectService {
 
     for (const item of docs) {
       const user = await this.getuserbyid(item.id);
-      if (user.idDomaine == this.profileService.profile.idDomaine) {
+      if (user && user.idDomaine == this.profileService.profile.idDomaine) {
         if (item[date]) {
           for (const key in item) {
             if (key == date && item[key].status === status) {
-              // await the return value of the getuserbyid() function before pushing the item to the submittedStatusItems array.
-              const user = await this.getuserbyid(item.id);
               submittedStatusItems.push({ month: key, id: item.id, user });
             }
           }
@@ -343,7 +340,7 @@ export class ProjectService {
 
 
   public async sendNotificationToAdmin(data) {
-    const usersList: Profile[] = [];
+    const adminUsers: Profile[] = [];
     const querySnapshot = await getDocs(
       query(
         collection(this.firestore, 'membership_CRA'),
@@ -352,22 +349,33 @@ export class ProjectService {
     );
 
     querySnapshot.forEach((doc) => {
-      usersList.push(doc.data() as Profile);
+      const userData = doc.data() as Profile;
+      if (userData.role === 'admin' && userData.notify) {
+        adminUsers.push(userData);
+      }
     });
 
-    for await (const user of usersList) {
-      if (user.role == 'admin') {
-        data.email = user.email;
-        data.AdminName = user.displayName;
-        this.http.post<void>(`https://us-central1-prodvalbridge.cloudfunctions.net/add_mail_cra`, data).subscribe(li => {
-          console.log('done');
+    for await (const adminUser of adminUsers) {
+      const emailData = { ...data }; // Clone data for each admin user
+      emailData.email = adminUser.email;
+      emailData.AdminName = adminUser.displayName;
 
-        })
-      }
+      console.log(emailData); // Optionally log email data before sending
 
+      this.http.post<void>(
+        `https://us-central1-prodvalbridge.cloudfunctions.net/add_mail_cra`,
+        emailData
+      ).subscribe(
+        (response) => {
+          console.log('Email sent successfully:', response);
+        },
+        (error) => {
+          console.error('Error sending email:', error);
+        }
+      );
     }
-
   }
+
   public async sendNotificationToUser(data) {
     this.http.post<void>(`https://us-central1-prodvalbridge.cloudfunctions.net/regectedAccpeted_mail_cra`, data).subscribe(li => {
       console.log('done');
