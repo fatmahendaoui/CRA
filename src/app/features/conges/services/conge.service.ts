@@ -5,7 +5,9 @@ import { environment } from 'src/environments/environment';
 import { getAuth, User } from 'firebase/auth';
 import { DocumentSnapshot, DocumentData } from 'firebase/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { getDocs, serverTimestamp, updateDoc, } from '@angular/fire/firestore';
+import { serverTimestamp, updateDoc,Timestamp } from '@angular/fire/firestore';
+
+import { getDocs, } from '@angular/fire/firestore';
 import { HttpClient } from '@angular/common/http';
 import { Profile } from 'src/app/models/profile.model';
 import { ProfileService } from 'src/app/services/profile.service';
@@ -42,9 +44,26 @@ export class CongeService {
 
   async addConge(conge): Promise<string | undefined> {
     try {
+      // Ajout des champs year, month et day à partir de la date de début du congé
+      const dateDebut: Date = new Date(conge.dateDebut);
+      const year: number = dateDebut.getFullYear();
+      const month: string = dateDebut.toLocaleString('en-US', { month: 'long' });
+      const monthCapitalized: string = month.charAt(0).toUpperCase() + month.slice(1); // Met la première lettre en majuscule
+      const day: number = dateDebut.getDate();
+  
+      // Crée le champ date au format "Month_Year"
+      const dateFormatted: string = `${monthCapitalized}_${year}`;
+  
+      console.log('Year:', year);
+      console.log('Month:', monthCapitalized);
+      console.log('Day:', day);
+      console.log('Date Formatted:', dateFormatted);
+      
+      // Création d'un nouvel objet congé avec les champs year, month, day et date ajoutés
+      const newConge = { ...conge, status: 0, year, month: monthCapitalized, day, date: dateFormatted };
+  
       const congeCollectionRef = collection(this.firestore, 'conge123');
-      const newConge = { ...conge, status: 0 };
-      const docRef = await addDoc(congeCollectionRef, conge);
+      const docRef = await addDoc(congeCollectionRef, newConge);
       console.log('Congé ajouté avec succès, ID:', docRef.id);
       return docRef.id; // Retourne l'ID du document ajouté
     } catch (error) {
@@ -52,6 +71,7 @@ export class CongeService {
       return undefined;
     }
   }
+  
 
 
   //hazit lid domain m table membership

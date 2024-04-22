@@ -137,9 +137,13 @@ export class TimesheetComponent implements OnInit {
 
   async Save() {
     try {
-      this.tabProject.forEach((project) => {
-        this.projectService.updateProjectsMonth(project.id, this.currentUser, project.days);
-      });
+        this.tabProject.forEach((project) => {
+            console.log(`Project ID: ${project.id}`);
+            console.log(`Current User: ${this.currentUser}`);
+            console.log(`Project Days:`, project.days);
+
+            this.projectService.updateProjectsMonth(project.id, this.currentUser, project.days);
+        });
       if (!this.IsAdmin) {
         handleResponseSuccessWithAlerts(
           this.transloco.translate('features.projects.dialog.success.title'),
