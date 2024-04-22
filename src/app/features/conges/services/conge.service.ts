@@ -42,36 +42,54 @@ export class CongeService {
     });
   }
 
-  async addConge(conge): Promise<string | undefined> {
+  async addConge(conge) {
     try {
-      // Ajout des champs year, month et day à partir de la date de début du congé
-      const dateDebut: Date = new Date(conge.dateDebut);
-      const year: number = dateDebut.getFullYear();
-      const month: string = dateDebut.toLocaleString('en-US', { month: 'long' });
-      const monthCapitalized: string = month.charAt(0).toUpperCase() + month.slice(1); // Met la première lettre en majuscule
-      const day: number = dateDebut.getDate();
-  
-      // Crée le champ date au format "Month_Year"
-      const dateFormatted: string = `${monthCapitalized}_${year}`;
-  
-      console.log('Year:', year);
-      console.log('Month:', monthCapitalized);
-      console.log('Day:', day);
-      console.log('Date Formatted:', dateFormatted);
-      
-      // Création d'un nouvel objet congé avec les champs year, month, day et date ajoutés
-      const newConge = { ...conge, status: 0, year, month: monthCapitalized, day, date: dateFormatted };
-  
-      const congeCollectionRef = collection(this.firestore, 'conge123');
-      const docRef = await addDoc(congeCollectionRef, newConge);
-      console.log('Congé ajouté avec succès, ID:', docRef.id);
-      return docRef.id; // Retourne l'ID du document ajouté
+        // Ajout des champs year, month et day à partir de la date de début du congé
+        const dateDebut = new Date(conge.dateDebut);
+        const year = dateDebut.getFullYear();
+        const month = dateDebut.toLocaleString('en-US', { month: 'long' });
+        const monthCapitalized = month.charAt(0).toUpperCase() + month.slice(1); // Met la première lettre en majuscule
+        const day = dateDebut.getDate();
+
+        // Ajout des champs yearF, monthF et dayF à partir de la date de fin du congé
+        const dateFin = new Date(conge.dateFin);
+        const yearF = dateFin.getFullYear();
+        const monthF = dateFin.toLocaleString('en-US', { month: 'long' });
+        const monthCapitalizedF = monthF.charAt(0).toUpperCase() + monthF.slice(1); // Met la première lettre en majuscule
+        const dayF = dateFin.getDate();
+
+        // Crée le champ date au format "Month_Year" pour la date de début
+        const dateFormatted = `${monthCapitalized}_${year}`;
+        
+        // Crée le champ dateF au format "Month_Year" pour la date de fin
+        const dateFormattedF = `${monthCapitalizedF}_${yearF}`;
+
+        console.log('Year:', yearF);
+        console.log('Month:', monthCapitalizedF);
+        console.log('Day:', dayF);
+        console.log('Date FormattedF:', dateFormattedF);
+        
+        // Création d'un nouvel objet congé avec les champs year, month, day, date et dateF ajoutés
+        const newConge = { 
+            ...conge, 
+            status: 0, 
+            year, 
+            month: monthCapitalized, 
+            day, 
+            date: dateFormatted,
+            dateF: dateFormattedF // Ajout du champ dateF
+        };
+
+        const congeCollectionRef = collection(this.firestore, 'conge123');
+        const docRef = await addDoc(congeCollectionRef, newConge);
+        console.log('Congé ajouté avec succès, ID:', docRef.id);
+        return docRef.id; // Retourne l'ID du document ajouté
     } catch (error) {
-      console.error('Erreur lors de l\'ajout du congé dans Firestore :', error);
-      return undefined;
+        console.error('Erreur lors de l\'ajout du congé dans Firestore :', error);
+        return undefined;
     }
-  }
-  
+}
+
 
 
   //hazit lid domain m table membership
