@@ -9,6 +9,8 @@ import { differenceInDays } from 'date-fns';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ProfileService } from 'src/app/services/profile.service';
 import { Auth } from '@angular/fire/auth';
+import { CongeService } from '../../services/conge.service';
+import { getDoc } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-listconge',
@@ -30,7 +32,7 @@ export class ListcongeComponent<T> implements OnInit {
   /*++++++*/
 
   constructor(private translocoService: TranslocoService, private profileService: ProfileService
-    , private auth: Auth
+    , private auth: Auth, private congeService: CongeService
   ) {
   }
 
@@ -187,7 +189,11 @@ export class ListcongeComponent<T> implements OnInit {
         this.showSuccessAlert('Congé accepté');
         conge.status = 1;
         conge.statusLabel = 'Approuvé';
-    
+
+
+        // Appel de la méthode sendEmailToUser avec l'ID du congé
+        await this.sendEmailToUser(conge.id);
+
         // Mettre à jour les congés filtrés pour retirer le congé approuvé
         this.filteredConges = this.filteredConges.filter(c => c.id !== conge.id);
         this.dataSource.data = this.filteredConges;
@@ -312,6 +318,9 @@ export class ListcongeComponent<T> implements OnInit {
           console.log('Congé refusé avec succès.');
           conge.status = 2;
           conge.statusLabel = 'Refusé';
+
+          // Appel de la méthode sendEmailToUser avec l'ID du congé
+          await this.sendEmailToUser(conge.id);
           // Mettre à jour les congés filtrés pour retirer le congé refusé
           this.filteredConges = this.filteredConges.filter(c => c.id !== conge.id);
           this.dataSource.data = this.filteredConges;
@@ -373,4 +382,36 @@ export class ListcongeComponent<T> implements OnInit {
     });
 
   }
+  async sendEmailToUser(congeId: string) {
+    try {
+      const congeDocRef = doc(getFirestore(), 'conge123', congeId);
+      const congeSnapshot = await getDoc(congeDocRef);
+      if (congeSnapshot.exists()) {
+        const congeData = congeSnapshot.data();
+        let status: string;
+        let commentaire: string = ''; // Initialiser le commentaire à une chaîne vide
+        if (congeData['status'] === 1) {
+
+          status = 'accepted'; // Utiliser 'accepted' pour approuvé
+        } else {
+          status = 'rejected'; // Utiliser 'rejected' pour rejeté
+          commentaire = congeData['commentaire'];          // Récupérer le commentaire du congé en cas de rejet
+        }
+        const emailData = {
+          status: status,
+          emailData: congeData['email'], // Supposons que l'e-mail est stocké dans un champ nommé 'email'
+          nameRequest: congeData['displayName'], // Supposons que le nom du demandeur est stocké dans un champ nommé 'nomDemandeur'
+          commentaire: commentaire // Passer le commentaire
+        };
+        await this.congeService.sendEmailToUser(emailData); // Appeler la méthode du service avec les données mises à jour
+        // Affichez un message de succès ou effectuez d'autres actions nécessaires
+      } else {
+        console.error('Le document de congé n\'existe pas.');
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'envoi de l\'e-mail:', error);
+      // Gérez l'erreur de manière appropriée
+    }
+  }
+
 }

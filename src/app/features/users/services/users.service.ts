@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, from, map } from 'rxjs';
 import { ProfileService } from '../../../services/profile.service';
-import { Profile } from 'src/app/models/profile.model';
+import { Profile, UserRole } from 'src/app/models/profile.model';
 
 import {
   DocumentData,
@@ -20,6 +20,7 @@ import { ProjectService } from '../../projects/services/projects.service';
 import { deleteApp, initializeApp } from '@angular/fire/app';
 import { getAuth } from '@angular/fire/auth';
 import { HttpClient } from '@angular/common/http';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 @Injectable()
 export class UsersService {
   private readonly profileService = inject(ProfileService);
@@ -55,34 +56,34 @@ export class UsersService {
     );
   }
   private readonly http = inject(HttpClient);
-  async  getAllUsersForProject(newproject: string, iduser: string): Promise<boolean>  {
+  async getAllUsersForProject(newproject: string, iduser: string): Promise<boolean> {
     if (newproject.trim() === "") {
-    console.log('champ vide');
+      console.log('champ vide');
+      return false;
+    }
+
+    const projectData = {
+      'name': newproject,
+      'projectTotal': 0,
+    };
+
+    const domaineRef = collection(
+      this.firestore,
+      'membership_CRA',
+      iduser,
+      'Projects'
+    ) as CollectionReference<DocumentData>;
+
+    // Check if the project exists before adding it to Firestore.
+    const projectDocRef = doc(domaineRef, newproject);
+    const projectDoc = await getDoc(projectDocRef);
+
+    if (projectDoc.exists()) {
+      console.log('Project already exists:', newproject);
+      return true;
+    }
     return false;
   }
-
-  const projectData = {
-    'name': newproject,
-    'projectTotal': 0,
-  };
-
-  const domaineRef = collection(
-    this.firestore,
-    'membership_CRA',
-    iduser,
-    'Projects'
-  ) as CollectionReference<DocumentData>;
-
-  // Check if the project exists before adding it to Firestore.
-  const projectDocRef = doc(domaineRef, newproject);
-  const projectDoc = await getDoc(projectDocRef);
-
-  if (projectDoc.exists()) {
-    console.log('Project already exists:', newproject);
-    return true;
-  }
-  return false;
-}
   // Function to update the user role in Firestore
   updateUserRole(userId: string, updatedUser: Profile): Observable<void> {
     // Assuming the 'membership_CRA' collection contains documents with document IDs equal to the user IDs
@@ -92,8 +93,12 @@ export class UsersService {
     // Create an object with the updated user data (only including the 'role' property in this example)
     const userUpdate = {
       role: updatedUser.role,
+      notify: false // Ajouter cette ligne pour initialiser la propriété notify
     };
-
+    // If the updated role is 'user', remove the 'notify' field from the user's data
+    if (updatedUser.role === 'user') {
+      userUpdate.notify = false;
+    }
     // Perform the update using the updateDoc function and convert the Promise to an Observable
     return from(updateDoc(userDocRef, userUpdate));
   }
@@ -126,19 +131,26 @@ export class UsersService {
       const emailParts = user.email.split('@');
       const nameFromEmail = emailParts[0];
 
-      await setDoc(doc(this.firestore, 'membership_CRA', userRecord.uid), {
+      const userData: any = {
         role: user.role,
         created_on: new Date().toISOString().substring(0, 10) + 'T00:00:00.000Z',
         idDomaine: this.profileService.profile.idDomaine,
         uid: userRecord.uid,
         photoURL: userRecord.photoURL || '',
         displayName: userRecord.displayName || nameFromEmail,
-        email: user.email || '',
-      });
-      this.projectService.addNewProject("Disponible","Disponible", userRecord.uid);
-      this.projectService.addNewProject("Vacances","Vacances", userRecord.uid);
-      this.projectService.addNewProject("Maladie","Maladie", userRecord.uid);
-      
+        email: user.email || ''
+      };
+
+      if (this.profileService.profile.role === UserRole.Admin) {
+        userData.notify = true;
+      }
+
+      await setDoc(doc(this.firestore, 'membership_CRA', userRecord.uid), userData);
+
+      this.projectService.addNewProject("Disponible", "Disponible", userRecord.uid);
+      this.projectService.addNewProject("Vacances", "Vacances", userRecord.uid);
+      this.projectService.addNewProject("Maladie", "Maladie", userRecord.uid);
+
       // Send email verification to the newly registered user
       await this.http.post("https://us-central1-prodvalbridge.cloudfunctions.net/add_user_cra", {
         displayname: userRecord.displayName || nameFromEmail,
@@ -161,4 +173,31 @@ export class UsersService {
       }
     }
   }
+
+  // Fonction pour gérer le changement d'état de la switch
+  async onToggleAdmin(element: Profile, event: MatSlideToggleChange): Promise<void> {
+    try {
+      // Récupérer le uid de l'utilisateur
+      const userId = element.uid;
+
+      // Vérifier si l'utilisateur est un administrateur
+      if (element.role === 'admin') {
+        // Mettre à jour la valeur de notify en fonction de l'état du MatSlideToggle
+        const userDocRef = doc(this.firestore, 'membership_CRA', userId);
+        const newData = { notify: event.checked };
+
+        // Effectuer la mise à jour dans Firestore
+        await updateDoc(userDocRef, newData);
+        console.log(userId)
+      } else {
+        // Si l'utilisateur n'est pas un administrateur, ne rien faire
+        console.warn('User is not an admin');
+      }
+    } catch (error) {
+      // Gérer les erreurs
+      console.error('Error updating notify:', error);
+      throw error;
+    }
+  }
+
 }

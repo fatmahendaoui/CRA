@@ -9,3 +9,15 @@ button[mat-icon-button] {
   background-color: white !important;
   color: #DE3163  !important;
 }
+.dense-form-field {
+  display: flex;
+  align-items: center; /* Aligne les éléments verticalement */
+  margin-right: none;
+}
+
+.mat-slide-toggle {
+  transform: scale(1.5); 
+  margin-left: 80px; 
+}
+
+

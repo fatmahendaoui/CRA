@@ -6,7 +6,7 @@
 </div>
 <!-- Formulaire de création de congé -->
 <mat-card>
-  <form class="form-container" (ngSubmit)="onSubmit()">
+  <form class="form-container" (ngSubmit)="onSubmit();Savewithemail()">
     <!-- Titre du formulaire -->
     <mat-toolbar>
       <h1>
@@ -109,7 +109,8 @@
       </mat-form-field>
       <!-- Bouton de sauvegarde -->
       <div class="buttons">
-        <button mat-flat-button color="primary" type="submit"> {{ 'features.projects.button.save' | transloco
+        <button mat-flat-button color="primary" type="submit"> {{
+          'features.projects.button.save' | transloco
           }}</button>
       </div>
     </div>

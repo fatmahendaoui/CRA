@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { DatePipe, NgIf } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { AbstractTableComponent } from '../../../../components/table.component';
@@ -10,6 +10,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { TranslocoModule } from '@ngneat/transloco';
 import { Profile } from 'src/app/models/profile.model';
 import { RouterLink } from '@angular/router';
+import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { UsersService } from '../../services/users.service';
 
 @Component({
   standalone: true,
@@ -27,6 +29,7 @@ import { RouterLink } from '@angular/router';
     TranslocoModule,
     DatePipe,
     RouterLink,
+    MatSlideToggleModule
 
 
   ],
@@ -34,9 +37,13 @@ import { RouterLink } from '@angular/router';
 export class UsersTableComponent extends AbstractTableComponent<Profile> {
   @Output()
   public updateRole = new EventEmitter<Profile>();
-today:Date=new Date();
+  today: Date = new Date();
   @Output()
   public deleteUser = new EventEmitter<Profile>();
+  @Output()
+  public onToggleAdminEvent = new EventEmitter<MatSlideToggleChange>(); // Renommage de l'événement
+
+  private readonly usersService = inject(UsersService);
 
   public override readonly displayedColumns: string[] = [
     'email',
@@ -51,8 +58,12 @@ today:Date=new Date();
       role: change.value,
     });
   }
-
   public onDelete(user: Profile): void {
     this.deleteUser.emit(user);
+  }
+
+  public onToggleAdmin(element: Profile, event: MatSlideToggleChange): void {
+    // Appel de la méthode onToggleAdmin du service UserService
+    this.usersService.onToggleAdmin(element, event);
   }
 }

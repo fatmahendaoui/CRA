@@ -75,7 +75,7 @@ export class AuthService {
         photoURL: user.photoURL ?? '',
         displayName: user.displayName ?? '',
         email: user.email ?? '',
-
+        notify: false
       };
 
       // Save profile data to 'membership_BQDS' collection
