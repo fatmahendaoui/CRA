@@ -219,11 +219,12 @@ export class ListcongeComponent<T> implements OnInit {
     
             // champ date f conge yekhou mois_year
             const tableName = conge.date;
+            const nexttablename=conge.dateF;
     
             // Accéder au tableau correspondant dans le document
             let tableData = doc.data()[tableName];
             console.log(`Contenu du tableau "${tableName}":`, tableData);
-    
+  
             // Si le tableau n'existe pas, le créer
             if (!tableData) {
               tableData = [];
@@ -246,8 +247,13 @@ export class ListcongeComponent<T> implements OnInit {
     
             // Extraire les champs day, year, month et nombreHeures du congé
             const { day, year, month, nombreHeures } = conge;
-    
+            
+            console.log("Valeur de day :", day);
+            console.log("Valeur de year :", year);
+            console.log("Valeur de month :", month);
+            console.log("Valeur de nombreHeures :", nombreHeures);
             // Parcourir les éléments du tableau correspondant
+            
             tableData.forEach((element, index) => {
               // Vérifier si les champs day, month et year correspondent
               if (element.day === day && element.month === month && element.year === year) {
@@ -261,20 +267,79 @@ export class ListcongeComponent<T> implements OnInit {
                   let remainingHours = nombreHeures - 8;
                   // Trouver le jour suivant dans le tableau et ajouter les heures restantes
                   let nextDayIndex = index + 1;
+            
                   while (remainingHours > 0 && nextDayIndex < tableData.length) {
                     const availableHours = Math.min(remainingHours, 8); // Maximum de 8 heures par jour
                     tableData[nextDayIndex].nbHeure += availableHours;
                     remainingHours -= availableHours;
                     nextDayIndex++;
                   }
+            
+                  if (remainingHours > 0) {
+                    let remainingHoursToStore = remainingHours; // Stocker les heures restantes dans une variable
+                  
+                    // Entrer dans le tableau suivant (nexttableName) pour ajouter les heures restantes
+                    let tableData = doc.data()[nexttablename];
+                    console.log("tableData:", tableData); 
+                    if (!tableData) {
+                      tableData = [];
+                    
+                      for (let i = 1; i <= 31; i++) {
+                        // Vérifiez si le jour est un jour de week-end ou un jour férié avant de l'ajouter
+                        if (!this.isWeekendDay(conge.year, this.monthToNumber(conge.month), i)) {
+                          tableData.push({
+                            year: conge.year,
+                            month: conge.month,
+                            day: i,
+                            nbHeure: '',
+                            nbTotal: '',
+                            projectTotal: ''
+                          });
+                        }
+                      }
+                    }
+                    if (tableData && tableData.length > 0) {
+                      if (remainingHoursToStore <= 8) {
+                        // S'il reste moins de 8 heures, ajoutez-les simplement au premier index
+                        console.log("Ajout de", remainingHoursToStore, "heures au premier index du tableau.");
+                        tableData[0].nbHeure += remainingHoursToStore;
+                        remainingHoursToStore = 0; // Aucune heure restante à stocker
+                      } else {
+                        // Ajouter 8 heures au premier index
+                        console.log("Ajout de 8 heures au premier index du tableau.");
+                        tableData[0].nbHeure += 8;
+                        remainingHoursToStore -= 8; // Réduire les heures restantes
+                      }
+                        doc.data()[nexttablename] = tableData;
+                         
+                    }
+                    
+                  
+                    // Si remainingHoursToStore est toujours supérieur à 0,
+                    // cela signifie qu'il reste encore des heures à ajouter au tableau suivant
+                    if (remainingHoursToStore > 0) {
+                      let currentIndex = 1; // Commencer par le deuxième index du tableau
+                      while (remainingHoursToStore > 0 && currentIndex < tableData.length) {
+                        const availableHours = Math.min(remainingHoursToStore, 8); // Maximum de 8 heures par jour
+                        tableData[currentIndex].nbHeure += availableHours;
+                        remainingHoursToStore -= availableHours;
+                        currentIndex++;
+                      }
+                      updateDoc(doc.ref, { [nexttablename]: tableData });
+                      
+                    }
+                    
+
+                  }
                 }
-              }
+                }
             });
-    
+            
             console.log(`Tableau "${tableName}" mis à jour:`, tableData);
     
             // Mettre à jour le document avec les nouvelles données
             await updateDoc(doc.ref, { [tableName]: tableData });
+           
     
             console.log(`Document "${documentName}" mis à jour avec succès.`);
             break; // Sortir de la boucle une fois le document trouvé
