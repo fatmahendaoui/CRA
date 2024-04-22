@@ -95,9 +95,15 @@ export class ProjectService {
       return;
     }
 
+    console.log('Tentative d\'accès au projet:', newproject);
+    
     const projectData = {
       [days[0].month + '_' + days[0].year]: days, // Array of timesheet items for each day
     };
+
+    console.log('Contenu de projectData aprés la mise à jour:', projectData);
+
+
     const domaineRef =
       collection(
         this.firestore,

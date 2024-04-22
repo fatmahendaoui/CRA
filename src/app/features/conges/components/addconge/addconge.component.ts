@@ -45,17 +45,26 @@ export class AddcongeComponent implements OnInit {
   }
 
   async onSubmit(): Promise<void> {
+    const userId = this.user ? this.user.uid : null;
     const nombreJours: number = differenceInDays(this.dateFin, this.dateDebut) + 1; // nzid +1 bech nzid nhar lewl
     let nombreHeures: number;
+
+
+    console.log('Date de début:', this.dateDebut);
+
+
+
+
+    
     switch (this.dureeConge) {
 
       case "Demi journée - le matin":
       case "Demi journée - l'après midi":
-        this.dateDebut = this.dateFin;
+        this.dateFin = this.dateDebut;
         nombreHeures = 4; // demi journe=4heures 
         break;
       case "Journée entière":
-        this.dateDebut = this.dateFin;
+        this.dateFin = this.dateDebut;
         nombreHeures = 8; // nahr wehed = 8heures tool 
         break;
       case "Plus d'1 jour":
@@ -63,8 +72,8 @@ export class AddcongeComponent implements OnInit {
         nombreHeures = 8 * nombreJours;
         break;
       case "Début de journée":
-      case "fin de journée":
-        this.dateDebut = this.dateFin;
+      case "Fin de journée":
+        this.dateFin = this.dateDebut;
         nombreHeures = 4; // demi journe=4heures 
         break;
 
@@ -86,6 +95,7 @@ export class AddcongeComponent implements OnInit {
       email: this.user ? this.user.email : null,
       domainId: this.domainId,
       nombreHeures: nombreHeures,
+      userId: userId,
       status: 0,
     };
 
