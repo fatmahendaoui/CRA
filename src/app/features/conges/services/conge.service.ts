@@ -1,16 +1,23 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc, doc, getDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, doc, getDoc, query, where } from 'firebase/firestore';
 import { environment } from 'src/environments/environment';
 import { getAuth, User } from 'firebase/auth';
 import { DocumentSnapshot, DocumentData } from 'firebase/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { serverTimestamp, updateDoc } from '@angular/fire/firestore';
+import { getDocs, serverTimestamp, updateDoc, } from '@angular/fire/firestore';
+import { HttpClient } from '@angular/common/http';
+import { Profile } from 'src/app/models/profile.model';
+import { ProfileService } from 'src/app/services/profile.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CongeService {
+
+  private readonly http = inject(HttpClient);
+  private readonly profileService = inject(ProfileService);
+
   getConges() {
     throw new Error('Method not implemented.');
   }
@@ -87,4 +94,73 @@ export class CongeService {
       console.error('Erreur lors de l\'ajout de l\'URL de téléchargement au document Congé :', error);
     }
   }
+
+  /*************************** */
+  async submitCongeWithEmail(data) {
+    try {
+      // Récupérer les administrateurs
+      const adminUsers: Profile[] = await this.getAdminUsers();
+
+      // Envoyer un email à chaque administrateur
+      for await (const adminUser of adminUsers) {
+        const emailData = { ...data }; // Cloner les données pour chaque admin
+        emailData.emailData = adminUser.email; // Utiliser emailData au lieu de email
+        emailData.AdminName = adminUser.displayName;
+
+        console.log(emailData); // Optionnel : journalisation des données avant l'envoi
+
+        // Appel de la fonction de Cloud pour envoyer l'email
+        await this.sendEmailToAdmin(emailData);
+      }
+    } catch (error) {
+      console.error('Error submitting congé with email:', error);
+    }
+  }
+
+
+  async getAdminUsers(): Promise<Profile[]> {
+    const adminUsers: Profile[] = [];
+    const querySnapshot = await getDocs(
+      query(
+        collection(this.firestore, 'membership_CRA'),
+        where('idDomaine', '==', this.profileService.profile.idDomaine)
+      )
+    );
+
+    querySnapshot.forEach((doc) => {
+      const userData = doc.data() as Profile;
+      if (userData.role === 'admin' && userData.notify) {
+        adminUsers.push(userData);
+      }
+    });
+
+    return adminUsers;
+  }
+
+  async sendEmailToAdmin(emailData): Promise<void> {
+    try {
+      await this.http.post<void>(
+        `https://us-central1-dev-cra-390314.cloudfunctions.net/sendCongeNotificationEmail`,
+        emailData
+      ).toPromise();
+      console.log('Email sent successfully to admin:', emailData.emailData); // Utiliser emailData.emailData au lieu de emailData.email
+    } catch (error) {
+      console.error('Error sending email to admin:', error);
+    }
+  }
+
+
+  async sendEmailToUser(emailData): Promise<void> {
+    try {
+      await this.http.post<void>(
+        `https://us-central1-dev-cra-390314.cloudfunctions.net/sendCongeStatusEmail`,
+        emailData
+      ).toPromise();
+      console.log('E-mail envoyé avec succès:', emailData);
+    } catch (error) {
+      console.error('Erreur lors de l\'envoi de l\'e-mail:', error);
+      throw error;
+    }
+  }
+
 }

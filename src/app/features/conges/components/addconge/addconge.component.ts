@@ -21,7 +21,8 @@ export class AddcongeComponent implements OnInit {
   domainId: string; //  variable pour stocker l'ID de domaine
   periode: any[] = [null, null];
   photourl: string;
-
+  displayNamecurent;
+  status: string;
   constructor(
     private congeService: CongeService,
     private translocoService: TranslocoService,
@@ -126,6 +127,28 @@ export class AddcongeComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error adding congé:', error);
+    }
+  }
+  async Savewithemail() {
+    try {
+
+      let data = {
+        nameRequest: this.user.displayName,
+        uid: this.user.uid,
+        nature: this.natureConge, // Ajoutez d'autres données nécessaires pour la notification
+        duree: this.dureeConge,
+        dateDebut: this.dateDebut,
+        dateFin: this.dateFin,
+        commentaires: this.commentaires
+      }
+
+      // Appel de la méthode pour soumettre la demande de congé et envoyer l'email à l'admin
+      await this.congeService.submitCongeWithEmail(data);
+
+      // Autres actions après la soumission du congé
+      this.status = 'Submitted';
+    } catch (error) {
+      console.error('Error adding project via ProjectService:', error);
     }
   }
 
