@@ -11,7 +11,7 @@
 
       <!-- Menu de sélection de langue -->
       <div class="select">
-        <button class="custom-icon" style="color: #E50060;" *ngIf="isAdmin">
+        <button class="custom-icon" style="color: #E50060;">
           <img src="../../assets/images/Lang.png" alt="language">
           <mat-select subscriptSizing="dynamic" (selectionChange)="onSelectionChange($event)" [value]="defaultLanguage"
             style="min-width: 3rem;">
@@ -22,12 +22,12 @@
 
 
 
-      <!-- Notification icon -->
-      <a [routerLink]="['conge/add']">
-        <mat-icon color="primary">work_off</mat-icon>
-      </a>
-
-
+      <!-- Add Conge icon -->
+      <div>
+        <button class="custom-icon" routerLink="conge/add">
+          <mat-icon color="primary" style="font-size: 28px;width: auto;height: auto;">work_off</mat-icon>
+        </button>
+      </div>
 
 
       <!-- Avatar de l'utilisateur avec menu contextuel -->
@@ -35,15 +35,12 @@
         <button mat-menu-item style="background-color: #fff;">
           <div class="user-metadata" style="text-align: end;">
             <strong style="color: #E50060;">{{ user?.displayName }}</strong>
-            <span style="font-size: 0.68rem; color: #193F77;">{{ domaineName }} Workspace</span>
+            <span style="font-size: 0.68rem; color: #193F77;">{{ domaineName }}</span>
           </div>
         </button>
         <button mat-icon-button class="user-avatar-trigger">
           <mat-avatar class="user-avatar">
-            <!-- Utilisation de la fonction getUserImage pour obtenir l'URL de l'image de l'utilisateur -->
-            <img *ngIf="getUserImage( user)" [src]="getUserImage(user)" alt="User Avatar">
-            {{ !getUserImage(user) ? getFirstLetter(user?.email) : '' }}
-          </mat-avatar>
+            {{ getFirstLetter(user?.email) }} </mat-avatar>
         </button>
       </div>
 
@@ -76,7 +73,7 @@
         </button>
 
 
-        <button mat-menu-item routerLink="/listconge">
+        <button mat-menu-item routerLink="/listconge" *ngIf="isAdmin">
           <mat-icon>assignment_turned_in</mat-icon> {{ 'layout.menu.leaveToValidate' | transloco }}
         </button>
 

@@ -11,7 +11,7 @@
   "common": {
     "form": {
       "required": "Field required",
-      "email": "Email format is invalid",
+      "email": "Invalid email format",
       "empty-file": "Select a file"
     },
     "role": {
@@ -74,12 +74,12 @@
         "action": "Create"
       },
       "success": {
-        "title": "The user is successfully invited",
+        "title": "The user has been successfully invited",
         "message": "An email was sent to this user"
       },
       "error": {
         "title": "Oops",
-        "message": "This user exist!"
+        "message": "This user already exists!"
       },
       "dialog": {
         "confirmation": "Are you sure you want to delete this user ?",

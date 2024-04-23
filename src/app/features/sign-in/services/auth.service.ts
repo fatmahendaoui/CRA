@@ -125,5 +125,23 @@ export class AuthService {
     }
   }
 
+// Method to retrieve domain name from Firebase using domaineId
+async getDomainName(domaineId: string): Promise<string | null> {
+  try {
+    const docRef = doc(this.firestore, 'domaine_CRA', domaineId);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return data['domaineName']; // Accessing property using bracket notation
+    } else {
+      console.log("No such document!");
+      return null;
+    }
+  } catch (error) {
+    console.error('Error getting domain name:', error);
+    throw error;
+  }
+}
 
 }
