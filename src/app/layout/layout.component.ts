@@ -13,6 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatBadgeModule } from '@angular/material/badge';
 import { AngularFireModule } from '@angular/fire/compat';
+import { AuthService } from '../features/sign-in/services/auth.service';
 
 
 @Component({
@@ -34,7 +35,7 @@ import { AngularFireModule } from '@angular/fire/compat';
     NgClass,
     MatBadgeModule,
     AngularFireModule,
-    
+
   ],
 })
 export class LayoutComponent implements OnInit, OnDestroy {
@@ -43,6 +44,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);
   private readonly profileService = inject(ProfileService);
+  private readonly authService = inject(AuthService);
   public isAdmin: boolean = true;
   domaineName: string | undefined;
   status: boolean;
@@ -59,6 +61,14 @@ export class LayoutComponent implements OnInit, OnDestroy {
       this.userRole = res;
     });
 
+    const domaineId = this.profileService.profile.idDomaine;
+    this.authService.getDomainName(domaineId).then((domaineName) => {
+      if (domaineName !== null) {
+        this.domaineName = domaineName;
+      } else {
+        this.domaineName = ""; // Assign a default value or handle the null case accordingly
+      }
+    });
     // Observer les changements d'état d'authentification de l'utilisateur
     this.auth.onAuthStateChanged((user) => {
       this.user = user; // Mettre à jour l'utilisateur actuel
@@ -72,16 +82,16 @@ export class LayoutComponent implements OnInit, OnDestroy {
   getFirstLetter(email: string): string {
     return email ? email.charAt(0).toUpperCase() : '';
   }
-
-  // Méthode pour obtenir l'URL de l'image de l'utilisateur si disponible
-  getUserImage(user: User): string | null {
-    if (user && user.photoURL) {
-      return user.photoURL; // Retourner l'URL de l'image si disponible
-    } else {
-      return null; // Retourner null sinon
+  /*
+    // Méthode pour obtenir l'URL de l'image de l'utilisateur si disponible
+    getUserImage(user: User): string | null {
+      if (user.photoURL) {
+        return user.photoURL; // Retourner l'URL de l'image si disponible
+      } else {
+        return null; // Retourner null sinon
+      }
     }
-  }
-
+  */
   // Méthode pour naviguer vers les paramètres de l'utilisateur
   navigateToSettings() {
     this.router.navigate(['/settings']); // Redirection vers la page de paramètres

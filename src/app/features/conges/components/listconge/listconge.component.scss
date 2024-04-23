@@ -32,8 +32,8 @@
     }
   
     img {
-      max-width: 40px;
-      max-height: 40px;
+      max-width: 35px;
+      max-height: 35px;
       border-radius: 50%;
       margin-right: 10px; /* Espacement entre l'image et le texte */
     }
@@ -52,7 +52,10 @@
     display: inline-flex;
     justify-content: center;
     align-items: center;
-  }
+    font-weight: bold;
+    font-size: 13px;
+
+      }
 
   .chip-awaiting {
     background-color: #fff2e5;
@@ -61,12 +64,12 @@
 
   .chip-approved {
     background-color: #d8f5e6;
-    color: #18c46e;
+    color: #17ba68;
   }
 
   .chip-rejected {
     background-color: #ffebec;
-    color: #fd5d63;
+    color: #fb4e54;
   }
   /*-------------commentaire --------------------*/
   .comment-cell {
@@ -89,8 +92,8 @@
   border: none;
 
   img {
-    width: 30px;
-    height: 30px;
+    width: 26px;
+    height: 26px;
     max-width: 100%;
     max-height: 100%;
   }

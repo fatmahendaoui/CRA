@@ -20,7 +20,7 @@
       <div class="Type-conge">
         <h3>{{ 'features.conge.nature' | transloco }}</h3>
         <mat-form-field class="mat-mdc-form-field" appearance="outline">
-          <mat-select [(ngModel)]="natureConge" name="natureConge" class="mat-mdc-select-value">
+          <mat-select [(ngModel)]="natureConge" name="natureConge">
             <!-- Options pour le type de congé -->
             <mat-option value="Congé Payé">{{ 'features.conge.paid_leave' | transloco }}</mat-option>
             <mat-option value="Congé de maladie (1 jour)">{{ 'features.conge.sick_leave' | transloco }}</mat-option>
@@ -35,9 +35,8 @@
       <!-- Durée de congé en fonction du type de congé sélectionné -->
       <div class="Duree-conge">
         <h3>{{ 'features.conge.leave_duration' | transloco }}</h3>
-        <mat-form-field class="mat-mdc-form-field" appearance="outline"
-          *ngIf="natureConge !== 'Autorisation de sortie '">
-          <mat-select [(ngModel)]="dureeConge" name="dureeConge" class="mat-mdc-select-value">
+        <mat-form-field class="mat-mdc-form-field" appearance="outline" *ngIf="natureConge === 'Congé Payé'">
+          <mat-select [(ngModel)]="dureeConge" name="dureeConge">
             <!-- Options pour la durée de congé -->
             <mat-option value="Demi journée - le matin">{{ 'features.conge.half_day_morning' | transloco }}</mat-option>
             <mat-option value="Demi journée - l'après midi">{{ 'features.conge.half_day_afternoon' | transloco
@@ -46,9 +45,17 @@
             <mat-option value="Plus d'1 jour">{{ 'features.conge.more_than_1_day' | transloco }}</mat-option>
           </mat-select>
         </mat-form-field>
+        <!-- Option supplémentaire pour la durée de congé pour un type de congé spécifique conge maladie-->
+        <mat-form-field class="mat-mdc-form-field" appearance="outline"
+          *ngIf="natureConge === 'Congé de maladie (1 jour)'">
+          <mat-select [(ngModel)]="dureeConge" name="dureeConge" class="custom-select">
+            <mat-option value="Journée entière">{{ 'features.conge.full_day' | transloco }}</mat-option>
+            <mat-option value="Plus d'1 jour">{{ 'features.conge.more_than_1_day' | transloco }}</mat-option>
+          </mat-select>
+        </mat-form-field>
         <!-- Option supplémentaire pour la durée de congé pour un type de congé spécifique -->
         <mat-form-field class="mat-mdc-form-field" appearance="outline"
-          *ngIf="natureConge === 'Autorisation de sortie '">
+          *ngIf="natureConge !== 'Congé Payé' && natureConge !== 'Congé de maladie (1 jour)'">
           <mat-select [(ngModel)]="dureeConge" name="dureeConge" class="custom-select">
             <mat-option value="Début de journée">{{ 'features.conge.exit_permission_start' |
               transloco }}</mat-option>
@@ -57,9 +64,6 @@
           </mat-select>
         </mat-form-field>
       </div>
-
-
-
     </div>
 
     <!-- Deuxième ligne -->
@@ -83,7 +87,7 @@
         <mat-form-field class="mat-mdc-form-field" subscriptSizing="dynamic" appearance="outline">
           <!-- Champ de saisie de la date de début -->
           <input matInput [matDatepicker]="picker1" placeholder="Date de début" [(ngModel)]="dateDebut" name="dateDebut"
-            (focus)="picker1.open()" />
+            (focus)="picker1.open()" [matDatepickerInput]="myDatepicker"  />
           <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
           <mat-datepicker #picker1></mat-datepicker>
         </mat-form-field>

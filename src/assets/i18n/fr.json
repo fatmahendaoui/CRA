@@ -9,8 +9,8 @@
   "common": {
     "form": {
       "required": "Ce champ est requis",
-      "email": "Le format de l'email est invalide",
-      "empty-file": "Selectionnez un fichier"
+      "email": "Format d'e-mail invalide",
+      "empty-file": "Sélectionnez un fichier"
     },
     "role": {
       "user": "Utilisateur",
@@ -71,12 +71,12 @@
         "action": "Ajouter"
       },
       "success": {
-        "title": "L'utilisateur est invité avec succès",
+        "title": "L'utilisateur a été invité avec succès",
         "message": "Un email à été envoyé à cet utilisateur"
       },
       "error": {
         "title": "Oops",
-        "message": "Cet utilisateur existe !"
+        "message": "Cet utilisateur existe déjà !"
       },
       "dialog": {
         "confirmation": "Êtes-vous sûr de vouloir supprimer cet utilisateur ?",
@@ -98,12 +98,12 @@
       }
     },
     "projects": {
-      "title": "Gestion des projet",
+      "title": "Gestion des projets",
       "search": "Rechercher...",
       "add": "Ajouter un projet",
-      "filter": "filtre",
+      "filter": "Filtre",
       "table": {
-        "name": "Nom de projet",
+        "name": "Nom du projet",
         "actions": "Actions",
         "role": "Rôle",
         "added_at": "Ajouté le",
@@ -111,8 +111,8 @@
       },
       "add-dialog": {
         "title": "Ajouter un projet",
-        "name": "Nom de projet",
-        "users": "Les utilisateurs",
+        "name": "Nom du projet",
+        "users": "Utilisateurs",
         "action": "Ajouter",
         "update":"Modifier"
       },
@@ -159,13 +159,13 @@
     },
     "day_off": {
       "add-dialig-title": "Ajouter un jour",
-      "title": "jour de congé",
+      "title": "Jour de congé",
       "titre": "Time Sheet à valider",
       "confirmation": "Êtes-vous sûr de vouloir supprimer cet jour ?",
-      "success": "Le jour est ajouté avec succès",
+      "success": "Le jour a été ajouté avec succès",
       "Disponible": "Disponible",
       "Maladie": "Maladie",
-      "Vacances": "congé",
+      "Vacances": "Congé",
       "update":"Le jour férié est modifié avec succès",
       "name": "Nom"
     },
@@ -210,7 +210,7 @@
       "date": "Date",
       "exit_permission_start": "Début de journée",
       "exit_permission_end": "fin de journée",
-      "enter_comments": "Entrez vos commentaires",
+      "enter_comments": "Saisissez vos commentaires",
       "comment": "Commentaires",
       "validate_confirm": "Êtes-vous sûr de vouloir accepter ce congé ?",
     "reject_confirm": "Êtes-vous sûr de vouloir refuser ce congé ?",
