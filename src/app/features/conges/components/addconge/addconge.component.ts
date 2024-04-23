@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CongeService } from '../../services/conge.service';
-import { differenceInDays } from 'date-fns';
+import { differenceInDays, addDays, isSaturday, isSunday } from 'date-fns';
+
 import { TranslocoService } from '@ngneat/transloco';
 import { handleResponseSuccessWithAlerts } from 'src/app/common/alerts.utils';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
@@ -47,14 +48,22 @@ export class AddcongeComponent implements OnInit {
 
   async onSubmit(): Promise<void> {
     const userId = this.user ? this.user.uid : null;
-    const nombreJours: number = differenceInDays(this.dateFin, this.dateDebut) + 1; // nzid +1 bech nzid nhar lewl
+    let nombreJours: number = differenceInDays(this.dateFin, this.dateDebut) + 1; // Ajouter 1 pour inclure la date de début
     let nombreHeures: number;
 
+    // Vérifier si la période contient un week-end
+    let joursWeekend = 0;
+    for (let i = 0; i < nombreJours; i++) {
+        const currentDate = addDays(this.dateDebut, i);
+        if (isSaturday(currentDate) || isSunday(currentDate)) {
+            joursWeekend++;
+        }
+    }
 
-    console.log('Date de début:', this.dateDebut);
-
-
-
+    
+    if (joursWeekend > 0) {
+        nombreJours -= 2;
+    }
 
     
     switch (this.dureeConge) {
@@ -75,7 +84,7 @@ export class AddcongeComponent implements OnInit {
       case "Début de journée":
       case "Fin de journée":
         this.dateFin = this.dateDebut;
-        nombreHeures = 4; // demi journe=4heures 
+        nombreHeures = 2; // demi journe=4heures 
         break;
 
       default:
