@@ -274,6 +274,7 @@ export class ListcongeComponent<T> implements OnInit {
                     remainingHours -= availableHours;
                     nextDayIndex++;
                   }
+                  
             
                   if (remainingHours > 0) {
                     let remainingHoursToStore = remainingHours; // Stocker les heures restantes dans une variable
