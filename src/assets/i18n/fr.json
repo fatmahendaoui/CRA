@@ -49,7 +49,11 @@
       "dashbordvide":"Veuillez choisir votre projet",
       "dashbordvideuser":"Veuillez choisir un utilisateur",
       "Project":"Projet",
-      "user":"Utilisateur"
+      "user":"Utilisateur",
+      "Project-by-month":"Projet par mois",
+      "Project-by-user": "Projet par mois par utilisateur",
+      "User-by-project": "Utilisateur par mois par projet"
+      
 
     }, 
     "users": {
@@ -98,16 +102,23 @@
       }
     },
     "projects": {
+      "List_Project":"Liste des projets",
       "title": "Gestion des projets",
       "search": "Rechercher...",
       "add": "Ajouter un projet",
       "filter": "Filtre",
+      "projectByMonth": "Projets Par Mois",
+  "userByMonthWithProject": "Utilisateur Par Mois avec Projet",
+  "projectByMonthOf": "Projet Par Mois de",
+  "in_year": "dans l'année",
       "table": {
         "name": "Nom du projet",
         "actions": "Actions",
         "role": "Rôle",
         "added_at": "Ajouté le",
-        "identifier": "Identifiant"
+        "identifier": "Identifiant",
+        "submitted": "Soumis",
+        "on-going": "En cours"
       },
       "add-dialog": {
         "title": "Ajouter un projet",
@@ -158,11 +169,13 @@
       }
     },
     "day_off": {
+      "list_day_off":"Liste des Jours Fériés",
       "add-dialig-title": "Ajouter un jour",
       "title": "Jour de congé",
       "titre": "Time Sheet à valider",
       "confirmation": "Êtes-vous sûr de vouloir supprimer cet jour ?",
       "success": "Le jour a été ajouté avec succès",
+      "successdeleted": "Le jour a été supprimé avec succès",
       "Disponible": "Disponible",
       "Maladie": "Maladie",
       "Vacances": "Congé",
@@ -193,7 +206,10 @@
       "h":"h",
       "heures":"heures",
       "jours":"jours",
-      "total":"Total Mensuel"
+      "total":"Total Mensuel",
+      "Save_Changes":"Enregistrer les modification",
+      "Submit_for_Validation":"Envoyer pour validation"
+
     },
     "conge": {
       "title": "Demandes de congé",

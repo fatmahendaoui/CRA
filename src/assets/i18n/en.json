@@ -52,9 +52,11 @@
       "dashbordvide":"Please Choose your Poject",
       "dashbordvideuser":"Please Choose User",
       "Project":"Poject",
-      "user":"User"
-
-    }, 
+      "user":"User",
+      "Project-by-month":"Project By Month",
+      "Project-by-user": "Project By Month by user",
+      "User-by-project": "User By Month by project"   
+     }, 
     "users": {
       "title": "Users",
       "search": "Search...",
@@ -101,16 +103,24 @@
       }
     },
     "projects": {
-      "title": "Projects",
+      "List_Project":"List Project",
+      "title": "Project Management",
       "search": "Search...",
       "filter": "filter",
       "add": "Add project",
+      "projectByMonth": "Project By Month",
+      "userByMonthWithProject": "User By Month with Project",
+      "projectByMonthOf": "Project By Month of",
+      "in_year": "in year",
       "table": {
         "name": "Project name",
         "actions": "Actions",
         "role": "Role",
         "added_at": "Created on",
-        "identifier": "Identifier"
+        "identifier": "Identifier",
+        "submitted": "Submitted",
+        "on-going": "On going"
+
       },
       "add-dialog": {
         "title": "Add project",
@@ -161,11 +171,14 @@
       }
     },
     "day_off": {
+      "list_day_off":"List Day Off",
       "add-dialig-title": "Add Day",
       "title": "Days off",
       "titre": "Time Sheet to validate",
       "confirmation": "Are you sure you want to delete this day ?",
       "success": "The day is successfully added",
+      "successdeleted": "The day has been successfully deleted",
+
       "Disponible": "Available",
       "Maladie": "Sickness",
       "Vacances": "Holiday",
@@ -196,7 +209,9 @@
       "h":"h",
       "heures":"hours",
       "jours":"days",
-      "total":"Monthly Total"
+      "total":"Monthly Total",
+      "Save_Changes":"Save Changes",
+      "Submit_for_Validation":"Submit to Approve"
     },
     "conge": {
       "title": "Leave Request",

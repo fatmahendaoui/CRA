@@ -20,15 +20,15 @@
           </mat-select></button>
       </div>
 
-
-
       <!-- Add Conge icon -->
+      <!--
+    
       <div>
         <button class="custom-icon" routerLink="conge/add">
           <mat-icon color="primary" style="font-size: 28px;width: auto;height: auto;">work_off</mat-icon>
         </button>
       </div>
-
+    -->
 
       <!-- Avatar de l'utilisateur avec menu contextuel -->
       <div class="user-name" [matMenuTriggerFor]="menu" style="background-color: #fff;">
@@ -55,11 +55,11 @@
         </button>
         <button mat-menu-item routerLink="projects" *ngIf="isAdmin">
           <mat-icon>add</mat-icon>
-          List Project
+          {{ 'features.projects.List_Project' | transloco }}
         </button>
         <button mat-menu-item routerLink="day_off" *ngIf="isAdmin">
           <mat-icon>calendar_today</mat-icon>
-          List Day Off
+          {{ 'features.day_off.list_day_off' | transloco }}
         </button>
 
         <button mat-menu-item routerLink="toValide" *ngIf="isAdmin">
@@ -72,12 +72,12 @@
           Timesheet
         </button>
 
-
+<!--
         <button mat-menu-item routerLink="/listconge" *ngIf="isAdmin">
           <mat-icon>assignment_turned_in</mat-icon> {{ 'layout.menu.leaveToValidate' | transloco }}
         </button>
 
-
+-->
 
 
 

@@ -95,7 +95,7 @@ export class day_offComponent implements OnInit {
             .then(() => {
               this.fetchAll();
               handleResponseSuccessWithAlerts(
-                this.transloco.translate('features.day_off.success'),
+                this.transloco.translate('features.day_off.successdeleted'),
                 '',
                 this.transloco.translate('common.close'),
                 () => { }

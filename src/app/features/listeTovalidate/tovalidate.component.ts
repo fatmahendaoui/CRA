@@ -33,9 +33,9 @@ import { Months } from '../timesheet/models/dates.constants';
           </mat-label>
           <!-- <input type="text" #searchInput matInput /> -->
         <mat-select [(ngModel)]="status" (ngModelChange)="fetchAll()">
-          <mat-option value="Submitted">Submitted</mat-option>
-          <mat-option value="Improved">Approved</mat-option>
-          <mat-option value="On going">On going ({{nameMonth}} {{year}})</mat-option>
+          <mat-option value="Submitted">{{ 'features.projects.table.submitted' | transloco }}</mat-option>
+          <mat-option value="Improved">{{ 'features.liste_conge.approved' | transloco }}</mat-option>
+          <mat-option value="On going">{{ 'features.projects.table.on-going' | transloco }} ({{nameMonth}} {{year}})</mat-option>
         </mat-select>
         </mat-form-field>
  
@@ -90,7 +90,7 @@ export class tovalidateComponent implements OnInit {
   public fetchAll(): void {
     this.tovalidate = null;
     if (this.status == 'On going') {
-      this.ProjectService.getongoingDateShipCRAs(this.status,this.nameMonth + '_' + this.year).then(li => {
+      this.ProjectService.getongoingDateShipCRAs(this.status, this.nameMonth + '_' + this.year).then(li => {
         this.tovalidate = li;
       })
     }
