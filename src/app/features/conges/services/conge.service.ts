@@ -53,6 +53,8 @@ export class CongeService {
 
         // Ajout des champs yearF, monthF et dayF à partir de la date de fin du congé
         const dateFin = new Date(conge.dateFin);
+        const nextMonth = dateFin.toLocaleString('en-US', { month: 'long' });
+
         const yearF = dateFin.getFullYear();
         const monthF = dateFin.toLocaleString('en-US', { month: 'long' });
         const monthCapitalizedF = monthF.charAt(0).toUpperCase() + monthF.slice(1); // Met la première lettre en majuscule
@@ -77,7 +79,9 @@ export class CongeService {
             month: monthCapitalized, 
             day, 
             date: dateFormatted,
-            dateF: dateFormattedF // Ajout du champ dateF
+            dateF: dateFormattedF,
+            nextMonth
+             // Ajout du champ dateF
         };
 
         const congeCollectionRef = collection(this.firestore, 'conge123');
@@ -88,6 +92,10 @@ export class CongeService {
         console.error('Erreur lors de l\'ajout du congé dans Firestore :', error);
         return undefined;
     }
+
+
+
+    
 }
 
 
@@ -200,5 +208,20 @@ export class CongeService {
       throw error;
     }
   }
-
+  async getCongeById(congId: string): Promise<any> {
+    try {
+      const congeDocRef = doc(this.firestore, 'conge123', congId);
+      const congeDocSnapshot: DocumentSnapshot<DocumentData> = await getDoc(congeDocRef);
+      if (congeDocSnapshot.exists()) {
+        return congeDocSnapshot.data();
+      } else {
+        console.error('Document de congé non trouvé pour l\'ID :', congId);
+        return null;
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération des détails du congé :', error);
+      throw error;
+    }
+  }
 }
+

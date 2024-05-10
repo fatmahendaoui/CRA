@@ -12,6 +12,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { MatSelectModule } from '@angular/material/select';
 
 if (environment.production) {
   enableProdMode();
@@ -23,7 +24,7 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(TranslocoModule),
     // Firebase App provider
     importProvidersFrom(provideFirebaseApp(() => initializeApp(environment.firebaseConfig))),
-
+    MatSelectModule,
 
     // Firebase Auth provider
     importProvidersFrom(provideAuth(() => getAuth())),

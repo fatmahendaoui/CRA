@@ -25,16 +25,29 @@ import { ListcongeComponent } from './components/listconge/listconge.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { DetailscongeComponent } from './components/detailsconge/detailsconge.component';
 
 const routes: Routes = [
   {
     path: 'add',
     component: AddcongeComponent
-  }
+  },
+  
+ {
+  path: 'details',
+  component: DetailscongeComponent
+},
+
+  {
+    path: 'details/:id',
+    component: DetailscongeComponent
+}
+
+
 ];
 
 @NgModule({
-  declarations: [AddcongeComponent, ListcongeComponent],
+  declarations: [AddcongeComponent, ListcongeComponent, DetailscongeComponent],
   imports: [
     CommonModule,
     HttpClientModule,
