@@ -1,155 +1,46 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { TranslocoService } from '@ngneat/transloco';
-import { getFirestore, collection,query, getDocs, doc, updateDoc,DocumentData,where } from 'firebase/firestore';
-import { DateService } from 'src/app/features/timesheet/services/date.service';
-import Swal from 'sweetalert2';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { differenceInDays } from 'date-fns';
-import { MatTooltip } from '@angular/material/tooltip';
-import { ProfileService } from 'src/app/services/profile.service';
-import { Auth } from '@angular/fire/auth';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CongeService } from '../../services/conge.service';
-import { getDoc } from '@angular/fire/firestore';
+import { getFirestore, collection,query, getDocs, doc, updateDoc,DocumentData,where,getDoc } from 'firebase/firestore';
+import Swal from 'sweetalert2';
+import { TranslocoService } from '@ngneat/transloco';
 
 @Component({
-  selector: 'app-listconge',
-  templateUrl: './listconge.component.html',
-  styleUrls: ['./listconge.component.scss']
+  selector: 'app-detailsconge',
+  templateUrl: './detailsconge.component.html',
+  styleUrls: ['./detailsconge.component.css']
 })
-export class ListcongeComponent<T> implements OnInit {
-  conges: any[] = [];
-  /*++++++++*/
+export class DetailscongeComponent implements OnInit {
+  congId: string | null;
+  congeDetails: any;
+  selectedCongeId: string | null; // Ajoutez selectedCongeId ici
+  
 
+  constructor(private route: ActivatedRoute, private router: Router, private congeService: CongeService,private translocoService: TranslocoService,) {}
 
-  filteredConges: any[] = []; // Tableau pour les congés filtrés
-  selectedStatus: string = 'awaiting'; // Par défaut, tous les congés sont affichés
-  displayedColumns: string[] = ['photo', 'dateDebut', 'nature', 'duree', 'comment', 'status', 'actions'];
-  public dataSource: MatTableDataSource<T>;
-  @ViewChild(MatPaginator, { static: true })
-  public paginator: MatPaginator;
-  @Input() data: any;
-  /*++++++*/
+  ngOnInit() {
+    this.route.paramMap.subscribe(params => {
+      this.congId = params.get('id');
+      console.log('ID du congé récupéré :', this.congId); 
 
-  constructor(private translocoService: TranslocoService, private profileService: ProfileService
-    , private auth: Auth, private congeService: CongeService
-  ) {
-  }
-
-  ngOnInit(): void {
-    this.loadConges();
-    this.dataSource = new MatTableDataSource(this.data ?? []);
-    this.dataSource.paginator = this.paginator; // Configuration du paginator
-    this.dataSource.filterPredicate = (data: any, filter: string) => {
-      const searchText = filter.trim().toLowerCase();
-      return Object.values(data).some(value =>
-        typeof value === 'string' && value.toLowerCase().includes(searchText)
-      );
-    };
-  }
-
-
-  async loadConges(): Promise<void> {
-    const firestore = getFirestore();
-    const congesCollectionRef = collection(firestore, 'conge123');
-
-    try {
-        const querySnapshot = await getDocs(congesCollectionRef);
-        querySnapshot.forEach(async (doc) => {
-            const data = doc.data() as { [key: string]: any, status: number };
-
-            this.getUserDomain().then(iddomain => {
-                if (data['domainId'] === iddomain) { // Vérifier la correspondance des domaines
-                    // Convertir la date de début en objet Date
-                    const dateDebutTimestamp = data['dateDebut'].toDate();
-                    const dateDebutFormatted = dateDebutTimestamp.toLocaleDateString(); // ou toLocaleString()
-
-                    // Convertir la date de fin en objet Date
-                    const dateFinTimestamp = data['dateFin'].toDate();
-                    const dateFinFormatted = dateFinTimestamp.toLocaleDateString(); // ou toLocaleString()
-
-                    // Ajouter le congé avec les dates converties
-                    this.conges.push({
-                        id: doc.id,
-                        ...data,
-                        dateDebutFormatted: dateDebutFormatted,
-                        dateFinFormatted: dateFinFormatted,
-                        statusLabel: this.getStatusLabel(data.status)
-                    });
-
-                    // Copier les congés dans filteredConges pour afficher tous les congés au début
-                    this.filterByStatus(this.selectedStatus);
-                }
-            });
-        });
-
-        console.log('Liste des congés:', this.conges);
-    } catch (error) {
-        console.error('Erreur lors du chargement des congés depuis Firestore:', error);
-    }
-}
-
-
-
-
-  async getUserDomain(): Promise<string | null> {
-    return new Promise<string | null>((resolve, reject) => {
-      const user = this.auth.currentUser;
-      if (user) {
-        this.profileService.getIdDomaine().then(domainId => {
-          resolve(domainId);
+      if (this.congId) {
+        this.congeService.getCongeById(this.congId).then(conge => {
+          this.congeDetails = { id: this.congId, ...conge }; 
+          console.log('Détails du congé récupérés :', this.congeDetails);
         }).catch(error => {
-          reject(error);
+          console.error('Erreur lors de la récupération des détails du congé :', error);
         });
-      } else {
-        reject('Aucun utilisateur connecté.');
       }
     });
   }
 
-
-  getStatusLabel(status: number): string {
-    switch (status) {
-      case 0:
-        return 'En attente';
-      case 1:
-        return 'Approuvé';
-      case 2:
-        return 'Refusé';
-      default:
-        return '';
-    }
-  }
-
-
-  // Méthode de filtrage des congés en fonction de l'état sélectionné
-  filterByStatus(status: string): void {
-    if (status === 'all') {
-      this.filteredConges = [...this.conges];
-    } else {
-      this.filteredConges = this.conges.filter(conge => conge.status === this.getStatusValue(status));
-    }
-    this.dataSource.data = this.filteredConges;
-  }
-
-  getStatusValue(status: string): number {
-    switch (status) {
-      case 'awaiting':
-        return 0;
-      case 'approved':
-        return 1;
-      case 'rejected':
-        return 2;
-      default:
-        return -1;
-    }
-
-    
-  }
+  
+  
   private isWeekendDay(year: number, month: number, day: number): boolean {
     const dayOfWeek = new Date(year, month, day).getDay();
     return dayOfWeek === 0 /* Sunday */ || dayOfWeek === 6 /* Saturday */;
   }
+
   monthToNumber(month: string): number {
     const monthMap: { [key: string]: number } = {
       January: 0,
@@ -168,9 +59,17 @@ export class ListcongeComponent<T> implements OnInit {
 
     return monthMap[month];
   }
- 
 
-  async validerConge(conge: any,numberOfDays: number): Promise<void> {
+
+  async validerConge(): Promise<void> {
+    // Vérifiez si les détails du congé sont définis
+    if (!this.congeDetails) {
+      console.error('Détails du congé non définis.');
+      return;
+    }
+    
+    const conge = this.congeDetails; // Récupérer les détails du congé
+  
     const firestore = getFirestore();
     const congDocRef = doc(firestore, 'conge123', conge.id);
 
@@ -195,8 +94,7 @@ export class ListcongeComponent<T> implements OnInit {
         await this.sendEmailToUser(conge.id);
 
         // Mettre à jour les congés filtrés pour retirer le congé approuvé
-        this.filteredConges = this.filteredConges.filter(c => c.id !== conge.id);
-        this.dataSource.data = this.filteredConges;
+        
     
         // Récupérer l'identifiant de l'utilisateur à partir des détails du congé
         const userId = conge.userId;
@@ -353,101 +251,6 @@ export class ListcongeComponent<T> implements OnInit {
   }    
 
 
-
-  async refuserConge(conge: any): Promise<void> {
-    const firestore = getFirestore();
-    const congDocRef = doc(firestore, 'conge123', conge.id);
-
-    try {
-      const { value: commentaire } = await Swal.fire({
-        title: this.translocoService.translate('features.conge.enter_comment'),
-        input: 'textarea',
-        inputPlaceholder: 'Ajouter un commentaire ',
-        showCancelButton: true,
-        confirmButtonText: this.translocoService.translate('common.confirm'),
-        cancelButtonText: this.translocoService.translate('common.cancel')
-      });
-
-      // Vérifier si un commentaire a été saisi
-      if (commentaire == '' || commentaire) {
-        const { isConfirmed } = await Swal.fire({
-          title: this.translocoService.translate('features.conge.reject_confirm'),
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: this.translocoService.translate('common.confirm'),
-          cancelButtonText: this.translocoService.translate('common.cancel')
-        });
-
-        // Mettre à jour le statut du congé seulement si l'utilisateur confirme
-        if (isConfirmed) {
-          await updateDoc(congDocRef, { status: 2, commentaire: commentaire });
-          console.log('Congé refusé avec succès.');
-          conge.status = 2;
-          conge.statusLabel = 'Refusé';
-
-          // Appel de la méthode sendEmailToUser avec l'ID du congé
-          await this.sendEmailToUser(conge.id);
-          // Mettre à jour les congés filtrés pour retirer le congé refusé
-          this.filteredConges = this.filteredConges.filter(c => c.id !== conge.id);
-          this.dataSource.data = this.filteredConges;
-
-        }
-      }
-    } catch (error) {
-      console.error('Erreur lors du refus du congé:', error);
-      this.showRefuseAlert('Erreur lors du refus du congé');
-    }
-  }
-
-
-  async showSuccessAlert(message: string): Promise<void> {
-    await Swal.fire({
-      title: this.translocoService.translate('common.success'),
-      text: message,
-      icon: 'success',
-      confirmButtonText: this.translocoService.translate('common.close'), // Texte du bouton de confirmation
-
-    });
-  }
-
-  async showRefuseAlert(message: string): Promise<void> {
-    await Swal.fire({
-      title: this.translocoService.translate('common.error'),
-      text: message,
-      icon: 'error',
-      confirmButtonText: this.translocoService.translate('common.close'), // Texte du bouton de confirmation
-
-    });
-  }
-
-
-
-  applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-  // Méthode pour formater la durée du congé
-  formatDuree(conge: any): string {
-    if (conge.duree === "Demi journée - le matin" || conge.duree === "Demi journée - l'après midi" || conge.duree === "Début de journée" || conge.duree === "Fin de journée") {
-      return "1/2 ";
-    } else {
-      const difference = differenceInDays(conge.dateFin.toDate(), conge.dateDebut.toDate()) + 1;
-      return `${difference} `;
-    }
-  }
-  // methode pour telcharge certif 
-  openFile(url: string): void {
-    window.open(url, '_blank');
-  }
-  async Congerefuser(conge: any) {
-  
-    Swal.fire({
-      text: conge.commentaire,
-      icon: 'warning',
-      showConfirmButton: false,
-    });
-
-  }
   async sendEmailToUser(congeId: string) {
     try {
       const congeDocRef = doc(getFirestore(), 'conge123', congeId);
@@ -479,5 +282,71 @@ export class ListcongeComponent<T> implements OnInit {
       // Gérez l'erreur de manière appropriée
     }
   }
+  
+  async showSuccessAlert(message: string): Promise<void> {
+    await Swal.fire({
+      title: this.translocoService.translate('common.success'),
+      text: message,
+      icon: 'success',
+      confirmButtonText: this.translocoService.translate('common.close'), // Texte du bouton de confirmation
 
+    });
+  }
+
+  async refuserConge(): Promise<void> {
+    // Vérifiez si les détails du congé sont définis
+    if (!this.congeDetails) {
+      console.error('Détails du congé non définis.');
+      return;
+    }
+    
+    const conge = this.congeDetails; // Récupérer les détails du congé
+  
+    const firestore = getFirestore();
+    const congDocRef = doc(firestore, 'conge123', conge.id);
+  
+    try {
+      const { value: commentaire } = await Swal.fire({
+        title: this.translocoService.translate('features.conge.enter_comment'),
+        input: 'textarea',
+        inputPlaceholder: 'Ajouter un commentaire ',
+        showCancelButton: true,
+        confirmButtonText: this.translocoService.translate('common.confirm'),
+        cancelButtonText: this.translocoService.translate('common.cancel')
+      });
+  
+      // Vérifier si un commentaire a été saisi
+      if (commentaire == '' || commentaire) {
+        const { isConfirmed } = await Swal.fire({
+          title: this.translocoService.translate('features.conge.reject_confirm'),
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: this.translocoService.translate('common.confirm'),
+          cancelButtonText: this.translocoService.translate('common.cancel')
+        });
+  
+        // Mettre à jour le statut du congé seulement si l'utilisateur confirme
+        if (isConfirmed) {
+          await updateDoc(congDocRef, { status: 2, commentaire: commentaire });
+          console.log('Congé refusé avec succès.');
+          conge.status = 2;
+          conge.statusLabel = 'Refusé';
+  
+          // Appel de la méthode sendEmailToUser avec l'ID du congé
+          await this.sendEmailToUser(conge.id);
+          // Mettre à jour les congés filtrés pour retirer le congé refusé
+          
+        }
+      }
+    } catch (error) {
+      console.error('Erreur lors du refus du congé:', error);
+      this.showRefuseAlert('Erreur lors du refus du congé');
+    }
+  }
+  
+  showRefuseAlert(arg0: string) {
+    throw new Error('Method not implemented.');
+  }
 }
+
+

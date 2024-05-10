@@ -1,0 +1,109 @@
+/* Style pour la section des détails du congé */
+.details-conge {
+    background-color: #f9f9f9;
+    padding: 25px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Style pour le titre */
+  .details-conge h2 {
+    margin-bottom: 5px;
+  }
+  
+  /* Style pour les détails */
+  .details-conge ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  /* Style pour chaque élément de détail */
+  .details-conge li {
+    margin-bottom: 20px;
+  }
+  
+  /* Style pour les éléments forts */
+  .details-conge li strong {
+    font-weight: bold;
+    margin-right: 5px;
+  }
+  
+  /* Style pour le nom d'utilisateur et l'image */
+  .details-conge .user-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Style pour le nom d'utilisateur */
+  .details-conge .user-info span {
+    margin-right: 10px;
+  }
+  
+  /* Style pour l'image utilisateur */
+  .details-conge .user-info img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ccc;
+  }
+  
+  .conge-status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-left: auto; /* Alignement à droite */
+  }
+  
+
+  .pending {
+    background-color: #fff2e5;
+    color: #ff9814;
+  }
+  
+  .approved {
+    background-color: #d8f5e6;
+    color: #17ba68;
+  }
+  
+  .rejected {
+    background-color: #ffebec;
+    color: #fb4e54;
+  }
+  
+  .text-center {
+    text-align: center;
+}
+
+.details-conge {
+    margin: auto;
+    width: 60%; /* ou toute autre largeur désirée */
+    height: 500px
+
+  }
+
+ 
+  .custom-button-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .custom-button-group button {
+   
+    color: #ED0F69;
+    
+    border-radius: 5px;
+    padding: 20px 20px;
+    font-size: 16px;
+    margin: 0; /* Réinitialiser la marge */
+    display: inline-block; 
+  }
+  
+  .custom-button-group button:not(:last-child) {
+    margin-right: 0; /* Supprimer la marge à droite pour tous les boutons sauf le dernier */
+  }
+  
