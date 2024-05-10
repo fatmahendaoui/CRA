@@ -1,0 +1,55 @@
+<div class="details-conge text-center" *ngIf="congeDetails">
+  <h2>Détails du Congé</h2>
+  <p class="user-info">
+    <img [src]="congeDetails.photourl" alt="User Photo" >
+    
+      Demande de congé envoyée par    {{ congeDetails.displayName }}
+      
+     
+        <span class="conge-status pending" *ngIf="congeDetails.status === 0">En attente</span>
+        <span class="conge-status approved" *ngIf="congeDetails.status === 1">Approuvé</span>
+        <span class="conge-status rejected" *ngIf="congeDetails.status === 2">Rejeté</span>
+    </p>
+  <br>
+  
+
+  <div class="details-container">
+    <ul>
+      <li><strong>Email:</strong> {{ congeDetails.email }}</li>
+      <li><strong>Date de début:</strong> {{ congeDetails.dateDebut.toDate() | date:'mediumDate' }}</li>
+      <li><strong>Date de fin:</strong> {{ congeDetails.dateFin.toDate() | date:'mediumDate' }}</li>
+      <li><strong>Durée:</strong> {{ congeDetails.duree }}</li>
+      <li><strong>Nature:</strong> {{ congeDetails.nature }}</li>
+      <li><strong>Nombre d'heures:</strong> {{ congeDetails.nombreHeures }} Heures</li>
+      <li>
+        <strong>Fichier:</strong>
+        <mat-icon (click)="showURL = !showURL">
+            <mat-icon>attach_file</mat-icon>
+        </mat-icon>
+        <span *ngIf="showURL">
+            <a [href]="congeDetails.url_sertif" target="_blank">
+                <img [src]="congeDetails.url_sertif" alt="Image du fichier" />
+            </a>
+        </span>
+        
+        
+      </li>
+    </ul>
+    <strong>Commentaire:</strong> {{ congeDetails.commentaires }}
+  </div>
+  
+  <br>
+ <div class="custom-button-group">
+  <button mat-icon-button (click)="validerConge(conge)">
+    <mat-icon>done_outline</mat-icon>
+  </button>
+  <button mat-icon-button (click)="refuserConge(conge)">
+    <mat-icon>block</mat-icon>
+  </button>
+</div>
+
+  
+
+</div>
+
+

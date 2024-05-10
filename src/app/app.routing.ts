@@ -10,6 +10,7 @@ import { NgModule } from '@angular/core';
 import { DashbordComponent } from './features/dashbord/dashbord.component';
 import { AddcongeComponent } from './features/conges/components/addconge/addconge.component';
 import { ListcongeComponent } from './features/conges/components/listconge/listconge.component';
+import { DetailscongeComponent } from './features/conges/components/detailsconge/detailsconge.component';
 
 
 
@@ -92,11 +93,31 @@ export const routes: Routes = [
 
       {
         path: 'conge',
+        canActivate: [() => isAdmin()], 
         loadChildren: () => import('./features/conges/conge.module')
           .then(({ CongeModule }) => CongeModule)
       },
+      
 
-      { path: 'listconge', component: ListcongeComponent },
+      {
+        path: 'listconge',
+        canActivate: [() => isAdmin()], 
+        component: ListcongeComponent
+      },
+
+      {
+        path: 'conge/details',
+        canActivate: [() => isAdmin()], 
+        component: DetailscongeComponent
+      },
+      
+      {
+        path: 'conge/details/:id',
+        canActivate: [() => isAdmin()], 
+        component: DetailscongeComponent
+      },
+      
+      
 
       {
         path: 'day_off',
