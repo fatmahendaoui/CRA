@@ -32,16 +32,16 @@ const routes: Routes = [
     path: 'add',
     component: AddcongeComponent
   },
-  
- {
-  path: 'details',
-  component: DetailscongeComponent
-},
+
+  {
+    path: 'details',
+    component: DetailscongeComponent
+  },
 
   {
     path: 'details/:id',
     component: DetailscongeComponent
-}
+  }
 
 
 ];

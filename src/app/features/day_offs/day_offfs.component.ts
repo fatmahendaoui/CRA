@@ -91,6 +91,7 @@ export class day_offComponent implements OnInit {
     )
       .then((result) => {
         if (result.isConfirmed) {
+          console.log("rrrrrrrr", result.isConfirmed);
           this.Day_offService.deletedaysoff(Date.date)
             .then(() => {
               this.fetchAll();

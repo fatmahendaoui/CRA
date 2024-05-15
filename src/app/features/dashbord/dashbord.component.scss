@@ -8,6 +8,8 @@
   justify-content: center; /* Centrer horizontalement */
   align-items: center; /* Centrer verticalement */
   background-color: white;
+  max-width: 100%; /* Assurez-vous que la table ne dépasse pas la largeur maximale */
+
 }
 .cra {
   // max-width: 103rem;
@@ -122,6 +124,3 @@
     }
   }
 }
-
-
-

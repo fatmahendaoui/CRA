@@ -4,7 +4,8 @@
       "users": "Gestion des utilisateurs",
       "settings": "Paramètres",
       "sign-out": "Se déconnecter",
-      "leaveToValidate": "Congé à Valider"    }
+      "leaveToValidate": "Congé à Valider"
+    }
   },
   "common": {
     "form": {
@@ -45,17 +46,15 @@
     "default": "Chargement en cours, Merci de patienter..."
   },
   "features": {
-    "dashbord":{
-      "dashbordvide":"Veuillez choisir votre projet",
-      "dashbordvideuser":"Veuillez choisir un utilisateur",
-      "Project":"Projet",
-      "user":"Utilisateur",
-      "Project-by-month":"Projet par mois",
+    "dashbord": {
+      "dashbordvide": "Veuillez choisir votre projet",
+      "dashbordvideuser": "Veuillez choisir un utilisateur",
+      "Project": "Projet",
+      "user": "Utilisateur",
+      "Project-by-month": "Projet par mois",
       "Project-by-user": "Projet par mois par utilisateur",
       "User-by-project": "Utilisateur par mois par projet"
-      
-
-    }, 
+    },
     "users": {
       "title": "Gestion des utilisateurs",
       "search": "Rechercher...",
@@ -102,15 +101,15 @@
       }
     },
     "projects": {
-      "List_Project":"Liste des projets",
+      "List_Project": "Liste des projets",
       "title": "Gestion des projets",
       "search": "Rechercher...",
       "add": "Ajouter un projet",
       "filter": "Filtre",
       "projectByMonth": "Projets Par Mois",
-  "userByMonthWithProject": "Utilisateur Par Mois avec Projet",
-  "projectByMonthOf": "Projet Par Mois de",
-  "in_year": "dans l'année",
+      "userByMonthWithProject": "Utilisateur Par Mois avec Projet",
+      "projectByMonthOf": "Projet Par Mois de",
+      "in_year": "dans l'année",
       "table": {
         "name": "Nom du projet",
         "actions": "Actions",
@@ -125,7 +124,7 @@
         "name": "Nom du projet",
         "users": "Utilisateurs",
         "action": "Ajouter",
-        "update":"Modifier"
+        "update": "Modifier"
       },
       "success": {
         "title": "Le projet est ajouté avec succès",
@@ -169,7 +168,7 @@
       }
     },
     "day_off": {
-      "list_day_off":"Liste des Jours Fériés",
+      "list_day_off": "Liste des Jours Fériés",
       "add-dialig-title": "Ajouter un jour",
       "title": "Jour de congé",
       "titre": "Time Sheet à valider",
@@ -179,7 +178,7 @@
       "Disponible": "Disponible",
       "Maladie": "Maladie",
       "Vacances": "Congé",
-      "update":"Le jour férié est modifié avec succès",
+      "update": "Le jour férié est modifié avec succès",
       "name": "Nom"
     },
     "settings": {
@@ -201,15 +200,14 @@
         "message": "Il y a une erreur vérifiez votre fichier JSON"
       }
     },
-    "timeshet":{
-      "j":"j",
-      "h":"h",
-      "heures":"heures",
-      "jours":"jours",
-      "total":"Total Mensuel",
-      "Save_Changes":"Enregistrer les modification",
-      "Submit_for_Validation":"Envoyer pour validation"
-
+    "timeshet": {
+      "j": "j",
+      "h": "h",
+      "heures": "heures",
+      "jours": "jours",
+      "total": "Total Mensuel",
+      "Save_Changes": "Enregistrer les modification",
+      "Submit_for_Validation": "Envoyer pour validation"
     },
     "conge": {
       "title": "Demandes de congé",
@@ -229,12 +227,13 @@
       "enter_comments": "Saisissez vos commentaires",
       "comment": "Commentaires",
       "validate_confirm": "Êtes-vous sûr de vouloir accepter ce congé ?",
-    "reject_confirm": "Êtes-vous sûr de vouloir refuser ce congé ?",
-    "enter_comment": "Ajouter un commentaire"
+      "reject_confirm": "Êtes-vous sûr de vouloir refuser ce congé ?",
+      "enter_comment": "Ajouter un commentaire",
+      "Request": "Demandes"
     },
-    "liste_conge":{
+    "liste_conge": {
       "title": "Liste des congés",
-      "day":"jour(s)",
+      "day": "jour(s)",
       "all": "Tout",
       "awaiting": "En attente",
       "approved": "Approuvé",
@@ -243,7 +242,17 @@
       "comment": "Commentaires",
       "status": "Statut",
       "actions": "Actions"
+    },
+    "detailsConge": {
+      "Created on": "Créé le",
+      "at": "à",
+      "by": "par",
+      "Nombre de jours": "Nombre de jours",
+      "Date de début": "Date de début",
+      "Date de fin": "Date de fin",
+      "NombreHeures": "Nombre d'heures",
+      "Accepter": "Accepter",
+      "Refuser": "Refuser"
     }
   }
-    }
-  
+}

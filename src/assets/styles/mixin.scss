@@ -12,7 +12,7 @@
   height: $height;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid gainsboro;
+  //border: 2px solid gainsboro;
   cursor: pointer;
   @extend .center;
 
@@ -51,7 +51,7 @@
       gap: 16px;
       position: relative;
       mat-icon{
-        color: #E11D74;
+        color: #E50060;
       }
     }
 

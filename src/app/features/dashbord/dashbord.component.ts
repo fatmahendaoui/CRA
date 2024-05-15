@@ -148,8 +148,8 @@ export class DashbordComponent implements OnInit {
       this.chartOptions = {
         series: this.data,
         chart: {
-          height: 500,
-          width: 1200,
+          height: 800,
+          width: 1250,
           type: "heatmap",
           background: '#FFFFFF'
         },
@@ -166,7 +166,7 @@ export class DashbordComponent implements OnInit {
           width: 0
         },
         colors: [
-          "#FFFFFF", "#F5C2D6",
+          "#FFFFFF", "#fec1db",
         ],
         plotOptions: {
           heatmap: {
@@ -287,7 +287,7 @@ export class DashbordComponent implements OnInit {
     this.chartOptionsuser = {
       series: this.dataUser,
       chart: {
-        height: 500,
+        height: 550,
         width: 1200,
         type: "heatmap",
         background: '#FFFFFF'
@@ -306,7 +306,7 @@ export class DashbordComponent implements OnInit {
       stroke: {
         width: 0
       },
-      colors: ["#FFFFFF", "#F5C2D6",],
+      colors: ["#FFFFFF", "#fec1db",],
       plotOptions: {
         heatmap: {
           colorScale: {
@@ -398,7 +398,7 @@ export class DashbordComponent implements OnInit {
       stroke: {
         width: 0
       },
-      colors: ["#FFFFFF", "#F5C2D6",],
+      colors: ["#FFFFFF", "#fec1db",],
       plotOptions: {
         heatmap: {
           colorScale: {
