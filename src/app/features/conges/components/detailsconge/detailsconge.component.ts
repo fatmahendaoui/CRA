@@ -73,7 +73,7 @@ export class DetailscongeComponent implements OnInit {
     const conge = this.congeDetails; // Récupérer les détails du congé
 
     const firestore = getFirestore();
-    const congDocRef = doc(firestore, 'conge123', conge.id);
+    const congDocRef = doc(firestore, 'conge', conge.id);
 
     try {
       const { isConfirmed } = await Swal.fire({
@@ -255,7 +255,7 @@ export class DetailscongeComponent implements OnInit {
 
   async sendEmailToUser(congeId: string) {
     try {
-      const congeDocRef = doc(getFirestore(), 'conge123', congeId);
+      const congeDocRef = doc(getFirestore(), 'conge', congeId);
       const congeSnapshot = await getDoc(congeDocRef);
       if (congeSnapshot.exists()) {
         const congeData = congeSnapshot.data();
@@ -305,7 +305,7 @@ export class DetailscongeComponent implements OnInit {
     const conge = this.congeDetails; // Récupérer les détails du congé
 
     const firestore = getFirestore();
-    const congDocRef = doc(firestore, 'conge123', conge.id);
+    const congDocRef = doc(firestore, 'conge', conge.id);
 
     try {
       const { value: commentaire } = await Swal.fire({

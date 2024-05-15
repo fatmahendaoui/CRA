@@ -276,9 +276,9 @@ export class TimesheetComponent implements OnInit {
     const timesheet: TimesheetItem[] = [];
     let currentWeek: TimesheetItem[] = [];
 
-    for (let i = 1; i <= numberOfDays; i++) {
+    for (let i = 1; i <= numberOfDays ; i++) {
       // Vérifiez si le jour est un jour de week-end ou un jour férié avant de l'ajouter
-      if (!this.isWeekendDay(year, this.monthToNumber(month), i) && !this.day_offs.includes(i)) {
+      if (!this.isWeekendDay(year, this.monthToNumber(month), i) ) {
         currentWeek.push({
           project: this.projectName,
           year: year,
@@ -299,6 +299,7 @@ export class TimesheetComponent implements OnInit {
       }
     }
 
+    
     return timesheet;
   }
 
@@ -368,13 +369,21 @@ export class TimesheetComponent implements OnInit {
   }
   day_offs: number[] = []
   init_total() {
+    
     this.resultTimesheet = this.generateTimesheet(this.year, this.nameMonth, this.numberDayNextMonth)
       .map((day) => ({
         ...day,
         isWeekend: this.isWeekendDay(day.year, this.month2, day.day),
         inputValue: day.nbHeure || '',
       }));
+      console.log('Days off:', this.day_offs);
+  
+    }
+  isDayOff(day: number): boolean {
+    const isDayOff = this.day_offs.includes(day);
+    return isDayOff;
   }
+  
   filterprojects() {
     this.day_offs = []
     this.day_offService.fetchAllKeyDay_off(this.nameMonth, this.year,this.profileService.profile.idDomaine).then(day_offs => {
@@ -384,7 +393,7 @@ export class TimesheetComponent implements OnInit {
         for (const key in project) {
           const MonthNumber = this.monthToNumber(this.getmonth(key));
           if (MonthNumber == this.month2 && this.year == this.getyear(key)) {
-            project.days = project[key].filter((day) => !this.isWeekendDay(day.year, this.month2, day.day) && !this.day_offs.includes(day.day));
+            project.days = project[key].filter((day) => !this.isWeekendDay(day.year, this.month2, day.day) );
             for (let index = 0; index < project.days.length; index++) {
               const element = project.days[index] === 0 ? '' : project.days[index] || '';
               element.nbHeure = element.nbHeure === 0 ? '' : element.nbHeure || '';
