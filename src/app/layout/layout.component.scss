@@ -1,5 +1,5 @@
 @use '../../assets/styles/mixin.scss' as avatar;
-
+// Styles for the header toolbar
 mat-toolbar {
   position: fixed;
   top: 0;
@@ -7,6 +7,8 @@ mat-toolbar {
   right: 0;
   z-index: 1000;
   background-color: white;
+  white-space: none;
+  //border-radius: 3px;
 
   /* Utilisation de gradient pour la bordure */
   &::after {
@@ -16,7 +18,9 @@ mat-toolbar {
     bottom: 0;
     width: 100%;
     height: 2px;
-    background: linear-gradient(to right, #E50060 40%, #193f77 100%);
+    background: #E50060;;
+
+    //background: linear-gradient(to right, #E50060 40%, #193f77 100%);
   }
 
   .logo-chips {
@@ -25,15 +29,15 @@ mat-toolbar {
     justify-content: space-between;
 
     .brand {
-      height: 62px;
+      height: 50px;
       width: auto;
       cursor: pointer;
       background-color: white;
-      padding: 8px 16px;
+      //padding: 6px 12px;
       border-radius: 16px;
 
       @media screen and (max-width: 774px) {
-        max-height: 55px;
+        max-height: 45px;
       }
     }
 
@@ -50,6 +54,14 @@ mat-toolbar {
       }
     }
   }
+  .mat-menu-item {
+    background-color: #E50060;
+    border: none;
+    border-radius: 10px;
+    padding:9px 18px; // Ajustez les valeurs de padding selon vos besoins
+    font-size: 0.80rem; // Ajustez la taille de la police selon vos besoins
+  }
+  
 
   .user-container-metadata {
     display: flex;
@@ -84,22 +96,99 @@ mat-toolbar {
   }
 }
 
+/* Styles pour la barre de menu horizontale */
+.horizontal-navbar {
+  position: fixed ;
+  top: 64px;;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+  height: 40px;
+  align-items: center;
+  background-color: #E50060;
+  //#ED0F69
+  @media screen and (max-width: 774px) {
+    position: relative;
+    top: 0px;;
+
+
+  }
+  @media screen and (max-width: 599px) {
+    .horizontal-navbar {
+      display: none; // Hide horizontal navbar on small screens
+    }
+  }
+}
+@media screen and (max-width: 1026px) {
+  .horizontal-navbar .custom-icon img {
+    width: 18px; /* Réduire la taille de l'image */
+    height: 18px;
+  }
+
+  .horizontal-navbar .custom-icon span {
+    font-size: 0.75rem; /* Réduire la taille du texte */
+  }
+}
+@media screen and (max-width: 988px) {
+  .horizontal-navbar .custom-icon img mat-icon{
+    width: 15px; /* Réduire la taille de l'image */
+    height: 15px;
+  }
+
+  .horizontal-navbar .custom-icon  {
+    font-size: 0.75rem; /* Réduire la taille du texte */
+  }
+}
+@media screen and (max-width: 768px) {
+  .horizontal-navbar .custom-icon img {
+    width: 26px; /* Réduire la taille de l'image */
+    height: 26px;
+  }
+  .horizontal-navbar .custom-icon mat-icon {
+    width: 0px; /* Réduire la taille de l'image */
+    height: 0px;
+  }
+  .horizontal-navbar .custom-icon  {
+    font-size: 0rem; /* Réduire la taille du texte */
+  }
+}
 .custom-icon {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #E50060;
-  font-size: medium;
-  font-weight: bold;
-  background-color: #fff;
+  font-size: small;
   border: none;
+  color: white;
+  background-color: transparent;
+  cursor: pointer; /* Changer le curseur en pointeur lorsqu'il survole le bouton */
 
+  .mat-icon{
+    color: white;
+    margin-right: 0%;
+  }
   img {
-    width: 28px;
-    height: 28px;
+    width: 22px;
+    height: 22px;
     max-width: 100%;
     max-height: 100%;
   }
+}
+
+.sidenav-container {
+  background-color: transparent !important;
+  margin-left: 18.5rem;  
+  margin-block: -1rem;
+  @media screen and (max-width: 1600px) {
+    margin-left: 6rem;  
+  }
+  
+  @media screen and (max-width: 1355px) {
+    margin-left: 1rem;
+  }
+  
 }
 
 ::ng-deep .mat-toolbar-row {
@@ -115,6 +204,9 @@ mat-toolbar {
 .max-width-container {
   max-width: 1350px;
   margin: auto;
+  @media screen and (max-width: 774px) {
+    margin-top: 0;
+  }
 }
 
 .layout-container {
@@ -124,12 +216,8 @@ mat-toolbar {
   height: auto;
  //background: #fdfdfd;
 
-  @media screen and (min-width: 774px) {
-    margin-top: 64px;
-  }
-
   @media screen and (max-width: 774px) {
-    margin-top: 0;
+    margin-top: 0 !important;
   }
 }
 
@@ -154,6 +242,7 @@ mat-toolbar {
 .user-avatar-trigger {
   @include avatar.avatar(40px, 40px);
   margin-right: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
 
   img {
     min-width: 40px;
@@ -170,7 +259,6 @@ mat-toolbar {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
 
   @media screen and (max-width: 774px) {
     margin: 0.5rem 0;
@@ -192,11 +280,10 @@ mat-toolbar {
 
 ::ng-deep .customize {
   min-width: 13.5rem;
-
   button {
     mat-icon {
       scale: 0.8;
-      color: #E11D74 !important;
+      color: #E50060 !important;
     }
 
   }
@@ -214,15 +301,25 @@ mat-toolbar {
 
 .select {
   display: inline-block;
-  
-  @media screen and (max-width: 472px) {
-    margin: 0 !important;
+  margin-right: 19.5rem;
+  font-size: medium;
+  @media screen and (max-width: 1600px) {
+    margin-right: 7rem;
   }
-}
-
-.select mat-form-field {
+  @media screen and (max-width: 1351px) {
+    margin-right: 2rem;
+  }
+  @media screen and (max-width: 774px) {
+    margin-right: 2rem;
+    span {
+      display: none; /* Masquer le texte sur les écrans plus petits */
+    }
+  }
+ mat-form-field {
   width: 8rem;
-
+  display: inline-flex; // Utiliser flexbox pour aligner les éléments horizontalement
+  align-items: center; 
+ 
   @media screen and (max-width: 472px) {
     width: 7rem;
   }
@@ -231,22 +328,33 @@ mat-toolbar {
 ::ng-deep .mat-mdc-select-value {
   font-size: 0.9rem;
   gap: 8px;
-  color: #E50060;
+  color: white; // Couleur du texte en blanc
   font-size: medium;
-  font-weight: bold;
+  align-items: center; // Aligner les éléments verticalement au centre
+  display: flex; // Utiliser flexbox pour aligner les éléments horizontalement
 }
-
+}
 .user-avatar-trigger {
   padding: 0;
 }
-
+.user-menu{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #E50060;
+  color: #fff;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .user-avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #E11D74;
+  background-color: #E50060;
   color: #fff;
-  font-size: 18px;
+  font-size: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -267,8 +375,18 @@ mat-toolbar {
   background-color: #e4ffe2;
   color: #46eb6a;
 }
-
 .no {
   background-color: #ffdede;
   color: #ff0000;
 }
+span {
+  color: #4F4747;
+  font-size: medium;
+  font-family: "Poppins", sans-serif !important;
+  flex: 1; /* Le texte prend tout l'espace disponible */
+}
+.content-container {
+  transition: margin-top 0.3s ease; /* Ajoutez une transition fluide */
+}
+
+

@@ -1,5 +1,5 @@
 import { NgClass, NgIf } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { Auth, User } from '@angular/fire/auth';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +14,9 @@ import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatBadgeModule } from '@angular/material/badge';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AuthService } from '../features/sign-in/services/auth.service';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
@@ -35,10 +38,16 @@ import { AuthService } from '../features/sign-in/services/auth.service';
     NgClass,
     MatBadgeModule,
     AngularFireModule,
-
+    MatSidenavModule,
+    MatListModule,
+    CommonModule
   ],
 })
 export class LayoutComponent implements OnInit, OnDestroy {
+
+  public showHorizontalNavbar: boolean = false;
+  public selectedLanguage: string = 'fr'; // Langue par défaut
+
   // Subject pour la gestion de la destruction du composant
   private readonly isDestroy$ = new Subject<void>();
   private readonly auth = inject(Auth);
@@ -60,6 +69,11 @@ export class LayoutComponent implements OnInit, OnDestroy {
     this.profileService.getUserRole().then((res) => {
       this.userRole = res;
     });
+    //defualt language
+    const defaultLanguage = localStorage.getItem('current_language');
+    if (defaultLanguage) {
+      this.selectedLanguage = defaultLanguage;
+    }
 
     const domaineId = this.profileService.profile.idDomaine;
     this.authService.getDomainName(domaineId).then((domaineName) => {
@@ -126,9 +140,32 @@ export class LayoutComponent implements OnInit, OnDestroy {
   }
 
   // Méthode appelée lors du changement de langue
+  /*
   public onSelectionChange(change: MatSelectChange): void {
     const { value } = change;
+    this.selectedLanguage = value; // Mettre à jour la langue sélectionnée
     this.transloco.setActiveLang(value); // Définir la langue active
     localStorage.setItem('current_language', value); // Sauvegarder la langue sélectionnée dans le stockage local
+  }*/
+  public onSelectionChange(language: string): void {
+    this.selectedLanguage = language; // Mettre à jour la langue sélectionnée
+    this.transloco.setActiveLang(language); // Définir la langue active
+    localStorage.setItem('current_language', language); // Sauvegarder la langue sélectionnée dans le stockage local
   }
+  public toggleHorizontalNavbar() {
+    this.showHorizontalNavbar = !this.showHorizontalNavbar;
+
+  }
+  // Méthode pour ouvrir le menu horizontal
+  /*
+  (mouseenter)="openHorizontalNavbar()" (mouseleave)="closeHorizontalNavbar()"
+  openHorizontalNavbar() {
+    this.showHorizontalNavbar = true;
+  }
+
+  // Méthode pour fermer le menu horizontal
+  closeHorizontalNavbar() {
+    this.showHorizontalNavbar = false;
+  }
+*/
 }

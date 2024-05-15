@@ -1,55 +1,95 @@
-<div class="details-conge text-center" *ngIf="congeDetails">
-  <h2>Détails du Congé</h2>
-  <p class="user-info">
-    <img [src]="congeDetails.photourl" alt="User Photo" >
-    
-      Demande de congé envoyée par    {{ congeDetails.displayName }}
-      
-     
-        <span class="conge-status pending" *ngIf="congeDetails.status === 0">En attente</span>
-        <span class="conge-status approved" *ngIf="congeDetails.status === 1">Approuvé</span>
-        <span class="conge-status rejected" *ngIf="congeDetails.status === 2">Rejeté</span>
-    </p>
-  <br>
-  
+<div class="btn-add">
+  <h1>
+    {{ 'features.conge.title' | transloco }}
+  </h1>
+</div>
+<!-- detaille de demande de conge -->
+<mat-card>
 
-  <div class="details-container">
-    <ul>
-      <li><strong>Email:</strong> {{ congeDetails.email }}</li>
-      <li><strong>Date de début:</strong> {{ congeDetails.dateDebut.toDate() | date:'mediumDate' }}</li>
-      <li><strong>Date de fin:</strong> {{ congeDetails.dateFin.toDate() | date:'mediumDate' }}</li>
-      <li><strong>Durée:</strong> {{ congeDetails.duree }}</li>
-      <li><strong>Nature:</strong> {{ congeDetails.nature }}</li>
-      <li><strong>Nombre d'heures:</strong> {{ congeDetails.nombreHeures }} Heures</li>
-      <li>
-        <strong>Fichier:</strong>
-        <mat-icon (click)="showURL = !showURL">
-            <mat-icon>attach_file</mat-icon>
-        </mat-icon>
-        <span *ngIf="showURL">
-            <a [href]="congeDetails.url_sertif" target="_blank">
-                <img [src]="congeDetails.url_sertif" alt="Image du fichier" />
-            </a>
-        </span>
-        
-        
-      </li>
-    </ul>
-    <strong>Commentaire:</strong> {{ congeDetails.commentaires }}
+  <div class="user-avatar-container">
+    <div class="user-info">
+      <mat-icon class="user-avatar">person</mat-icon>
+      <!--<mat-avatar class="user-avatar">
+        {{ getFirstLetter(user?.email) }} </mat-avatar>-->
+      <!-- Affichage de la date de création -->
+      <p>
+        {{ 'features.detailsConge.Created on' | transloco }} {{ congeDetails.dateEnvoi | date: 'EEEE, d MMMM yyyy' }} {{
+        'features.detailsConge.at' | transloco }}
+        {{ congeDetails.heureEnvoi }} {{ 'features.detailsConge.by' | transloco }} <b style="color: #E50060;">{{
+          congeDetails.displayName
+          }}</b>
+      </p>
+
+    </div>
+
+    <!-- Congé Status Chip -->
+    <mat-chip class="chips"
+      [ngClass]="{'chip-awaiting': congeDetails.status === 0, 'chip-approved': congeDetails.status === 1, 'chip-rejected': congeDetails.status === 2}">
+      <span *ngIf="congeDetails.status === 0"> {{ 'features.liste_conge.awaiting' | transloco }} </span>
+      <span *ngIf="congeDetails.status === 1"> {{ 'features.liste_conge.approved' | transloco }} </span>
+      <span *ngIf="congeDetails.status === 2"> {{ 'features.liste_conge.rejected' | transloco }} </span>
+    </mat-chip>
   </div>
-  
-  <br>
- <div class="custom-button-group">
-  <button mat-icon-button (click)="validerConge(conge)">
-    <mat-icon>done_outline</mat-icon>
-  </button>
-  <button mat-icon-button (click)="refuserConge(conge)">
-    <mat-icon>block</mat-icon>
-  </button>
-</div>
 
-  
+  <!-- Congé Details -->
+  <div class="details-container">
+    <div class="description">
+      <div class="Type-conge">
+        <span>
+          <h3>{{ 'features.conge.nature' | transloco }} :</h3>
+          <p>{{ congeDetails.nature }} </p>
+        </span>
+      </div>
+      <div class="Duree-conge">
+        <h3>{{ 'features.conge.leave_duration' | transloco }} :</h3>
+        <p>{{ congeDetails.duree }} </p>
+      </div>
+      <div class="Houre-conge">
+        <span class="detail-item">
+          <h3>{{ 'features.detailsConge.Nombre de jours' | transloco }} :</h3>
+          <p>{{ formatDuree(congeDetails) }}{{ 'features.liste_conge.day' |
+            transloco }}</p>
+        </span>
+        <span class="detail-item">
+          <h3>{{ 'features.detailsConge.Date de début' | transloco }} :</h3>
+          <p>{{ congeDetails.dateDebut.toDate() | date: 'dd/MM/yyyy' }} </p>
+        </span>
+        <span class="detail-item">
+          <h3>{{ 'features.detailsConge.Date de fin' | transloco }} :</h3>
+          <p>{{ congeDetails.dateFin.toDate() | date: 'dd/MM/yyyy' }} </p>
+        </span>
+        <span class="detail-item">
+          <h3>{{ 'features.detailsConge.NombreHeures' | transloco }} :</h3>
+          <p> {{ congeDetails.nombreHeures }} Hours</p>
+        </span>
+      </div>
+    </div>
 
-</div>
+    <!-- Certificate Section -->
+    <div class="certif" *ngIf="congeDetails.nature == 'Congé de maladie (1 jour)'">
+      <a href="{{ congeDetails.url_sertif }}" target="_blank" download>
+        <img *ngIf="congeDetails.url_sertif" [src]="congeDetails.url_sertif" alt="Certificat">
+      </a>
+    </div>
+  </div>
 
+  <!-- Comment Form -->
+  <div class="form-comment">
+    <mat-form-field appearance="outline" class="description">
+      <mat-label style="color: #193F77; font-size:22px;">
+        <b>{{ 'features.conge.comment' | transloco }}</b> </mat-label>
+      <textarea class="textarea" matInput type="text" [value]="congeDetails.commentaires"> </textarea>
+    </mat-form-field>
 
+    <!-- Button Container for Accepting/Rejecting Congé -->
+    <div class="button-container" *ngIf="congeDetails.status === 0">
+      <button mat-flat-button color="primary" (click)="validerConge(conge)">
+        {{ 'features.detailsConge.Accepter' | transloco }}
+      </button>
+
+      <button mat-flat-button color="primary" (click)="refuserConge(conge)">
+        {{ 'features.detailsConge.Refuser' | transloco }}
+      </button>
+    </div>
+  </div>
+</mat-card>

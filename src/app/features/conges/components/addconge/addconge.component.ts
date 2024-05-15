@@ -32,8 +32,8 @@ export class AddcongeComponent implements OnInit {
   status: string;
   userId: string | null;
 
-  congesParUtilisateur: any; 
-  leavesByUser:any;
+  congesParUtilisateur: any;
+  leavesByUser: any;
   congesLengths: { [userId: string]: number } = {};
   leavesLengths: { [userId: string]: number } = {};
 
@@ -45,9 +45,9 @@ export class AddcongeComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    
+
     this.fetchAndStoreFilteredConges();
-     this.fetchAndStoreFilteredLeaves();
+    this.fetchAndStoreFilteredLeaves();
     this.congeService
       .getUserAndDomainId()
       .then(({ user, domainId }) => {
@@ -62,7 +62,7 @@ export class AddcongeComponent implements OnInit {
       .catch((error) => {
         console.error('Erreur lors de la récupération de l\'utilisateur et de l\'ID de domaine:', error);
       });
-      
+
   }
 
 
@@ -70,22 +70,24 @@ export class AddcongeComponent implements OnInit {
     const userId = this.user ? this.user.uid : null;
     let nombreJours: number = differenceInDays(this.dateFin, this.dateDebut) + 1; // Ajouter 1 pour inclure la date de début
     let nombreHeures: number;
+    // Obtenez la date et l'heure actuelles
+    const currentDate = new Date();
 
     // Vérifier si la période contient un week-end
     let joursWeekend = 0;
     for (let i = 0; i < nombreJours; i++) {
-        const currentDate = addDays(this.dateDebut, i);
-        if (isSaturday(currentDate) || isSunday(currentDate)) {
-            joursWeekend++;
-        }
+      const currentDate = addDays(this.dateDebut, i);
+      if (isSaturday(currentDate) || isSunday(currentDate)) {
+        joursWeekend++;
+      }
     }
 
-    
+
     if (joursWeekend > 0) {
-        nombreJours -= 2;
+      nombreJours -= 2;
     }
 
-    
+
     switch (this.dureeConge) {
 
       case "Demi journée - le matin":
@@ -128,13 +130,15 @@ export class AddcongeComponent implements OnInit {
       userId: userId,
       status: 0,
     };
-
+    // Définissez les propriétés de date et d'heure dans l'objet conge
+    conge.dateEnvoi = currentDate.toISOString().split('T')[0]; // Date au format ISO
+    conge.heureEnvoi = currentDate.toLocaleTimeString(); // Heure au format local
     try {
       const congeId = await this.congeService.addConge(conge);
 
       if (congeId) {
-       
-        
+
+
         // Vérifier si la nature du congé est 'Congé de maladie (1 jour)'
         if (this.natureConge === 'Congé de maladie (1 jour)' && this.selectedFile) {
           const path = `sertif_conge/${congeId}/${this.selectedFile.name}`;
@@ -144,6 +148,8 @@ export class AddcongeComponent implements OnInit {
             const downloadURL = await snapshot.ref.getDownloadURL();
             console.log('URL de téléchargement:', downloadURL);
             await this.congeService.updateCongeWithFileURLAndCongeId(downloadURL, congeId);
+            conge.url_certif = downloadURL;
+
           }).catch((error) => {
             console.error('Erreur lors du téléchargement du fichier:', error);
           });
@@ -197,51 +203,46 @@ export class AddcongeComponent implements OnInit {
     this.selectedFile = event.target.files[0];
   }
 
-  
-
-
   async fetchAndStoreFilteredConges(): Promise<void> {
     const firestore = getFirestore();
     const congesCollectionRef = collection(firestore, 'conge123');
     const currentYear = new Date().getFullYear();
-  
     // Tableau pour stocker les congés filtrés
     const congesFiltres: DocumentData[] = [];
-  
     try {
-      const q = query(congesCollectionRef, 
+      const q = query(congesCollectionRef,
         where('status', '==', 1),
         where('year', '==', currentYear), // Ajout de la condition pour l'année actuelle
         where('nature', '==', 'Congé de maladie (1 jour)') // Ajout de la condition pour la nature du congé
       );
-  
+
       const querySnapshot = await getDocs(q);
-  
+
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         congesFiltres.push(data); // Ajouter le congé filtré au tableau des congés filtrés
       });
-  
-  
+
+
       // Créer un objet pour stocker les congés de chaque utilisateur
       const congesParUtilisateur: { [userId: string]: DocumentData[] } = {};
-  
+
       // Parcourir les congés filtrés
       congesFiltres.forEach(conge => {
         const userId = conge['userId']; // Supposons que l'ID de l'utilisateur est stocké dans un champ 'userId'
-  
+
         // Vérifier si l'utilisateur a déjà des congés dans l'objet congesParUtilisateur
         if (!congesParUtilisateur[userId]) {
           // Si l'utilisateur n'a pas encore de congés, initialiser un tableau vide
           congesParUtilisateur[userId] = [];
         }
-  
+
         // Ajouter le congé à l'objet congesParUtilisateur sous la clé correspondant à l'ID de l'utilisateur
         congesParUtilisateur[userId].push(conge);
-        
+
       });
-  
-     
+
+
       for (const userId in congesParUtilisateur) {
         if (Object.prototype.hasOwnProperty.call(congesParUtilisateur, userId)) {
           const congesLength = congesParUtilisateur[userId].length;
@@ -256,8 +257,6 @@ export class AddcongeComponent implements OnInit {
   }
 
 
-
-
   async fetchAndStoreFilteredLeaves(): Promise<void> {
     const firestore = getFirestore();
     const leavesCollectionRef = collection(firestore, 'conge123');
@@ -266,43 +265,39 @@ export class AddcongeComponent implements OnInit {
     const capitalizedMonth: string = currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1);
 
 
-  
+
     // Tableau pour stocker les congés filtrés
     const leavesFiltered: DocumentData[] = [];
-  
+
     try {
-      const q = query(leavesCollectionRef, 
-       
+      const q = query(leavesCollectionRef,
+
         where('nombreHeures', '==', 2),
         where('status', '==', 1),
         where('month', '==', capitalizedMonth),
-      
-
-
-
       );
-  
+
       const querySnapshot = await getDocs(q);
-  
+
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         leavesFiltered.push(data);
       });
-  
+
       // Créer un objet pour stocker les congés de chaque utilisateur
       const leavesByUser: { [userId: string]: DocumentData[] } = {};
-  
+
       // Parcourir les congés filtrés
       leavesFiltered.forEach(leave => {
         const userId = leave['userId'];
-  
+
         if (!leavesByUser[userId]) {
           leavesByUser[userId] = [];
         }
-  
+
         leavesByUser[userId].push(leave);
       });
-  
+
       // Afficher les congés pour chaque utilisateur
       console.log('autorisation  par utilisateur:', leavesByUser);
 
@@ -322,4 +317,4 @@ export class AddcongeComponent implements OnInit {
 
 
 
-  
+

@@ -91,11 +91,12 @@ export class day_offComponent implements OnInit {
     )
       .then((result) => {
         if (result.isConfirmed) {
+          console.log("rrrrrrrr", result.isConfirmed);
           this.Day_offService.deletedaysoff(Date.date)
             .then(() => {
               this.fetchAll();
               handleResponseSuccessWithAlerts(
-                this.transloco.translate('features.day_off.success'),
+                this.transloco.translate('features.day_off.successdeleted'),
                 '',
                 this.transloco.translate('common.close'),
                 () => { }

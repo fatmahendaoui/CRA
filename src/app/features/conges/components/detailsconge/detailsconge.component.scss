@@ -1,0 +1,169 @@
+.user-avatar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.user-avatar {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background-color: #E50060;
+  color: #fff;
+  font-size: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/*-------------status--------------------*/
+.chips {
+  border-radius: 28px;
+  padding: 6px 12px;
+  font-weight: bold;
+  font-size: 13px;
+  justify-content: right;
+  margin-top: 20px;
+
+}
+
+.chip-awaiting {
+  background-color: #fff2e5;
+  color: #ff9814;
+}
+
+.chip-approved {
+  background-color: #d8f5e6;
+  color: #17ba68;
+}
+
+.chip-rejected {
+  background-color: #ffebec;
+  color: #fb4e54;
+}
+
+/* Réactivité pour les appareils mobiles *//*
+@media (max-width: 768px) {
+  .user-avatar {
+    width: 30vw;
+    height: 30vw;
+    font-size: 16vw;
+  }
+}*/
+.user-info {
+  display: flex;
+  align-items: center; /* Pour aligner les éléments sur la même ligne */
+  p{
+    margin-left: 15px;
+    margin-top: 20px;
+    font-size: 18px;
+    color: #4F4747;
+    font-size: medium;
+    font-family: "Poppins", sans-serif !important;
+    flex: 1;
+  }
+}
+/**details-container */
+.details-container{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  margin-left: 20px;
+  //margin-right: 150px;
+  //align-items: center; 
+}
+.Type-conge ,
+.Duree-conge ,
+.Houre-conge ,
+.Commentaire{
+  h3{
+    display: inline; /* Display as inline elements */
+    margin-right: 20px; /* Add some margin between the header and paragraph */
+    color: #193F77;
+    font-size: 18px;
+    font-family: "Poppins", sans-serif !important;
+    letter-spacing: normal;
+    margin-bottom: 6px;
+    font-weight: 600; // Semi-bold
+  }
+
+}
+.Type-conge,
+.Duree-conge ,
+.Houre-conge ,
+.Commentaire  {
+  margin-bottom: 10px; /* Add some spacing between each item */
+
+  p{ 
+    display: inline; /* Display as inline elements */
+    margin: 0; /* Remove any default margin */
+  }}
+  .Houre-conge {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .detail-item {
+    margin-bottom: 10px; /* Add some spacing between each item */
+  }
+.certif {
+  display: flex;
+  align-items:end;
+  max-width: 800px; /* Set a maximum width if needed */
+
+  img {
+  width: 50%; /* Set the width to 100% of its container */
+  height: auto; /* Maintain aspect ratio */
+  max-width: 800px; /* Set a maximum width if needed */
+  display: block; /* Ensure it's treated as a block element */
+  margin: auto; /* Center horizontally */
+}
+}
+.description{
+  margin-left: 100px;
+  p{
+    font-size: 16px;
+    color: #4F4747;
+    font-size: medium;
+    font-family: "Poppins", sans-serif !important;
+    flex: 1;
+   // margin-left: 150px;
+
+  }
+
+}
+ /*------Commentaire-------*/
+ .form-comment {
+  padding: 16px;
+  display: flex;
+  flex-direction: row;
+  background-color: #fff;
+  margin-top: 8px;
+margin-right: 10px;
+  .textarea {
+    height: 69px;
+  }
+
+  .description {
+    flex-grow: 1;
+    margin-right: 8px;
+    border-color: #E50060;
+    /*
+border-radius: 6px;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);*/
+  }
+
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    button {
+      margin-bottom: 4px;
+      margin-right: 4px;
+    }
+  }
+}

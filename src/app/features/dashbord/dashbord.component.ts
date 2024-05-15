@@ -1,10 +1,13 @@
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { ProjectService } from '../projects/services/projects.service';
 import { ChartComponent } from 'ng-apexcharts';
 import { Months } from '../timesheet/models/dates.constants';
 import { DateService } from '../timesheet/services/date.service';
 import { UsersService } from '../users/services/users.service';
 import { Profile } from 'src/app/models/profile.model';
+import { TranslocoService } from '@ngneat/transloco';
+import { CssSelector } from '@angular/compiler';
+import { style } from '@angular/animations';
 
 @Component({
   selector: 'app-dashbord',
@@ -14,7 +17,9 @@ import { Profile } from 'src/app/models/profile.model';
 export class DashbordComponent implements OnInit {
   private readonly projectService = inject(ProjectService);
   private readonly DateService = inject(DateService);
+  private readonly transloco = inject(TranslocoService);
   @ViewChild("chart") chart: ChartComponent;
+
   data: any;
   public chartOptions: any;
   public chartOptionsuser: any;
@@ -35,10 +40,10 @@ export class DashbordComponent implements OnInit {
   searchUser: string = '';
   filteredUsers: string[] = [];
   projectFilter: string = '';
-  
+
 
   ngOnInit() {
-    
+
     this.filteredUsers = this.listuser;
     this.theDate = new Date();
     if (this.theDate) {
@@ -48,7 +53,7 @@ export class DashbordComponent implements OnInit {
     this.listuser = [];
     // Assurez-vous que filteredUsers est également initialisé avec la liste complète des utilisateurs
     this.filteredUsers = this.listuser;
-    
+
 
     this.getallProjectwithsommeNumber();
   }
@@ -57,15 +62,15 @@ export class DashbordComponent implements OnInit {
   filterUsers() {
     // Filter the list of users based on the search query
     this.filteredUsers = this.listuser.filter(user =>
-        user.toLowerCase().includes(this.searchUser.toLowerCase())
+      user.toLowerCase().includes(this.searchUser.toLowerCase())
     );
   }
 
-   get filteredProjects(): any[] {
-        return this.data.filter(project =>
-            project.name.toLowerCase().includes(this.projectFilter.toLowerCase())
-        );
-    }
+  get filteredProjects(): any[] {
+    return this.data.filter(project =>
+      project.name.toLowerCase().includes(this.projectFilter.toLowerCase())
+    );
+  }
 
 
   getallProjectwithsommeNumber() {
@@ -95,13 +100,17 @@ export class DashbordComponent implements OnInit {
             projectTotalHours += totalHours;
           }
         }
-
+        // Apply style to project name (assuming projectName is a string)
+        const styledProjectName = `<span style='color: #193F77; font-weight: bold; font-size: 20px;'>${projectName}</span>`;
         const data = monthlyData.map((hours, index) => ({
           x: this.months[index],
           y: hours
         }));
 
-        result.push({ name: projectName, data: data });
+        result.push({
+          name: projectName,
+          data: data
+        });
         if (!this.listuser.includes(project.displayName)) {
           this.listuser.push(project.displayName);
         }
@@ -125,22 +134,24 @@ export class DashbordComponent implements OnInit {
       result.unshift({ name: 'Total', data: totalsData });
 
       this.data = this.processProjects(result);
-      
-      let x=0;
-      this.data.map(list=>{
-       list.data.map(li=>{
-        if(li.x =="Total"){
-          x=x+li.y
-        }
-       })
-      })      
-      this.data[0].data[12].y=x;
+
+
+      let x = 0;
+      this.data.map(list => {
+        list.data.map(li => {
+          if (li.x == "Total") {
+            x = x + li.y
+          }
+        })
+      })
+      this.data[0].data[12].y = x;
       this.chartOptions = {
         series: this.data,
         chart: {
-          height: 500,
-          width: 1200,
-          type: "heatmap"
+          height: 800,
+          width: 1250,
+          type: "heatmap",
+          background: '#FFFFFF'
         },
         tooltip: {
           enabled: false,
@@ -148,13 +159,15 @@ export class DashbordComponent implements OnInit {
           intersect: false,
           x: {
             show: false,
-            format: "dd.MM.yyyy hh:mm:ss"
+            format: "dd.MM.yyyy hh:mm:ss",
           }
         },
         stroke: {
           width: 0
         },
-        colors: ["transparent"],
+        colors: [
+          "#FFFFFF", "#fec1db",
+        ],
         plotOptions: {
           heatmap: {
             colorScale: {
@@ -167,18 +180,28 @@ export class DashbordComponent implements OnInit {
         dataLabels: {
           enabled: true,
           formatter: function (val, opts) {
-            if (opts.seriesIndex === 0) {
-              opts.w.config.dataLabels.style.fontFamily = '20px'
-              opts.w.config.dataLabels.style.fontWeight = '900'
+            /* if (opts.seriesIndex === 0) {
+               opts.w.config.dataLabels.style.fontFamily = '20px'
+               opts.w.config.dataLabels.style.fontWeight = '900'
+ 
+             } else {
+               opts.w.config.dataLabels.style.fontWeight = '600'
+               opts.w.config.dataLabels.style.fontFamily = undefined
+             }*/
+            // Vérifier si c'est la ligne ou la colonne "Total"
 
-            } else {
-              opts.w.config.dataLabels.style.fontWeight = '600'
-              opts.w.config.dataLabels.style.fontFamily = undefined
-            }
+            const isTotal = val === "Total" || opts.seriesIndex === 0 || opts.dataPointIndex === opts.w.config.series[0].data.length - 1;
+
+            // Appliquer le style en gras si c'est "Total", sinon le style normal
+            opts.w.config.dataLabels.style.fontWeight = isTotal ? 'bold' : 'normal';
+            // Appliquer le style de la police uniquement pour la ligne ou la colonne "Total"
+            opts.w.config.dataLabels.style.fontFamily = isTotal ? '30px' : undefined;
+
             return val.toString().replace('.', ',');
+
           },
           style: {
-            colors: ["#000000"]
+            colors: ["#193F77"]
           },
 
         },
@@ -187,16 +210,30 @@ export class DashbordComponent implements OnInit {
           position: 'top',
           tooltip: {
             enabled: false
+          },
+          labels: {
+            show: true,
+            floating: true,
+            style: {
+              colors: '#193F77',
+              fontSize: '12px',
+              fontFamily: 'Arial',
+              fontWeight: 'bold',
+            }
           }
         },
         title: {
-          text: "Project By Month "+this.year
+          text: this.transloco.translate('features.projects.projectByMonth') + ' ' + this.year,
+          style: {
+            color: '#E50060',
+            margin: '20px 0', // Add margin top and bottom
+          }
         }
       };
 
     })
   }
-  
+
 
   processProjects(projects) {
     let processedProjects: any = [];
@@ -244,15 +281,18 @@ export class DashbordComponent implements OnInit {
     this.loader = false;
     let result: any = [];
     this.dataUser = null;
-    
+
     result = this.calculateHoursWorkedByMonth(this.allvalues, this.currentProject, this.year);
     this.dataUser = result;
     this.chartOptionsuser = {
       series: this.dataUser,
       chart: {
-        height: 500,
+        height: 550,
         width: 1200,
-        type: "heatmap"
+        type: "heatmap",
+        background: '#FFFFFF'
+      }, markers: {
+        colors: ['#F44336', '#E91E63', '#9C27B0']
       },
       tooltip: {
         enabled: false,
@@ -266,7 +306,7 @@ export class DashbordComponent implements OnInit {
       stroke: {
         width: 0
       },
-      colors: ["transparent"],
+      colors: ["#FFFFFF", "#fec1db",],
       plotOptions: {
         heatmap: {
           colorScale: {
@@ -277,30 +317,53 @@ export class DashbordComponent implements OnInit {
       },
       dataLabels: {
         enabled: true,
-         formatter: function (val, opts) {
-            if (opts.seriesIndex === 0) {
-              opts.w.config.dataLabels.style.fontFamily = '20px'
-              opts.w.config.dataLabels.style.fontWeight = '900'
+        formatter: function (val, opts) {
+          /* if (opts.seriesIndex === 0) {
+             opts.w.config.dataLabels.style.fontFamily = '20px'
+             opts.w.config.dataLabels.style.fontWeight = '900'
+ 
+           } else {
+             opts.w.config.dataLabels.style.fontWeight = '600'
+             opts.w.config.dataLabels.style.fontFamily = undefined
+           }*/
+          // Vérifier si c'est la ligne ou la colonne "Total"
+          const isTotal = val === "Total" || opts.seriesIndex === 0 || opts.dataPointIndex === opts.w.config.series[0].data.length - 1;
 
-            } else {
-              opts.w.config.dataLabels.style.fontWeight = '600'
-              opts.w.config.dataLabels.style.fontFamily = undefined
-            }
-            return val.toString().replace('.', ',');
-          },
-          style: {
-            colors: ["#000000"]
-          },
+          // Appliquer le style en gras si c'est "Total", sinon le style normal
+          opts.w.config.dataLabels.style.fontWeight = isTotal ? 'bold' : 'normal';
+
+          // Appliquer le style de la police uniquement pour la ligne ou la colonne "Total"
+          opts.w.config.dataLabels.style.fontFamily = isTotal ? '20px' : undefined;
+          return val.toString().replace('.', ',');
+        },
+        style: {
+          colors: ["#193F77"]
+        },
       },
       xaxis: {
         type: "category",
         position: 'top',
         tooltip: {
           enabled: false
+        },
+        labels: {
+          show: true,
+          floating: true,
+          style: {
+            colors: '#193F77',
+            fontSize: '12px',
+            fontFamily: 'Arial',
+            fontWeight: 'bold',
+          }
         }
       },
       title: {
-        text: "User By Month with Project "+this.currentProject+ ' in year '+this.year
+        text: this.transloco.translate('features.projects.userByMonthWithProject') + ' ' + this.currentProject + ' in year ' + this.year
+        , style: {
+          color: '#E50060',
+          margin: '20px 0', // Add margin top and bottom
+
+        }
       }
     };
     this.loader = true;
@@ -312,14 +375,16 @@ export class DashbordComponent implements OnInit {
     this.dataProject = null;
     result = this.calculateHoursWorkedByMonthinuser(this.allvalues, this.currentuser, this.year);
     console.log(result);
-    
+
     this.dataProject = result;
     this.chartOptionsproject = {
       series: this.dataProject,
       chart: {
         height: 500,
         width: 1200,
-        type: "heatmap"
+        type: "heatmap",
+        background: '#FFFFFF'
+
       },
       tooltip: {
         enabled: false,
@@ -333,7 +398,7 @@ export class DashbordComponent implements OnInit {
       stroke: {
         width: 0
       },
-      colors: ["transparent"],
+      colors: ["#FFFFFF", "#fec1db",],
       plotOptions: {
         heatmap: {
           colorScale: {
@@ -344,30 +409,51 @@ export class DashbordComponent implements OnInit {
       },
       dataLabels: {
         enabled: true,
-         formatter: function (val, opts) {
-            if (opts.seriesIndex === 0) {
-              opts.w.config.dataLabels.style.fontFamily = '20px'
-              opts.w.config.dataLabels.style.fontWeight = '900'
+        formatter: function (val, opts) {
+          /* if (opts.seriesIndex === 0) {
+             opts.w.config.dataLabels.style.fontFamily = '20px'
+             opts.w.config.dataLabels.style.fontWeight = '900'
+ 
+           } else {
+             opts.w.config.dataLabels.style.fontWeight = '600'
+             opts.w.config.dataLabels.style.fontFamily = undefined
+           }*/
+          // Vérifier si c'est la ligne ou la colonne "Total"
+          const isTotal = val === "Total" || opts.seriesIndex === 0 || opts.dataPointIndex === opts.w.config.series[0].data.length - 1;
+          // Appliquer le style en gras si c'est "Total", sinon le style normal
+          opts.w.config.dataLabels.style.fontWeight = isTotal ? 'bold' : 'normal';
 
-            } else {
-              opts.w.config.dataLabels.style.fontWeight = '600'
-              opts.w.config.dataLabels.style.fontFamily = undefined
-            }
-            return val.toString().replace('.', ',');
-          },
-          style: {
-            colors: ["#000000"]
-          },
+          // Appliquer le style de la police uniquement pour la ligne ou la colonne "Total"
+          opts.w.config.dataLabels.style.fontFamily = isTotal ? '60px' : undefined;
+          return val.toString().replace('.', ',');
+        },
+        style: {
+          colors: ["#193F77"]
+        },
       },
       xaxis: {
         type: "category",
         position: 'top',
         tooltip: {
           enabled: false
+        },
+        labels: {
+          show: true,
+          floating: true,
+          style: {
+            colors: '#193F77',
+            fontSize: '12px',
+            fontFamily: 'Arial',
+            fontWeight: 'bold',
+          }
         }
       },
       title: {
-        text: "Project By Month of "+ this.currentuser+" in year "+this.year
+        text: this.transloco.translate('features.projects.projectByMonthOf') + ' ' + this.currentuser + ' ' + this.transloco.translate('features.projects.in_year') + ' ' + this.year
+        , style: {
+          color: '#E50060',
+          margin: '20px 0'
+        }
       }
     };
     this.loader = true;
@@ -428,15 +514,15 @@ export class DashbordComponent implements OnInit {
       .map((item) => {
         const name = this.capitalizeFirstLetter(item.name);
         const data: any = [];
-  
+
         // Create an object to store monthly data
         const monthData = {};
-  
+
         // Initialize monthData with 0 for each month
         this.months2.forEach((month) => {
           monthData[month] = 0;
         });
-  
+
         for (const key in item) {
           if (key !== "displayName" && key !== "name" && key.includes(`${year}`)) {
             const month = key.split("_")[0];
@@ -444,7 +530,7 @@ export class DashbordComponent implements OnInit {
             monthData[month] = monthValue;
           }
         }
-  
+
         // Calculate row total
         let rowTotal = 0;
         this.months2.forEach((month) => {
@@ -452,13 +538,13 @@ export class DashbordComponent implements OnInit {
           rowTotal += monthValue;
           data.push({ x: month, y: monthValue });
         });
-  
+
         // Add row total to the data structure
         data.push({ x: "Total", y: rowTotal });
-  
+
         return { name, data };
       });
-  
+
     // Calculate column totals
     const columnTotals = {};
     this.months.forEach((month) => {
@@ -471,17 +557,17 @@ export class DashbordComponent implements OnInit {
       });
       columnTotals[month] = columnTotal;
     });
-  
+
     // Add column totals to the result
     result.unshift({
       name: "Total",
       data: this.months.map((month) => ({ x: month, y: columnTotals[month] })),
     });
-  
+
     return result;
   }
-  
-  
+
+
 
   capitalizeFirstLetter(inputString: string): string {
     if (inputString.length === 0) {
