@@ -51,7 +51,7 @@ export class ListcongeComponent<T> implements OnInit {
 
   async loadConges(): Promise<void> {
     const firestore = getFirestore();
-    const congesCollectionRef = collection(firestore, 'conge123');
+    const congesCollectionRef = collection(firestore, 'conge');
 
     try {
         const querySnapshot = await getDocs(congesCollectionRef);
@@ -172,7 +172,7 @@ export class ListcongeComponent<T> implements OnInit {
 
   async validerConge(conge: any,numberOfDays: number): Promise<void> {
     const firestore = getFirestore();
-    const congDocRef = doc(firestore, 'conge123', conge.id);
+    const congDocRef = doc(firestore, 'conge', conge.id);
 
     try {
       const { isConfirmed } = await Swal.fire({
@@ -356,7 +356,7 @@ export class ListcongeComponent<T> implements OnInit {
 
   async refuserConge(conge: any): Promise<void> {
     const firestore = getFirestore();
-    const congDocRef = doc(firestore, 'conge123', conge.id);
+    const congDocRef = doc(firestore, 'conge', conge.id);
 
     try {
       const { value: commentaire } = await Swal.fire({
@@ -450,7 +450,7 @@ export class ListcongeComponent<T> implements OnInit {
   }
   async sendEmailToUser(congeId: string) {
     try {
-      const congeDocRef = doc(getFirestore(), 'conge123', congeId);
+      const congeDocRef = doc(getFirestore(), 'conge', congeId);
       const congeSnapshot = await getDoc(congeDocRef);
       if (congeSnapshot.exists()) {
         const congeData = congeSnapshot.data();

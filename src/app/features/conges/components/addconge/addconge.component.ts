@@ -205,7 +205,7 @@ export class AddcongeComponent implements OnInit {
 
   async fetchAndStoreFilteredConges(): Promise<void> {
     const firestore = getFirestore();
-    const congesCollectionRef = collection(firestore, 'conge123');
+    const congesCollectionRef = collection(firestore, 'conge');
     const currentYear = new Date().getFullYear();
     // Tableau pour stocker les congés filtrés
     const congesFiltres: DocumentData[] = [];
@@ -259,7 +259,7 @@ export class AddcongeComponent implements OnInit {
 
   async fetchAndStoreFilteredLeaves(): Promise<void> {
     const firestore = getFirestore();
-    const leavesCollectionRef = collection(firestore, 'conge123');
+    const leavesCollectionRef = collection(firestore, 'conge');
     const currentYear = new Date().getFullYear();
     const currentMonth: string = new Date().toLocaleString('en-US', { month: 'long' });
     const capitalizedMonth: string = currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1);

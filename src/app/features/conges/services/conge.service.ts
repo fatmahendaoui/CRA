@@ -84,7 +84,7 @@ export class CongeService {
         // Ajout du champ dateF
       };
 
-      const congeCollectionRef = collection(this.firestore, 'conge123');
+      const congeCollectionRef = collection(this.firestore, 'conge');
       const docRef = await addDoc(congeCollectionRef, newConge);
       console.log('Congé ajouté avec succès, ID:', docRef.id);
       return docRef.id; // Retourne l'ID du document ajouté
@@ -133,7 +133,7 @@ export class CongeService {
 
   async updateCongeWithFileURLAndCongeId(downloadURL: string, congeId: string): Promise<void> {
     try {
-      const congeDocRef = doc(this.firestore, 'conge123', congeId);
+      const congeDocRef = doc(this.firestore, 'conge', congeId);
       await updateDoc(congeDocRef, { url_sertif: downloadURL });
       console.log('URL de téléchargement ajoutée au document Congé.');
     } catch (error) {
@@ -210,7 +210,7 @@ export class CongeService {
   }
   async getCongeById(congId: string): Promise<any> {
     try {
-      const congeDocRef = doc(this.firestore, 'conge123', congId);
+      const congeDocRef = doc(this.firestore, 'conge', congId);
       const congeDocSnapshot: DocumentSnapshot<DocumentData> = await getDoc(congeDocRef);
       if (congeDocSnapshot.exists()) {
         return congeDocSnapshot.data();

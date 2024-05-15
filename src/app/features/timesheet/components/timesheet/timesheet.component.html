@@ -60,20 +60,22 @@
               <th class="vide">
               </th>
               <ng-container *ngFor="let week of weeks">
-              <th *ngFor="let day of resultTimesheet; let dayIndex = index">
-                <div class="days"
-                  [ngClass]="{'width36': isWeekendDay(day.year, this.month2, day.day) || this.day_offs.includes(day.day)}">
-                  <p class="day-name"
-                    [ngStyle]="{'background': isWeekendDay(day.year, this.month2, day.day) || this.day_offs.includes(day.day)  ? '#e1e1e194' :  '',
-                  'color': isWeekendDay(day.year, this.month2, day.day) || this.day_offs.includes(day.day)  ? 'transparent' :  ''}">{{
-                    day.nameDay }}</p>
-                  <p class="day-number" [ngClass]="{ 'disabled-input': isWeekend }"
-                    [ngStyle]="{'background': isWeekendDay(day.year, this.month2, day.day) || this.day_offs.includes(day.day)  ? '#e1e1e194' :  '',
-                  'color': isWeekendDay(day.year, this.month2, day.day) || this.day_offs.includes(day.day)  ? 'transparent' :  ''}">{{ day.day }}
-                  </p>
-                </div>
-              </th>
+                <th *ngFor="let day of resultTimesheet; let dayIndex = index">
+                  <div class="days"
+                    [ngClass]="{'width36': isWeekendDay(day.year, this.month2, day.day),
+                                'day-off': isDayOff(day.day) }"> 
+                    <p class="day-name"
+                      [ngStyle]="{'background': isWeekendDay(day.year, this.month2, day.day),
+                                  'color': isWeekendDay(day.year, this.month2, day.day) }">{{ day.nameDay }}</p>
+                                  <p class="day-number" [ngClass]="{ 'disabled-input': isWeekend }"
+                                  [ngStyle]="{'background': isWeekendDay(day.year, this.month2, day.day) || isDayOff(day.day) ? '#B6BDC2' : 'transparent',
+                                              'color': isWeekendDay(day.year, this.month2, day.day),
+                                              'font-weight': isDayOff(day.day) ? 'bold' : 'normal' }">{{ day.day }}</p>
+                  </div>
+                </th>
               </ng-container>
+              
+              
               <th class="totaldays" style="right: -1px !important;"> {{ 'features.timeshet.total' | transloco }}
               </th>
               <!-- transparent -->
@@ -97,10 +99,10 @@
                     'border-empty': !day.nbHeure,
                     'border-filled': day.nbHeure
                  }"
-                    *ngIf="!isWeekendDay(day.year, this.month2, day.day) && !this.day_offs.includes(day.day)">
+                    *ngIf="!isWeekendDay(day.year, this.month2, day.day) ">
                     <input type="number" class="form-control input-heure input"
                       (input)="getInputValeur($event.target.value, day)" [value]="day.inputValue || ''" min="0"
-                      [disabled]="isWeekendDay(day.year, this.month2, day.day) || this.day_offs.includes(day.day)"
+                      [disabled]="isWeekendDay(day.year, this.month2, day.day)"
                       [(ngModel)]="day.nbHeure" (change)="changetotal()" />
                   </div>
                 </td>
@@ -117,7 +119,7 @@
               </td>
               <td *ngFor="let day of resultTimesheet; let dayIndex = index">
                 <div class="form-group div-heure"
-                  *ngIf="!isWeekendDay(day.year, this.month2, day.day) && !this.day_offs.includes(day.day)">
+                  *ngIf="!isWeekendDay(day.year, this.month2, day.day)">
                   <input type="number" class="form-control input-heure input" [(ngModel)]="day.nbHeure"
                     [value]="totalHours[dayIndex] || ''" [disabled]="true" [ngStyle]="{'background':   day.nbHeure != 8 && day.nbHeure != 0 ? '#E50060' :  '',
                 'color':   day.nbHeure != 8 && day.nbHeure != 0 ? 'white' :  ''}" />
@@ -131,6 +133,9 @@
         <app-loader *ngIf="!resultTimesheet">Chargement ...</app-loader>
       </div>
     </div>
+
+
+    
 
 
     <!-- ---------------------Description-------------------------  -->
