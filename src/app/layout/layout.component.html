@@ -4,7 +4,7 @@
     <div class="logo-chips">
       <img routerLink="/dashbord" class="brand" src="./assets/images/logo.png" alt="Logo" role="presentation">
     </div>
-    <div class="user-container-metadata" *ngIf="user">
+    <div class="user-container-metadata" *ngIf="user" routerLink="/profile">
       <div class="user-name">
         <button style="background-color: #fff; border: none; ">
           <div class="user-metadata" style="text-align: end;">
@@ -12,7 +12,7 @@
             <span style="font-size: 0.68rem; color: #193F77;">{{ domaineName }}</span>
           </div>
         </button>
-        <button mat-icon-button class="user-avatar-trigger">
+        <button mat-icon-button class="user-avatar-trigger" routerLink="/profile">
           <mat-icon class="user-avatar">person</mat-icon>
           <!--<mat-avatar class="user-avatar">
             {{ getFirstLetter(user?.email) }} </mat-avatar>-->

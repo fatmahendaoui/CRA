@@ -96,7 +96,7 @@ export class ProjectService {
     }
 
     console.log('Tentative d\'accès au projet:', newproject);
-    
+
     const projectData = {
       [days[0].month + '_' + days[0].year]: days, // Array of timesheet items for each day
     };
@@ -369,7 +369,7 @@ export class ProjectService {
       console.log(emailData); // Optionally log email data before sending
 
       this.http.post<void>(
-        `https://us-central1-prodvalbridge.cloudfunctions.net/add_mail_cra`,
+        `https://us-central1-dev-cra-390314.cloudfunctions.net/add_mail_cra`,
         emailData
       ).subscribe(
         (response) => {
@@ -383,7 +383,7 @@ export class ProjectService {
   }
 
   public async sendNotificationToUser(data) {
-    this.http.post<void>(`https://us-central1-prodvalbridge.cloudfunctions.net/regectedAccpeted_mail_cra`, data).subscribe(li => {
+    this.http.post<void>(`https://us-central1-dev-cra-390314.cloudfunctions.net/regectedAccpeted_mail_cra`, data).subscribe(li => {
       console.log('done');
 
     })
