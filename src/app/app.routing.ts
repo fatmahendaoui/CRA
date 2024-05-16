@@ -89,11 +89,15 @@ export const routes: Routes = [
           .then(({ TimesheetModule }) => TimesheetModule)
       },
 
-
+      {
+        path: 'conge/details/:id',
+        canActivate: [() => isAdmin()], 
+        component: DetailscongeComponent
+      },
 
       {
         path: 'conge',
-        canActivate: [() => isAdmin()], 
+        
         loadChildren: () => import('./features/conges/conge.module')
           .then(({ CongeModule }) => CongeModule)
       },
@@ -111,11 +115,7 @@ export const routes: Routes = [
         component: DetailscongeComponent
       },
       
-      {
-        path: 'conge/details/:id',
-        canActivate: [() => isAdmin()], 
-        component: DetailscongeComponent
-      },
+    
       
       
 
