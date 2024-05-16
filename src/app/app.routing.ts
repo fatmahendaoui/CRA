@@ -87,15 +87,21 @@ export const routes: Routes = [
         path: 'timesheet',
         loadChildren: () => import('./features/timesheet/timesheet.module')
           .then(({ TimesheetModule }) => TimesheetModule)
-      }, {
+      },
+      {
         path: 'profile',
         loadChildren: () => import('./features/profileUser/profile-user.module')
           .then(({ ProfileUserModule }) => ProfileUserModule)
       },
+      {
+        path: 'conge/details/:id',
+        canActivate: [() => isAdmin()],
+        component: DetailscongeComponent
+      },
 
       {
         path: 'conge',
-        canActivate: [() => isAdmin()],
+
         loadChildren: () => import('./features/conges/conge.module')
           .then(({ CongeModule }) => CongeModule)
       },
@@ -113,11 +119,7 @@ export const routes: Routes = [
         component: DetailscongeComponent
       },
 
-      {
-        path: 'conge/details/:id',
-        canActivate: [() => isAdmin()],
-        component: DetailscongeComponent
-      },
+
 
 
 
