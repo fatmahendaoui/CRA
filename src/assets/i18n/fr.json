@@ -132,10 +132,10 @@
         "update": "Le projet est modifié avec succès"
       },
       "button": {
-        "save": "Sauvegarder",
+        "save": "Enregistrer les modification",
         "approved": "Accepter",
         "reject": "Rejeter",
-        "Envoye": "Envoyé"
+        "Envoye": "Envoyer pour validation"
       },
       "error": {
         "title": "Oops",
@@ -170,7 +170,7 @@
     "day_off": {
       "list_day_off": "Liste des Jours Fériés",
       "add-dialig-title": "Ajouter un jour",
-      "title": "Jour de congé",
+      "title": "Jours Fériés",
       "titre": "Time Sheet à valider",
       "confirmation": "Êtes-vous sûr de vouloir supprimer cet jour ?",
       "success": "Le jour a été ajouté avec succès",
@@ -253,6 +253,18 @@
       "NombreHeures": "Nombre d'heures",
       "Accepter": "Accepter",
       "Refuser": "Refuser"
+    },
+    "profile": {
+      "title": "Profil",
+      "edit": "Modifier le profil",
+      "user_name": "Nom d'utilisateur",
+      "Date_Birth": "Date de naissance",
+      "Phone": "Numéro de téléphone",
+      "NumbConger_pay": "Nombre de congés payés",
+      "NumbConger_Mal": "Nombre de congés maladie",
+      "Statistic": "Statistiques du projet",
+      "Type_contrat": "Type de contrat",
+      "Date_embauche": "Date d’embauche"
     }
   }
 }

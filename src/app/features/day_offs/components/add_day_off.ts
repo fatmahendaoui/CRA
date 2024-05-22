@@ -10,6 +10,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { TranslocoModule } from "@ngneat/transloco";
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MAT_DATE_LOCALE } from "@angular/material/core";
 
 @Component({
   standalone: true,
@@ -65,6 +66,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
       font-size: 1rem;
     }
   `],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }],
   imports: [
     NgIf,
     MatToolbarModule,

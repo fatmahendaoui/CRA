@@ -272,7 +272,7 @@ export class DetailscongeComponent implements OnInit {
           status: status,
           emailData: congeData['email'], // Supposons que l'e-mail est stocké dans un champ nommé 'email'
           nameRequest: congeData['displayName'], // Supposons que le nom du demandeur est stocké dans un champ nommé 'nomDemandeur'
-          commentaire: commentaire // Passer le commentaire
+          commentaire: commentaire, // Passer le commentaire,
         };
         await this.congeService.sendEmailToUser(emailData); // Appeler la méthode du service avec les données mises à jour
         // Affichez un message de succès ou effectuez d'autres actions nécessaires

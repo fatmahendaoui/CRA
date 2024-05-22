@@ -6,13 +6,13 @@
     </div>
     <div class="user-container-metadata" *ngIf="user">
       <div class="user-name">
-        <button style="background-color: #fff; border: none; ">
+        <button style="background-color: #fff; border: none; " routerLink="/profile">
           <div class="user-metadata" style="text-align: end;">
             <strong style="color: #E50060;">{{ user?.displayName }}</strong>
             <span style="font-size: 0.68rem; color: #193F77;">{{ domaineName }}</span>
           </div>
         </button>
-        <button mat-icon-button class="user-avatar-trigger">
+        <button mat-icon-button class="user-avatar-trigger" routerLink="/profile">
           <mat-icon class="user-avatar">person</mat-icon>
           <!--<mat-avatar class="user-avatar">
             {{ getFirstLetter(user?.email) }} </mat-avatar>-->

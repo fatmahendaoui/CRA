@@ -12,7 +12,7 @@ import { InviteUserComponent } from './components/invite-user/invite-user.compon
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { LoaderComponent } from '../../components/loader.component';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { Profile} from 'src/app/models/profile.model';
+import { Profile } from 'src/app/models/profile.model';
 import { displayConfirmationAlert, handleResponseErrorWithAlerts, handleResponseSuccessWithAlerts } from 'src/app/common/alerts.utils';
 import { ProjectService } from '../projects/services/projects.service';
 import { AuthModule } from '@angular/fire/auth';
@@ -90,7 +90,7 @@ export class UsersComponent implements OnInit {
 
 
   public ngOnInit() {
-     this.fetchAll();
+    this.fetchAll();
   }
 
   public fetchAll(): void {
@@ -109,9 +109,9 @@ export class UsersComponent implements OnInit {
         if (result.isConfirmed) {
           this.handleResponse(
             this.usersService.deleteUser(user.uid)
-            .subscribe({
+              .subscribe({
                 next: () => this.fetchAll(),
-                 error: () => alert('Une erreur est survenue lors de la suppression de l\'utilisateur')
+                error: () => alert('Une erreur est survenue lors de la suppression de l\'utilisateur')
               }), 'remove'
           );
         }
@@ -139,7 +139,7 @@ export class UsersComponent implements OnInit {
             this.transloco.translate('features.users.success.title'),
             this.transloco.translate('features.users.success.message'),
             this.transloco.translate('common.close'),
-            () => {}
+            () => { }
           );
         })
         .catch((error: any) => {

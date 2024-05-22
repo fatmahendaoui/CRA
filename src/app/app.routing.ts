@@ -88,36 +88,40 @@ export const routes: Routes = [
         loadChildren: () => import('./features/timesheet/timesheet.module')
           .then(({ TimesheetModule }) => TimesheetModule)
       },
-
+      {
+        path: 'profile',
+        loadChildren: () => import('./features/profileUser/profile-user.module')
+          .then(({ ProfileUserModule }) => ProfileUserModule)
+      },
       {
         path: 'conge/details/:id',
-        canActivate: [() => isAdmin()], 
+        canActivate: [() => isAdmin()],
         component: DetailscongeComponent
       },
 
       {
         path: 'conge',
-        
+
         loadChildren: () => import('./features/conges/conge.module')
           .then(({ CongeModule }) => CongeModule)
       },
-      
+
 
       {
         path: 'listconge',
-        canActivate: [() => isAdmin()], 
+        canActivate: [() => isAdmin()],
         component: ListcongeComponent
       },
 
       {
         path: 'conge/details',
-        canActivate: [() => isAdmin()], 
+        canActivate: [() => isAdmin()],
         component: DetailscongeComponent
       },
-      
-    
-      
-      
+
+
+
+
 
       {
         path: 'day_off',
@@ -128,9 +132,9 @@ export const routes: Routes = [
             ({ day_offComponent }) => day_offComponent
           ),
       },
-      
-    
-     
+
+
+
     ],
   },
 
