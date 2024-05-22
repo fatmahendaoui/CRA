@@ -16,6 +16,8 @@ import { Profile} from 'src/app/models/profile.model';
 import { displayConfirmationAlert, handleResponseErrorWithAlerts, handleResponseSuccessWithAlerts } from 'src/app/common/alerts.utils';
 import { ProjectService } from '../projects/services/projects.service';
 import { AuthModule } from '@angular/fire/auth';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 
 @Component({
@@ -73,7 +75,9 @@ import { AuthModule } from '@angular/fire/auth';
     MatProgressSpinnerModule,
     LoaderComponent,
     TranslocoModule,
-    AuthModule
+    AuthModule,
+    MatDatepickerModule,
+    MatNativeDateModule
 
   ]
 })

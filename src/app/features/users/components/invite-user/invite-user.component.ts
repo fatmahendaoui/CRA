@@ -9,51 +9,80 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { TranslocoModule } from "@ngneat/transloco";
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 @Component({
   standalone: true,
   selector: 'app-invite-user',
   template: `
-    <mat-toolbar>
-      <mat-toolbar-row>
-        <span>
-          {{ 'features.users.add-dialog.title' | transloco }}
-        </span>
-        <span class="spacer"></span>
-        <button mat-icon-button (click)="close()">
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-toolbar-row>
-    </mat-toolbar>
+  <mat-toolbar>
+  <mat-toolbar-row>
+    <span>
+      {{ 'features.users.add-dialog.title' | transloco }}
+    </span>
+    <span class="spacer"></span>
+    <button mat-icon-button (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-toolbar-row>
+</mat-toolbar>
 
-    <form class="invite-user-form" [formGroup]="formGroup" (ngSubmit)="inviteUser()">
-      <mat-form-field appearance="outline">
-        <mat-label>
-        {{ 'features.users.add-dialog.email' | transloco }}
-        </mat-label>
-        <input matInput formControlName="email" />
-        <mat-error *ngIf="formGroup.get('email')?.hasError('required')">
-          {{ 'common.form.required' | transloco }}
-        </mat-error>
-        <mat-error *ngIf="formGroup.get('email')?.hasError('email')">
-          {{ 'common.form.email' | transloco }}
-        </mat-error>
-      </mat-form-field>
+<form class="invite-user-form" [formGroup]="formGroup" (ngSubmit)="inviteUser()">
+  <mat-form-field appearance="outline">
+    <mat-label>
+      {{ 'features.users.add-dialog.email' | transloco }}
+    </mat-label>
+    <input matInput formControlName="email" />
+    <mat-error *ngIf="formGroup.get('email')?.hasError('required')">
+      {{ 'common.form.required' | transloco }}
+    </mat-error>
+    <mat-error *ngIf="formGroup.get('email')?.hasError('email')">
+      {{ 'common.form.email' | transloco }}
+    </mat-error>
+  </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>
-          {{ 'features.users.add-dialog.role' | transloco }}
-        </mat-label>
-        <mat-select formControlName="role">
-          <mat-option value="user">{{ 'common.role.user' | transloco }}</mat-option>
-          <mat-option value="admin">{{ 'common.role.admin' | transloco }}</mat-option>
-        </mat-select>
-      </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>
+      {{ 'features.users.add-dialog.role' | transloco }}
+    </mat-label>
+    <mat-select formControlName="role">
+      <mat-option value="user">{{ 'common.role.user' | transloco }}</mat-option>
+      <mat-option value="admin">{{ 'common.role.admin' | transloco }}</mat-option>
+    </mat-select>
+  </mat-form-field>
 
-      <button mat-flat-button color="primary" type="submit" [disabled]="!formGroup.valid">
-        {{ 'features.users.add-dialog.action' | transloco }}
-      </button>
-    </form>
+  <mat-form-field appearance="outline">
+    <mat-label>
+       Date d'embauche 
+    </mat-label>
+    <input matInput [matDatepicker]="picker" formControlName="dateEmbauche" />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+    <mat-error *ngIf="formGroup.get('dateEmbauche')?.hasError('required')">
+      {{ 'common.form.required' | transloco }}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+  <mat-label>
+    {{ 'Type de contrat' }}
+  </mat-label>
+  <mat-select formControlName="contractType">
+    <mat-option value="CDI">CDI</mat-option>
+    <mat-option value="CIVP">CIVP</mat-option>
+    <mat-option value="Stagaire">Stagaire</mat-option>
+  </mat-select>
+  <mat-error *ngIf="formGroup.get('contractType')?.hasError('required')">
+    {{ 'common.form.required' | transloco }}
+  </mat-error>
+</mat-form-field>
+
+
+  <button mat-flat-button color="primary" type="submit" [disabled]="!formGroup.valid">
+    {{ 'features.users.add-dialog.action' | transloco }}
+  </button>
+</form>
+
   `,
   styles: [`
     :host {
@@ -84,6 +113,8 @@ import { TranslocoModule } from "@ngneat/transloco";
     ReactiveFormsModule,
     TranslocoModule,
     MatIconModule,
+    MatDatepickerModule
+    
   ],
 })
 export class InviteUserComponent implements OnInit {
@@ -94,7 +125,9 @@ export class InviteUserComponent implements OnInit {
   public ngOnInit(): void {
     this.formGroup = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      role: ['user', Validators.required]
+      role: ['user', Validators.required],
+      dateEmbauche: ['', Validators.required],
+      contractType: ['', Validators.required],
     });
   }
 

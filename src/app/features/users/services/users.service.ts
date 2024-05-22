@@ -138,7 +138,9 @@ export class UsersService {
         uid: userRecord.uid,
         photoURL: userRecord.photoURL || '',
         displayName: userRecord.displayName || nameFromEmail,
-        email: user.email || ''
+        email: user.email || '',
+        dateEmbauche: user.dateEmbauche,
+        contractType: user.contractType
       };
 
       if (this.profileService.profile.role === UserRole.Admin) {
