@@ -132,10 +132,10 @@
         "update": "The project is successfully updated"
       },
       "button": {
-        "save": "Save",
+        "save": "Save Changes",
         "approved": "Approve",
         "reject": "Reject",
-        "Envoye": "Submit"
+        "Envoye": "Submit to Approve"
       },
       "error": {
         "title": "Oops",
@@ -253,6 +253,18 @@
       "NombreHeures": "Number of hours",
       "Accepter": "Accept",
       "Refuser": "Refuse"
+    },
+    "profile": {
+      "title": "Profile",
+      "edit": "Edit Profile",
+      "user_name": "User Name",
+      "Date_Birth": "Date of Birth",
+      "Phone": "Phone Number",
+      "NumbConger_pay": "Number of Paid Leave Days",
+      "NumbConger_Mal": "Number of Sick Leave Days",
+      "Statistic": "Project Statistics",
+      "Type_contrat": "Contract Type",
+      "Date_embauche": "Date of Hire"
     }
   }
 }

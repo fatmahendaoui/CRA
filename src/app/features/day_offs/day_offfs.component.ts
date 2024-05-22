@@ -17,6 +17,7 @@ import { ProfileService } from 'src/app/services/profile.service';
 import { Edit_day_offComponent } from './components/edit_day_off';
 import { MatDialogModule } from '@angular/material/dialog';
 import { Add_day_offComponent } from './components/add_day_off';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 @Component({
   standalone: true,
   selector: 'app-day_off',
@@ -47,7 +48,8 @@ import { Add_day_offComponent } from './components/add_day_off';
   `,
   providers: [
     Day_offService,
-    ProfileService
+    ProfileService,
+    { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }
   ],
   imports: [
     NgIf,

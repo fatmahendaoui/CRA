@@ -152,7 +152,7 @@ export class UsersService {
       this.projectService.addNewProject("Maladie", "Maladie", userRecord.uid);
 
       // Send email verification to the newly registered user
-      await this.http.post("https://us-central1-prodvalbridge.cloudfunctions.net/add_user_cra", {
+      await this.http.post("https://us-central1-dev-cra-390314.cloudfunctions.net/add_user_cra", {
         displayname: userRecord.displayName || nameFromEmail,
         email: user.email,
       }).subscribe(res => {

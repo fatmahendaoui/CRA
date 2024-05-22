@@ -177,6 +177,7 @@ export class AddcongeComponent implements OnInit {
     }
   }
   async Savewithemail() {
+
     try {
 
       let data = {
@@ -186,7 +187,7 @@ export class AddcongeComponent implements OnInit {
         duree: this.dureeConge,
         dateDebut: this.dateDebut,
         dateFin: this.dateFin,
-        commentaires: this.commentaires
+        commentaires: this.commentaires,
       }
 
       // Appel de la méthode pour soumettre la demande de congé et envoyer l'email à l'admin
