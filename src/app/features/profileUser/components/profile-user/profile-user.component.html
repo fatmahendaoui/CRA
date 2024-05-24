@@ -2,56 +2,58 @@
     <h1>
         {{ 'features.profile.title' | transloco }}
     </h1>
-    <button mat-flat-button color="primary">
-        {{ 'features.profile.edit' | transloco }}
-    </button>
+    <button mat-raised-button color="primary" (click)="saveProfile()">Save</button>
 </div>
 <div class="cards-container">
     <mat-card class="MatCard-profile">
 
-        <div class="profile-image-container">
-            <!-- Cercle principal pour la photo de profil -->
-            <div class="user-avatar-container">
-                <img *ngIf="profileImage" [src]="profileImage" class="user-avatar" alt="User Profile">
-                <mat-icon *ngIf="!profileImage" class="user-avatar">person</mat-icon>
+        <form [formGroup]="profileForm">
+            <div class="profile-image-container">
+
+                <!-- Cercle principal pour la photo de profil -->
+                <div class="user-avatar-container">
+                    <img *ngIf="profileImage" [src]="profileImage" class="user-avatar" alt="User Profile">
+                    <mat-icon *ngIf="!profileImage" class="user-avatar">person</mat-icon>
+                </div>
+                <!-- Cercle pour l'icône d'ajout de photo -->
+                <div class="add-photo-icon" (click)="fileInput.click()">
+                    <mat-icon>add_a_photo</mat-icon>
+                </div>
+                <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" style="display:none">
             </div>
-            <!-- Cercle pour l'icône d'ajout de photo -->
-            <div class="add-photo-icon" (click)="fileInput.click()">
-                <mat-icon>add_a_photo</mat-icon>
+            <!-- User Name -->
+            <div class="User-name">
+                <h4> {{ 'features.profile.user_name' | transloco }}</h4>
+                <mat-form-field class="mat-mdc-form-field" appearance="outline">
+                    <input matInput formControlName="name" />
+                </mat-form-field>
             </div>
-            <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" style="display:none">
-        </div>
-        <!-- User Name -->
-        <div class="User-name">
-            <h4> {{ 'features.profile.user_name' | transloco }}</h4>
-            <mat-form-field class="mat-mdc-form-field" appearance="outline">
-                <input matInput formControlName="name" />
-            </mat-form-field>
-        </div>
-        <!-- User Email -->
-        <div class="Email">
-            <h4>Email </h4>
-            <mat-form-field class="mat-mdc-form-field" appearance="outline">
-                <input matInput formControlName="name" />
-            </mat-form-field>
-        </div>
-        <!-- User Date de naissance  -->
-        <div class="Date">
-            <h4>{{ 'features.profile.Date_Birth' | transloco }}</h4>
-            <mat-form-field class="mat-mdc-form-field" subscriptSizing="dynamic" appearance="outline">
-                <input matInput [matDatepicker]="picker" placeholder="Choose a date" name="dateOfBirth"
-                    [(ngModel)]="selectedDate" />
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-            </mat-form-field>
-        </div>
-        <!-- User Phone Number -->
-        <div class="Phone">
-            <h4>{{ 'features.profile.Phone' | transloco }}</h4>
-            <mat-form-field class="mat-mdc-form-field" appearance="outline">
-                <input matInput formControlName="name" />
-            </mat-form-field>
-        </div>
+            <!-- User Email -->
+            <div class="Email">
+                <h4>Email </h4>
+                <mat-form-field class="mat-mdc-form-field" appearance="outline">
+                    <input matInput formControlName="Email" />
+                </mat-form-field>
+            </div>
+            <!-- User Date de naissance  -->
+            <div class="Date">
+                <h4>{{ 'features.profile.Date_Birth' | transloco }}</h4>
+                <mat-form-field class="mat-mdc-form-field" subscriptSizing="dynamic" appearance="outline">
+                    <input matInput [matDatepicker]="dateOfBirthPicker" name="dateOfBirth"
+                        formControlName="dateOfBirth" />
+                    <mat-datepicker-toggle matSuffix [for]="dateOfBirthPicker"></mat-datepicker-toggle>
+                    <mat-datepicker #dateOfBirthPicker></mat-datepicker>
+                </mat-form-field>
+            </div>
+        
+            <!-- User Phone Number -->
+            <div class="Phone">
+                <h4>{{ 'features.profile.Phone' | transloco }}</h4>
+                <mat-form-field class="mat-mdc-form-field" appearance="outline">
+                    <input matInput formControlName="phone" />
+                </mat-form-field>
+            </div>
+        </form>
     </mat-card>
     <div class="side-cards">
         <!-- Nombre de conger pay-->
@@ -71,7 +73,7 @@
     <mat-card class="State-Project">
         <h4>{{ 'features.profile.Statistic' | transloco }}</h4>
         <!-- Ajoutez ici votre graphique ou statistiques -->
-        <img src="path_to_your_chart_image" alt="Statistic project">
+        <img src="" alt="Statistic project">
     </mat-card>
     <!-- Embuche -->
 
@@ -79,36 +81,39 @@
         <h3 style="color: #E50060;">
             <b>Embauche</b>
         </h3>
-        <div>
-            <!-- Type de contrat -->
+       <form [formGroup]="profileForm">
+            <div>
+                <!-- Type de contrat -->
+                <div class="User-name">
+                    <h4>{{ 'features.profile.Type_contrat' | transloco }}</h4>
+                    <mat-form-field class="mat-mdc-form-field" appearance="outline">
+                        <mat-select [(ngModel)]="typeContrat" name="dureeConge" formControlName="typeContrat">
+                            <!-- Options pour la durée de congé -->
+                            <mat-option value="CDI">CDI</mat-option>
+                            <mat-option value="CIVP">CIVP</mat-option>
+                            <mat-option value="Stagiaire">Stagiaire</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <!-- Date d’embauche -->
+                <div class="User-name">
+                    <h4>{{ 'features.profile.Date_embauche' | transloco }}</h4>
+                    <mat-form-field class="mat-mdc-form-field" subscriptSizing="dynamic" appearance="outline">
+                        <input matInput [matDatepicker]="dateEmbuchePicker" placeholder="Choose a date"
+                            name="dateEmbauche" formControlName="dateEmbauche" />
+                        <mat-datepicker-toggle matSuffix [for]="dateEmbuchePicker"></mat-datepicker-toggle>
+                        <mat-datepicker #dateEmbuchePicker></mat-datepicker>
+                        
+                    </mat-form-field>
+                </div>
+            </div>
+            <!-- Poste -->
             <div class="User-name">
-                <h4>{{ 'features.profile.Type_contrat' | transloco }}</h4>
+                <h4>Poste</h4>
                 <mat-form-field class="mat-mdc-form-field" appearance="outline">
-                    <mat-select [(ngModel)]="typeContrat" name="dureeConge">
-                        <!-- Options pour la durée de congé -->
-                        <mat-option value="CDI">CDI</mat-option>
-                        <mat-option value="CIVP">CIVP</mat-option>
-                        <mat-option value="Stagiaire">Stagiaire</mat-option>
-                    </mat-select>
+                    <input matInput formControlName="poste" />
                 </mat-form-field>
             </div>
-            <!-- Date d’embauche -->
-            <div class="User-name">
-                <h4>{{ 'features.profile.Date_embauche' | transloco }}</h4> <mat-form-field class="mat-mdc-form-field"
-                    subscriptSizing="dynamic" appearance="outline">
-                    <input matInput [matDatepicker]="picker" placeholder="Choose a date" name="dateOfBirth"
-                        [(ngModel)]="selectedDate" />
-                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                    <mat-datepicker #picker></mat-datepicker>
-                </mat-form-field>
-            </div>
-        </div>
-        <!-- Poste -->
-        <div class="User-name">
-            <h4>Poste</h4>
-            <mat-form-field class="mat-mdc-form-field" appearance="outline">
-                <input matInput formControlName="name" />
-            </mat-form-field>
-        </div>
+        </form>
     </mat-card>
 </div>

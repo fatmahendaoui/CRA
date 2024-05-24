@@ -143,5 +143,8 @@ async getDomainName(domaineId: string): Promise<string | null> {
     throw error;
   }
 }
-
+getCurrentUserId(): string | null {
+  const user = this.auth.currentUser;
+  return user ? user.uid : null;
+}
 }
