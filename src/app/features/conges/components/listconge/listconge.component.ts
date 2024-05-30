@@ -170,10 +170,10 @@ export class ListcongeComponent<T> implements OnInit {
   }
  
 
-  async validerConge(conge: any,numberOfDays: number): Promise<void> {
+  async validerConge(conge: any, numberOfDays: number): Promise<void> {
     const firestore = getFirestore();
     const congDocRef = doc(firestore, 'conge', conge.id);
-
+  
     try {
       const { isConfirmed } = await Swal.fire({
         title: this.translocoService.translate('features.conge.validate_confirm'),
@@ -189,11 +189,10 @@ export class ListcongeComponent<T> implements OnInit {
         this.showSuccessAlert('Congé accepté');
         conge.status = 1;
         conge.statusLabel = 'Approuvé';
-
-
+  
         // Appel de la méthode sendEmailToUser avec l'ID du congé
         await this.sendEmailToUser(conge.id);
-
+  
         // Mettre à jour les congés filtrés pour retirer le congé approuvé
         this.filteredConges = this.filteredConges.filter(c => c.id !== conge.id);
         this.dataSource.data = this.filteredConges;
@@ -201,9 +200,9 @@ export class ListcongeComponent<T> implements OnInit {
         // Récupérer l'identifiant de l'utilisateur à partir des détails du congé
         const userId = conge.userId;
         const natureConge = conge.nature;
-    
+  
         console.log('Valeur de conge.nature juste avant la condition :', natureConge);
-    
+  
         // Accéder à la collection de projets avec le chemin approprié incluant l'identifiant de l'utilisateur
         const documentName = natureConge === 'Congé de maladie (1 jour)' ? 'Maladie' : 'Vacances';
         const projectsCollectionRef = collection(firestore, `membership_CRA/${userId}/Projects`);
@@ -219,7 +218,7 @@ export class ListcongeComponent<T> implements OnInit {
     
             // champ date f conge yekhou mois_year
             const tableName = conge.date;
-            const nexttablename=conge.dateF;
+            const nexttablename = conge.dateF;
     
             // Accéder au tableau correspondant dans le document
             let tableData = doc.data()[tableName];
@@ -228,12 +227,11 @@ export class ListcongeComponent<T> implements OnInit {
             // Si le tableau n'existe pas, le créer
             if (!tableData) {
               tableData = [];
-    
+  
               for (let i = 1; i <= 31; i++) {
                 // Vérifiez si le jour est un jour de week-end ou un jour férié avant de l'ajouter
                 if (!this.isWeekendDay(conge.year, this.monthToNumber(conge.month), i)) {
                   tableData.push({
-                   
                     year: conge.year,
                     month: conge.month,
                     day: i,
@@ -244,16 +242,16 @@ export class ListcongeComponent<T> implements OnInit {
                 }
               }
             }
-    
+  
             // Extraire les champs day, year, month et nombreHeures du congé
             const { day, year, month, nombreHeures } = conge;
-            
+  
             console.log("Valeur de day :", day);
             console.log("Valeur de year :", year);
             console.log("Valeur de month :", month);
             console.log("Valeur de nombreHeures :", nombreHeures);
             // Parcourir les éléments du tableau correspondant
-            
+  
             tableData.forEach((element, index) => {
               // Vérifier si les champs day, month et year correspondent
               if (element.day === day && element.month === month && element.year === year) {
@@ -267,24 +265,21 @@ export class ListcongeComponent<T> implements OnInit {
                   let remainingHours = nombreHeures - 8;
                   // Trouver le jour suivant dans le tableau et ajouter les heures restantes
                   let nextDayIndex = index + 1;
-            
+  
                   while (remainingHours > 0 && nextDayIndex < tableData.length) {
                     const availableHours = Math.min(remainingHours, 8); // Maximum de 8 heures par jour
                     tableData[nextDayIndex].nbHeure += availableHours;
                     remainingHours -= availableHours;
                     nextDayIndex++;
                   }
-                  
-            
+  
                   if (remainingHours > 0) {
                     let remainingHoursToStore = remainingHours; // Stocker les heures restantes dans une variable
-                  
-                    // Entrer dans le tableau suivant (nexttableName) pour ajouter les heures restantes
+                    // Entrer dans le tableau suivant (nexttablename) pour ajouter les heures restantes
                     let tableData = doc.data()[nexttablename];
                     console.log("tableData:", tableData); 
                     if (!tableData) {
                       tableData = [];
-                    
                       for (let i = 1; i <= 31; i++) {
                         // Vérifiez si le jour est un jour de week-end ou un jour férié avant de l'ajouter
                         if (!this.isWeekendDay(conge.year, this.monthToNumber(conge.nextMonth), i)) {
@@ -311,11 +306,10 @@ export class ListcongeComponent<T> implements OnInit {
                         tableData[0].nbHeure += 8;
                         remainingHoursToStore -= 8; // Réduire les heures restantes
                       }
-                        doc.data()[nexttablename] = tableData;
-                         
+                      doc.data()[nexttablename] = tableData;
                     }
                     
-                  
+                    
                     // Si remainingHoursToStore est toujours supérieur à 0,
                     // cela signifie qu'il reste encore des heures à ajouter au tableau suivant
                     if (remainingHoursToStore > 0) {
@@ -329,29 +323,58 @@ export class ListcongeComponent<T> implements OnInit {
                       updateDoc(doc.ref, { [nexttablename]: tableData });
                       
                     }
-                    
-
+  
                   }
                 }
-                }
+              }
             });
             
             console.log(`Tableau "${tableName}" mis à jour:`, tableData);
-    
+  
             // Mettre à jour le document avec les nouvelles données
             await updateDoc(doc.ref, { [tableName]: tableData });
-           
-    
+  
+  
             console.log(`Document "${documentName}" mis à jour avec succès.`);
             break; // Sortir de la boucle une fois le document trouvé
+          }
+        }
+  
+        // Mise à jour du champ maladie ou conge dans le document membership_CRA/${userId}
+        const userDocRef = doc(firestore, `membership_CRA/${userId}`);
+        const userDocSnapshot = await getDoc(userDocRef);
+        if (userDocSnapshot.exists()) {
+          const userData = userDocSnapshot.data();
+  
+          // Déterminer le champ à mettre à jour
+          let fieldToUpdate = '';
+          if (natureConge === 'Congé de maladie (1 jour)') {
+            fieldToUpdate = 'maladie';
+          } else {
+            fieldToUpdate = 'conge';
+          }
+  
+          if (userData && userData[fieldToUpdate] !== undefined) {
+            let updatedHours = userData[fieldToUpdate] - conge.nombreHeures; // Soustraire le nombre d'heures de congé
+            console.log(`Valeur avant mise à jour de ${fieldToUpdate} :`, userData[fieldToUpdate]);
+            console.log(`Soustraction de ${conge.nombreHeures} heures :`, updatedHours);
+  
+            // Assurez-vous que la valeur mise à jour n'est pas NaN ou undefined
+            if (isNaN(updatedHours) || updatedHours < 0) {
+              updatedHours = 0; // Définir une valeur par défaut si nécessaire
+            }
+            // Mettre à jour le champ
+            await updateDoc(userDocRef, { [fieldToUpdate]: updatedHours });
+  
+            console.log(`Champ "${fieldToUpdate}" mis à jour avec succès.`);
           }
         }
       }
     } catch (error) {
       console.error('Erreur lors de la validation du congé:', error);
     }
-  }    
-
+  }
+  
 
 
   async refuserConge(conge: any): Promise<void> {
