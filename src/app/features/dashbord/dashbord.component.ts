@@ -49,6 +49,7 @@ export class DashbordComponent implements OnInit {
     if (this.theDate) {
       this.month2 = this.theDate.getMonth();
       this.year = this.theDate.getFullYear();
+     
     }
     this.listuser = [];
     // Assurez-vous que filteredUsers est également initialisé avec la liste complète des utilisateurs

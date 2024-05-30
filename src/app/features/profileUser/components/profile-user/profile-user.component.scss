@@ -9,14 +9,16 @@
   display: flex;
   .profile-image-container {
     margin: 20px auto;
-    width: 120px;
-    height: 120px;
+    width: 140px;
+    height: 140px;
     position: relative;
+    border-radius: 50%; 
+    overflow: hidden;
   }
   
   .user-avatar-container {
-    width: 100%;
-    height: 100%;
+    width: 150%;
+    height: 150%;
     border-radius: 50%;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
     overflow: hidden;
@@ -25,6 +27,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    object-fit: cover;
   }
   
   .user-avatar {
@@ -104,7 +107,11 @@ mat-form-field {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
-
-
-
+.small-image {
+  width: 130px; 
+  height: auto; 
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
 
