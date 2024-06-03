@@ -12,6 +12,10 @@ import { MAT_DATE_LOCALE, MatNativeDateModule, MatOptionModule } from '@angular/
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import * as ApexCharts from 'apexcharts';
+import { NgApexchartsModule } from "ng-apexcharts";
+
+
 
 const routes: Routes = [
   {
@@ -40,7 +44,13 @@ const routes: Routes = [
     MatNativeDateModule,
     FormsModule,
     ReactiveFormsModule,
+    NgApexchartsModule,
+   
+    
+    
 
+
+    
   ]
 })
 export class ProfileUserModule { }
