@@ -19,14 +19,15 @@
         </button>
       </div>
       <button mat-icon-button class="user-avatar-trigger" (click)="toggleHorizontalNavbar()">
-
         <mat-icon class="user-menu">widgets</mat-icon>
       </button>
-
-      <button class="mat-menu-item" (click)="signOut()">
+      <button mat-icon-button class="user-avatar-trigger" (click)="signOut()">
+        <mat-icon class="user-menu">logout</mat-icon>
+      </button>
+      <!--<button class="mat-menu-item" (click)="signOut()">
         <span style="color: white;">{{ 'layout.menu.sign-out' | transloco }}</span>
       </button>
-
+-->
     </div>
   </mat-toolbar-row>
 </mat-toolbar>
@@ -43,23 +44,26 @@
           <mat-list-item [matMenuTriggerFor]="matTime">
             <button class="custom-icon">
               <img src="../../assets/images/timecard.png">
-              Time cards
+              {{ 'features.day_off.Time-cards' | transloco }}
               <mat-icon mat-list-icon>keyboard_arrow_down</mat-icon>
             </button>
           </mat-list-item>
           <mat-menu #matTime="matMenu" class="custeme" class="mat-menu-time">
-            <button class="custom-icon" [routerLink]="'timesheet/'+auth.currentUser.uid+'/'+today">
-              <img src="../../assets/images/schedule.png">
-              <span>Timesheet</span>
-            </button>
-            <button class="custom-icon" routerLink="toValide" *ngIf="isAdmin">
-              <img src="../../assets/images/timesheetValid.png">
-              <span>{{ 'features.day_off.titre' | transloco }}</span>
-            </button>
+            <span class="select-button">
+              <button class="custom-icon" [routerLink]="'timesheet/'+auth.currentUser.uid+'/'+today">
+                <img src="../../assets/images/schedule.png">
+                <span>Timesheet</span>
+              </button></span>
+            <span class="select-button">
+              <button class="custom-icon" routerLink="toValide" *ngIf="isAdmin">
+                <img src="../../assets/images/timesheetValid.png">
+                <span>{{ 'features.day_off.titre' | transloco }}</span>
+              </button>
+            </span>
           </mat-menu>
         </mat-list>
         <button class="custom-icon" *ngIf="!isAdmin" [routerLink]="'timesheet/'+auth.currentUser.uid+'/'+today">
-          <img src="../../assets/images/scheduleWhite.png">
+          <img src="../../assets/images/scheduleW.png">
           Timesheet
         </button>
         <button class="custom-icon" routerLink="users" *ngIf="isAdmin">
@@ -81,14 +85,16 @@
             </button>
           </mat-list-item>
           <mat-menu #matRequest="matMenu" class="custeme">
-            <button routerLink="conge/add" class="custom-icon">
-              <img src="../../assets/images/leave.png">
-              <span> {{ 'features.conge.title' | transloco }}
-              </span> </button>
-            <button routerLink="/listconge" *ngIf="isAdmin" class="custom-icon">
-              <img src="../../assets/images/verification.png">
-              <span>{{ 'layout.menu.leaveToValidate' | transloco }}</span>
-            </button>
+            <span class="select-button">
+              <button routerLink="conge/add" class="custom-icon">
+                <img src="../../assets/images/leave.png">
+                <span> {{ 'features.conge.title' | transloco }}
+                </span> </button></span>
+            <span class="select-button">
+              <button routerLink="/listconge" *ngIf="isAdmin" class="custom-icon">
+                <img src="../../assets/images/verification.png">
+                <span>{{ 'layout.menu.leaveToValidate' | transloco }}</span>
+              </button></span>
           </mat-menu>
         </mat-list>
         <button class="custom-icon" *ngIf="!isAdmin" routerLink="conge/add">
@@ -100,14 +106,16 @@
     </mat-nav-list></mat-sidenav-container>
   <!-- Language Selection Dropdown -->
   <mat-menu #translateLang="matMenu" class="mat-menu-language">
-    <button (click)="onSelectionChange('en')" class="custom-icon">
-      <img src="../../assets/images/En.png" alt="En">
-      <span>En</span>
-    </button>
-    <button (click)="onSelectionChange('fr')" class="custom-icon">
-      <img src="../../assets/images/Fr.png" alt="Fr">
-      <span>Fr</span>
-    </button>
+    <span class="select-button">
+      <button (click)="onSelectionChange('en')" class="custom-icon">
+        <img src="../../assets/images/En.png" alt="En">
+        <span>En</span>
+      </button></span>
+    <span class="select-button">
+      <button (click)="onSelectionChange('fr')" class="custom-icon">
+        <img src="../../assets/images/Fr.png" alt="Fr">
+        <span>Fr</span>
+      </button></span>
   </mat-menu>
 
   <div class="select">

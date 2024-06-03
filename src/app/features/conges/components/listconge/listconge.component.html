@@ -11,16 +11,16 @@
         <!--  filtrer selon les états-->
         <div class="filter-table">
           <span class="mat-form-field">
-           <mat-form-field subscriptSizing="dynamic" appearance="outline">
-  <mat-select [(ngModel)]="selectedStatus" (ngModelChange)="filterByStatus(selectedStatus)">
-    <mat-option value="all">{{ 'features.liste_conge.all' | transloco }}</mat-option>
-    <mat-option value="awaiting">{{ 'features.liste_conge.awaiting' | transloco }}</mat-option>
-    <mat-option value="approved">{{ 'features.liste_conge.approved' | transloco }}</mat-option>
-    <mat-option value="rejected">{{ 'features.liste_conge.rejected' | transloco }}</mat-option>
-  </mat-select>
-</mat-form-field>
+            <mat-form-field subscriptSizing="dynamic" appearance="outline">
+              <mat-select [(ngModel)]="selectedStatus" (ngModelChange)="filterByStatus(selectedStatus)">
+                <mat-option value="all">{{ 'features.liste_conge.all' | transloco }}</mat-option>
+                <mat-option value="awaiting">{{ 'features.liste_conge.awaiting' | transloco }}</mat-option>
+                <mat-option value="approved">{{ 'features.liste_conge.approved' | transloco }}</mat-option>
+                <mat-option value="rejected">{{ 'features.liste_conge.rejected' | transloco }}</mat-option>
+              </mat-select>
+            </mat-form-field>
 
-            
+
           </span>
         </div>
         <!--  Recherche -->
@@ -109,10 +109,10 @@
               <img src="../../assets/images/medical-certificate.png">
             </button>
             <button class="custom-icon" (click)="validerConge(conge)">
-              <img src="../../assets/images/accepte.png">
+              <img src="../../assets/images/accepte.2.png">
             </button>
             <button class="custom-icon" (click)="refuserConge(conge)">
-              <img src="../../assets/images/refuse.png">
+              <img src="../../assets/images/refuse.2.png">
             </button>
 
           </ng-container>

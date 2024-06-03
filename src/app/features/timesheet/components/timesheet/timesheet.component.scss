@@ -7,6 +7,7 @@
     /*-------------- header-filter -----------------*/
     .header-filter {
       margin-bottom: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
 
       .filter-table-end {
         margin-left: auto;
@@ -24,12 +25,12 @@
         position: relative; // Ajout pour positionner correctement le dégradé
 
         img {
-          width: 40px;
-          height: 40px;
+          width: 38px;
+          height: 38px;
         }
 
         // Ajout du dégradé entre la barre d'outils et le formulaire
-        &::after {
+       /* &::after {
           content: "";
           position: absolute;
           bottom: 0;
@@ -37,13 +38,14 @@
           width: 100%;
           height: 2px;
           background: linear-gradient(to right, #E50060 40%, #193f77 100%);
-        }
+        }*/
       }
 
       .select {
         .mat-mdc-form-field-wrapper {
           border-color: #E50060; // Couleur de la bordure
         }
+      
       }
 
       .mat-form-field {
@@ -56,6 +58,7 @@
         font-weight: bold;
         background-color: #fff;
         border: none;
+        
       }
 
       .chips {
@@ -81,12 +84,12 @@
         color: #E50060;
         align-items: center;
 
-        span {
+     /*   span {
           display: flex;
           align-items: center;
           border-bottom: 2px solid #F286B4;
           flex-grow: 1;
-        }
+        }*/
 
         .text-center {
           flex-grow: 1;
@@ -319,7 +322,7 @@
   }
   /*--------------- scroll : Table-TimeSheet -----------------*/
 ::-webkit-scrollbar-thumb {
-  background-color: #e64c8c;
+  background-color: #DEDDDE;
   border-radius: 10px;
   width: 8px;
 }
@@ -331,7 +334,7 @@
 ::-webkit-scrollbar {
   width: 8px;
   scrollbar-width: thin;
-  scrollbar-color: #e64c8c #FFFFFF;
+  scrollbar-color: #DEDDDE #FFFFFF;
 }
 
 } 
@@ -365,6 +368,7 @@
         button {
           margin-bottom: 4px;
           margin-right: 4px;
+          min-width: 15rem;
         }
       }
     }

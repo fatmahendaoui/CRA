@@ -66,10 +66,6 @@ export class CongeService {
       // Crée le champ dateF au format "Month_Year" pour la date de fin
       const dateFormattedF = `${monthCapitalizedF}_${yearF}`;
 
-      console.log('Year:', yearF);
-      console.log('Month:', monthCapitalizedF);
-      console.log('Day:', dayF);
-      console.log('Date FormattedF:', dateFormattedF);
 
       // Création d'un nouvel objet congé avec les champs year, month, day, date et dateF ajoutés
       const newConge = {
@@ -142,21 +138,21 @@ export class CongeService {
   }
 
   /*************************** */
-  async submitCongeWithEmail(data) {
+  async submitCongeWithEmail(emailData): Promise<void> {
     try {
       // Récupérer les administrateurs
       const adminUsers: Profile[] = await this.getAdminUsers();
 
       // Envoyer un email à chaque administrateur
       for await (const adminUser of adminUsers) {
-        const emailData = { ...data }; // Cloner les données pour chaque admin
-        emailData.emailData = adminUser.email; // Utiliser emailData au lieu de email
-        emailData.AdminName = adminUser.displayName;
+        const adminEmailData = {
+          ...emailData,
+          emailData: adminUser.email,
+          AdminName: adminUser.displayName,
 
-        console.log(emailData); // Optionnel : journalisation des données avant l'envoi
-
-        // Appel de la fonction de Cloud pour envoyer l'email
-        await this.sendEmailToAdmin(emailData);
+        }; // Cloner les données pour chaque admin
+        console.log("email envoyer avec les", adminEmailData);
+        await this.sendEmailToAdmin(adminEmailData);
       }
     } catch (error) {
       console.error('Error submitting congé with email:', error);

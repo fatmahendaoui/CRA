@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CongeService } from '../../services/conge.service';
-import { differenceInDays, addDays, isSaturday, isSunday } from 'date-fns';
+import { differenceInDays, addDays, isSaturday, isSunday, add } from 'date-fns';
 import { Router } from '@angular/router';
 
 import { TranslocoService } from '@ngneat/transloco';
@@ -31,6 +31,8 @@ export class AddcongeComponent implements OnInit {
   displayNamecurent;
   status: string;
   userId: string | null;
+  congeId: string | null; // Nouvelle variable de classe pour stocker l'ID du congé
+
 
   congesParUtilisateur: any;
   leavesByUser: any;
@@ -129,15 +131,13 @@ export class AddcongeComponent implements OnInit {
       nombreHeures: nombreHeures,
       userId: userId,
       status: 0,
+      dateEnvoi: currentDate.toISOString().split('T')[0],
+      heureEnvoi: currentDate.toLocaleTimeString(),
     };
-    // Définissez les propriétés de date et d'heure dans l'objet conge
-    conge.dateEnvoi = currentDate.toISOString().split('T')[0]; // Date au format ISO
-    conge.heureEnvoi = currentDate.toLocaleTimeString(); // Heure au format local
     try {
       const congeId = await this.congeService.addConge(conge);
-
       if (congeId) {
-
+        this.congeId = congeId;
 
         // Vérifier si la nature du congé est 'Congé de maladie (1 jour)'
         if (this.natureConge === 'Congé de maladie (1 jour)' && this.selectedFile) {
@@ -154,7 +154,17 @@ export class AddcongeComponent implements OnInit {
             console.error('Erreur lors du téléchargement du fichier:', error);
           });
         }
-
+        let data = {
+          nameRequest: this.user.displayName,
+          uid: this.user.uid,
+          nature: this.natureConge,
+          duree: this.dureeConge,
+          dateDebut: this.dateDebut,
+          dateFin: this.dateFin,
+          commentaires: this.commentaires,
+          congeId: this.congeId
+        };
+        await this.congeService.submitCongeWithEmail(data);
         // Réinitialiser les champs du formulaire après l'ajout du congé
         this.natureConge = '';
         this.dureeConge = '';
@@ -176,10 +186,10 @@ export class AddcongeComponent implements OnInit {
       console.error('Error adding congé:', error);
     }
   }
+  /*
   async Savewithemail() {
 
     try {
-
       let data = {
         nameRequest: this.user.displayName,
         uid: this.user.uid,
@@ -188,18 +198,20 @@ export class AddcongeComponent implements OnInit {
         dateDebut: this.dateDebut,
         dateFin: this.dateFin,
         commentaires: this.commentaires,
+        congeId: this.congeId
       }
-
-      // Appel de la méthode pour soumettre la demande de congé et envoyer l'email à l'admin
-      await this.congeService.submitCongeWithEmail(data);
-
-      // Autres actions après la soumission du congé
-      this.status = 'Submitted';
+      if (this.congeId) {
+        // Appel de la méthode pour soumettre la demande de congé et envoyer l'email à l'admin
+        await this.congeService.submitCongeWithEmail(this.congeId, data);
+        console.log("email envoyer avec les", data);
+        // Autres actions après la soumission du congé
+        this.status = 'Submitted';
+      }
     } catch (error) {
       console.error('Error adding project via ProjectService:', error);
     }
   }
-
+*/
   async onFileChange(event: any) {
     this.selectedFile = event.target.files[0];
   }

@@ -101,7 +101,7 @@ export class DashbordComponent implements OnInit {
           }
         }
         // Apply style to project name (assuming projectName is a string)
-        const styledProjectName = `<span style='color: #193F77; font-weight: bold; font-size: 20px;'>${projectName}</span>`;
+        const styledProjectName = `<span style='color: #193F77; font-weight: bold; font-size: 20px; display: inline-block; text-align: left; width: 100%;'>${projectName}</span>`;
         const data = monthlyData.map((hours, index) => ({
           x: this.months[index],
           y: hours
@@ -201,7 +201,7 @@ export class DashbordComponent implements OnInit {
 
           },
           style: {
-            colors: ["#193F77"]
+            colors: ["#193F77"],
           },
 
         },

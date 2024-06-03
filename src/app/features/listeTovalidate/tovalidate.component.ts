@@ -83,8 +83,30 @@ export class tovalidateComponent implements OnInit {
   status: string = 'Submitted'
   public ngOnInit() {
     this.fetchAll();
-    this.nameMonth = this.month[new Date().getMonth()];
+    this.setMonthName();
     this.year = new Date().getFullYear();
+    this.transloco.langChanges$.subscribe(() => this.setMonthName());
+  }
+  private setMonthName() {
+    const currentMonthIndex = new Date().getMonth();
+    const monthNamesKeys = [
+      'features.months.january',
+      'features.months.february',
+      'features.months.march',
+      'features.months.april',
+      'features.months.may',
+      'features.months.june',
+      'features.months.july',
+      'features.months.august',
+      'features.months.september',
+      'features.months.october',
+      'features.months.november',
+      'features.months.december'
+    ];
+    const currentLang = this.transloco.getActiveLang();
+    this.transloco.selectTranslate(monthNamesKeys[currentMonthIndex], {}, currentLang).subscribe((translation) => {
+      this.nameMonth = translation;
+    });
   }
 
   public fetchAll(): void {

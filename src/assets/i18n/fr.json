@@ -53,7 +53,9 @@
       "user": "Utilisateur",
       "Project-by-month": "Projet par mois",
       "Project-by-user": "Projet par mois par utilisateur",
-      "User-by-project": "Utilisateur par mois par projet"
+      "User-by-project": "Utilisateur par mois par projet",
+      "Search_User": "Rechercher un utilisateur",
+      "Search_Project": "Rechercher un projet"
     },
     "users": {
       "title": "Gestion des utilisateurs",
@@ -132,7 +134,8 @@
         "update": "Le projet est modifié avec succès"
       },
       "button": {
-        "save": "Enregistrer les modification",
+        "save": "sauvgarder",
+        "saveCh": "Enregistrer les modification",
         "approved": "Accepter",
         "reject": "Rejeter",
         "Envoye": "Envoyer pour validation"
@@ -179,7 +182,8 @@
       "Maladie": "Maladie",
       "Vacances": "Congé",
       "update": "Le jour férié est modifié avec succès",
-      "name": "Nom"
+      "name": "Nom",
+      "Time-cards": "Time Sheet"
     },
     "settings": {
       "title": "Paramètres",
@@ -265,6 +269,20 @@
       "Statistic": "Statistiques du projet",
       "Type_contrat": "Type de contrat",
       "Date_embauche": "Date d’embauche"
+    },
+    "months": {
+      "january": "Janvier",
+      "february": "Février",
+      "march": "Mars",
+      "april": "Avril",
+      "may": "Mai",
+      "june": "Juin",
+      "july": "Juillet",
+      "august": "Août",
+      "september": "Septembre",
+      "october": "Octobre",
+      "november": "Novembre",
+      "december": "Décembre"
     }
   }
 }

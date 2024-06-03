@@ -16,12 +16,13 @@
     </td>
   </ng-container>
   <ng-container matColumnDef="actions">
-    <th style="padding-left: 2.5rem;" mat-header-cell *matHeaderCellDef mat-sort-header>
+    <th style="padding-right: 2.5rem;" mat-header-cell *matHeaderCellDef mat-sort-header>
       {{ 'features.projects.table.actions' | transloco }}
     </th>
     <td mat-cell *matCellDef="let element">
       <div>
-        <button mat-icon-button [routerLink]="['/timesheet/'+element.user.uid+'/'+transfertdate(element.month)]" routerLinkActive="router-link-active" >
+        <button mat-icon-button [routerLink]="['/timesheet/'+element.user.uid+'/'+transfertdate(element.month)]"
+          routerLinkActive="router-link-active">
           <mat-icon>keyboard_tab</mat-icon>
         </button>
       </div>
