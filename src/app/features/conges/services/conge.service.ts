@@ -223,5 +223,22 @@ export class CongeService {
       throw error;
     }
   }
-}
+  async getApprovedConges(): Promise<any[]> {
+    try {
+      const congeCollectionRef = collection(this.firestore, 'conge');
+      const q = query(congeCollectionRef, where('status', '==', 1));
+      const querySnapshot = await getDocs(q);
+      const approvedConges: any[] = [];
+      querySnapshot.forEach((doc) => {
+        approvedConges.push(doc.data());
+      });
+     // console.log('Liste des congés approuvés:', approvedConges); // Ajout de la console log
+      return approvedConges;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des congés approuvés :', error);
+      return [];
+    }
+  }
+}  
+
 
