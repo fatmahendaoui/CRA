@@ -233,7 +233,8 @@
       "validate_confirm": "Êtes-vous sûr de vouloir accepter ce congé ?",
       "reject_confirm": "Êtes-vous sûr de vouloir refuser ce congé ?",
       "enter_comment": "Ajouter un commentaire",
-      "Request": "Demandes"
+      "Request": "Demandes",
+      "file_error": "Veuillez joindre votre certificat médical pour cette demande."
     },
     "liste_conge": {
       "title": "Liste des congés",
@@ -264,11 +265,12 @@
       "user_name": "Nom d'utilisateur",
       "Date_Birth": "Date de naissance",
       "Phone": "Numéro de téléphone",
-      "NumbConger_pay": "Nombre de congés payés",
-      "NumbConger_Mal": "Nombre de congés maladie",
+      "NumbConger_pay": "Solde congés payé :",
+      "NumbConger_Mal": "Solde congé de maladie :",
       "Statistic": "Statistiques du projet",
       "Type_contrat": "Type de contrat",
-      "Date_embauche": "Date d’embauche"
+      "Date_embauche": "Date d’embauche",
+      "hr_data": "Données RH"
     },
     "months": {
       "january": "Janvier",

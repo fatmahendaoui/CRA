@@ -62,12 +62,16 @@ export class LayoutComponent implements OnInit, OnDestroy {
   private readonly transloco = inject(TranslocoService);
   public defaultLanguage = this.transloco.getActiveLang();
   public user: User | null;
-
-
+  profileImage: string | ArrayBuffer | null = null;
   public ngOnInit(): void {
     // Récupérer le rôle de l'utilisateur depuis le service de profil utilisateur
     this.profileService.getUserRole().then((res) => {
       this.userRole = res;
+    });
+
+    this.profileService.getUserPhotoURL(this.auth.currentUser!.uid
+    ).then((res) => {
+      this.profileImage = res;
     });
     //defualt language
     const defaultLanguage = localStorage.getItem('current_language');
@@ -96,16 +100,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   getFirstLetter(email: string): string {
     return email ? email.charAt(0).toUpperCase() : '';
   }
-  /*
-    // Méthode pour obtenir l'URL de l'image de l'utilisateur si disponible
-    getUserImage(user: User): string | null {
-      if (user.photoURL) {
-        return user.photoURL; // Retourner l'URL de l'image si disponible
-      } else {
-        return null; // Retourner null sinon
-      }
-    }
-  */
+
   // Méthode pour naviguer vers les paramètres de l'utilisateur
   navigateToSettings() {
     this.router.navigate(['/settings']); // Redirection vers la page de paramètres
@@ -139,14 +134,6 @@ export class LayoutComponent implements OnInit, OnDestroy {
     return this.isAdmin;
   }
 
-  // Méthode appelée lors du changement de langue
-  /*
-  public onSelectionChange(change: MatSelectChange): void {
-    const { value } = change;
-    this.selectedLanguage = value; // Mettre à jour la langue sélectionnée
-    this.transloco.setActiveLang(value); // Définir la langue active
-    localStorage.setItem('current_language', value); // Sauvegarder la langue sélectionnée dans le stockage local
-  }*/
   public onSelectionChange(language: string): void {
     this.selectedLanguage = language; // Mettre à jour la langue sélectionnée
     this.transloco.setActiveLang(language); // Définir la langue active
@@ -156,16 +143,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
     this.showHorizontalNavbar = !this.showHorizontalNavbar;
 
   }
-  // Méthode pour ouvrir le menu horizontal
-  /*
-  (mouseenter)="openHorizontalNavbar()" (mouseleave)="closeHorizontalNavbar()"
-  openHorizontalNavbar() {
-    this.showHorizontalNavbar = true;
-  }
 
-  // Méthode pour fermer le menu horizontal
-  closeHorizontalNavbar() {
-    this.showHorizontalNavbar = false;
-  }
-*/
+
+
 }

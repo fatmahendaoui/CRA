@@ -10,7 +10,5 @@ export const isNotAuthenticated = (): Observable<boolean> | boolean => {
   if (!auth?.currentUser) {
     return true;
   }
-
-
   return false;
 }

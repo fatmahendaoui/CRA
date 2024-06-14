@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CongeService } from '../../services/conge.service';
 import { differenceInDays, addDays, isSaturday, isSunday, add } from 'date-fns';
 import { Router } from '@angular/router';
-
 import { TranslocoService } from '@ngneat/transloco';
 import { handleResponseSuccessWithAlerts } from 'src/app/common/alerts.utils';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { getFirestore, collection, query, where, getDocs, DocumentData } from 'firebase/firestore';
+import { ProfileService } from 'src/app/services/profile.service';
 
 
 
@@ -32,7 +32,9 @@ export class AddcongeComponent implements OnInit {
   status: string;
   userId: string | null;
   congeId: string | null; // Nouvelle variable de classe pour stocker l'ID du congé
+  private readonly profileService = inject(ProfileService);
 
+  fileError: boolean = false; // Variable to track file validation error
 
   congesParUtilisateur: any;
   leavesByUser: any;
@@ -69,6 +71,15 @@ export class AddcongeComponent implements OnInit {
 
 
   async onSubmit(): Promise<void> {
+    // Reset file error
+    this.fileError = false;
+
+    // Check if the leave type is "Congé de maladie" and if a file is selected
+    if (this.natureConge === 'Congé de maladie (1 jour)' && !this.selectedFile) {
+      this.fileError = true;
+      return;
+    }
+
     const userId = this.user ? this.user.uid : null;
     let nombreJours: number = differenceInDays(this.dateFin, this.dateDebut) + 1; // Ajouter 1 pour inclure la date de début
     let nombreHeures: number;
@@ -117,6 +128,7 @@ export class AddcongeComponent implements OnInit {
         return;
     }
     // Définir la valeur de this.natureConge avant la condition
+    let photourl = await this.profileService.getUserPhotoURL(userId);
 
     const conge: any = {
       nature: this.natureConge,
@@ -124,7 +136,7 @@ export class AddcongeComponent implements OnInit {
       dateDebut: this.dateDebut,
       dateFin: this.dateFin,
       commentaires: this.commentaires,
-      photourl: this.user ? this.user.photoURL : null,
+      photourl: photourl,
       displayName: this.user ? this.user.displayName : null,
       email: this.user ? this.user.email : null,
       domainId: this.domainId,

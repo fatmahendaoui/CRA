@@ -19,10 +19,10 @@
         </div>
         <div class="filter-table-end">
           <mat-chip class="chips" *ngIf="status && status != 'Improved'" [ngStyle]="{
-            'background-color': status == 'On going' ? '#EA3380' : status == 'Submitted' ? '#ff9814' : '',
+            'background-color': status == 'On going' ? '#193F77' : status == 'Submitted' ? '#EA3380' : '',
             'color': 'white'
         }" disabled><span style="color: white;">{{status}}</span></mat-chip>
-          <mat-chip class="chips" *ngIf="!status" style="  background-color: #EA3380;" disabled><span
+          <mat-chip class="chips" *ngIf="!status" style="  background-color: #193F77;" disabled><span
               style="color: white;">On going</span></mat-chip>
           <mat-chip class="chips" *ngIf="status == 'Improved'" style="  background-color: #17ba68;" disabled><span
               style="color: white;">Approved </span></mat-chip>

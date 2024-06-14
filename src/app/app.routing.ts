@@ -11,6 +11,7 @@ import { DashbordComponent } from './features/dashbord/dashbord.component';
 import { AddcongeComponent } from './features/conges/components/addconge/addconge.component';
 import { ListcongeComponent } from './features/conges/components/listconge/listconge.component';
 import { DetailscongeComponent } from './features/conges/components/detailsconge/detailsconge.component';
+import { TimesheetGuard } from './guards/authorize-timesheet.guard';
 
 
 
@@ -83,16 +84,24 @@ export const routes: Routes = [
             ({ tovalidateComponent }) => tovalidateComponent
           ),
       },
+
       {
         path: 'timesheet',
         loadChildren: () => import('./features/timesheet/timesheet.module')
-          .then(({ TimesheetModule }) => TimesheetModule)
+          .then(({ TimesheetModule }) => TimesheetModule),
       },
       {
         path: 'profile',
         loadChildren: () => import('./features/profileUser/profile-user.module')
           .then(({ ProfileUserModule }) => ProfileUserModule)
       },
+      {
+        path: 'profile/:id',
+        loadChildren: () => import('./features/profileUser/profile-user.module')
+          .then(({ ProfileUserModule }) => ProfileUserModule)
+      },
+
+
       {
         path: 'conge/details/:id',
         canActivate: [() => isAdmin()],
@@ -132,9 +141,6 @@ export const routes: Routes = [
             ({ day_offComponent }) => day_offComponent
           ),
       },
-
-
-
     ],
   },
 

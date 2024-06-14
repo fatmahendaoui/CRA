@@ -19,8 +19,6 @@
                 <mat-option value="rejected">{{ 'features.liste_conge.rejected' | transloco }}</mat-option>
               </mat-select>
             </mat-form-field>
-
-
           </span>
         </div>
         <!--  Recherche -->
@@ -46,7 +44,12 @@
         <th mat-header-cell *matHeaderCellDef></th>
         <td class="Photo_name" mat-cell *matCellDef="let conge">
           <div class="photo-wrapper">
-            <img *ngIf="conge.photourl" [src]="conge.photourl" alt="Photo">
+            <ng-container *ngIf="!conge.photoURL; else userImage">
+              <mat-icon class="user-avatar">person</mat-icon>
+            </ng-container>
+            <ng-template #userImage>
+              <img [src]="conge.photoURL" alt="User Photo">
+            </ng-template>
             <span>{{ conge.displayName }}</span>
           </div>
         </td>

@@ -1,49 +1,63 @@
 .page-container {
-      /*-------------filter--------------------*/
-    .header-filter {
-      margin-bottom: 10px;
+  /*-------------filter--------------------*/
+  .header-filter {
+    margin-bottom: 10px;
 
-      .filter-table-end {
-        margin-top: 22px;
-        margin-left: auto;
-        display: flex;
-        justify-content: flex-end;
-        color: white; // Couleur du texte
+    .filter-table-end {
+      margin-top: 22px;
+      margin-left: auto;
+      display: flex;
+      justify-content: flex-end;
+      color: white; // Couleur du texte
+    }
+
+    .filter-table {
+      flex-grow: 1;
+      mat-form-field {
+        width: 30%;
       }
-.filter-table{
-          flex-grow: 1;
-            mat-form-field{
-              width: 30%;  }
-          }  
+    }
 
-      mat-toolbar {
-        background-color: white;
-        box-shadow: none;
-        margin-top: 0px;
-        display: flex;
-        align-items: center;
+    mat-toolbar {
+      background-color: white;
+      box-shadow: none;
+      margin-top: 0px;
+      display: flex;
+      align-items: center;
+    }
+  }
 
-  }}
-  
   .Photo_name {
     .photo-wrapper {
       display: flex;
       align-items: center; /* Alignement vertical */
     }
-  
+
     img {
       max-width: 35px;
       max-height: 35px;
       border-radius: 50%;
       margin-right: 10px; /* Espacement entre l'image et le texte */
     }
-  
+
     span {
       color: #193F77;
       flex: 1; /* Le texte prend tout l'espace disponible */
     }
+
+    .user-avatar {
+      color: white; /* Couleur de l'icône */
+      background-color: #E50060; /* Couleur de fond du cercle */
+      border-radius: 50%; /* Rendre le fond un cercle */
+      padding: 18px; /* Augmenter l'espace autour de l'icône à l'intérieur du cercle */
+      font-size: 30px; /* Ajuster la taille de l'icône */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      margin-right: 10px;
+    }
   }
-  
 
   /*-------------status--------------------*/
   .chips {
@@ -54,8 +68,7 @@
     align-items: center;
     font-weight: bold;
     font-size: 13px;
-
-      }
+  }
 
   .chip-awaiting {
     background-color: #fff2e5;
@@ -71,6 +84,7 @@
     background-color: #ffebec;
     color: #fb4e54;
   }
+
   /*-------------commentaire --------------------*/
   .comment-cell {
     max-width: 60px;
@@ -78,58 +92,55 @@
     overflow: hidden;
     text-overflow: ellipsis;
     position: relative; /* Ajoute une position relative pour le positionnement du tooltip */
-  } 
+  }
 
-/*-------------action--------------------*/
-.custom-icon {
-  display: initial;  
-  align-items: center;
-  gap: 8px;
-  color: #E50060;
-  font-size: medium;
-  font-weight: bold;
-  background-color: #fff;
-  border: none;
+  /*-------------action--------------------*/
+  .custom-icon {
+    display: initial;
+    align-items: center;
+    gap: 8px;
+    color: #E50060;
+    font-size: medium;
+    font-weight: bold;
+    background-color: #fff;
+    border: none;
 
-  img {
-    width: 26px;
-    height: 26px;
-    max-width: 100%;
-    max-height: 100%;
+    img {
+      width: 26px;
+      height: 26px;
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
+
+  td {
+    color: #193F77;
   }
 }
- 
-  td{
-    color: #193F77;  
-  }
-  
 
+::ng-deep .comment-Toolitip {
+  transform: scale(1.5) !important;
+  position: relative !important;
+  border-radius: 4px;
+  border: 0.02px solid #193f7747; /* Ajoute une bordure de 1px avec une couleur grise */
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  --mdc-plain-tooltip-container-color: white;
+  --mdc-plain-tooltip-supporting-text-size: 10px;
+  --mdc-plain-tooltip-supporting-text-color: #193F77;
 }
 
-::ng-deep .comment-Toolitip{
-    transform: scale(1.5) !important;
-    position: relative !important;
-    border-radius: 4px;
-    border: 0.02px solid #193f7747; /* Ajoute une bordure de 1px avec une couleur grise */
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); 
---mdc-plain-tooltip-container-color:white  ;
---mdc-plain-tooltip-supporting-text-size:10px ;
---mdc-plain-tooltip-supporting-text-color:#193F77 ;
+::ng-deep .swal2-confirm {
+  background-color: #E50060 !important; // Couleur de fond du bouton de confirmation
+  color: #FFFFFF !important; // Couleur du texte du bouton de confirmation
+  border: none !important; // Supprimer la bordure
+  padding: 10px 20px !important; // Espacement interne
+  border-radius: 5px !important; // Bordure arrondie
+}
 
-
-  }
-  ::ng-deep .swal2-confirm {
-    background-color: #E50060 !important; // Couleur de fond du bouton de confirmation
-    color: #FFFFFF !important; // Couleur du texte du bouton de confirmation
-    border: none !important; // Supprimer la bordure
-    padding: 10px 20px !important; // Espacement interne
-    border-radius: 5px !important; // Bordure arrondie
-  }
-  
-  ::ng-deep .swal2-cancel {
-    background-color: #193F77 !important; // Couleur de fond du bouton de confirmation
-    color: #FFFFFF !important; // Couleur du texte du bouton de confirmation
-    border: none !important; // Supprimer la bordure
-    padding: 10px 20px !important; // Espacement interne
-    border-radius: 5px !important; // Bordure arrondie
-  }
+::ng-deep .swal2-cancel {
+  background-color: #193F77 !important; // Couleur de fond du bouton de confirmation
+  color: #FFFFFF !important; // Couleur du texte du bouton de confirmation
+  border: none !important; // Supprimer la bordure
+  padding: 10px 20px !important; // Espacement interne
+  border-radius: 5px !important; // Bordure arrondie
+}

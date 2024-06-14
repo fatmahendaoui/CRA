@@ -1,9 +1,12 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { AuthService } from 'src/app/features/sign-in/services/auth.service';
-import { ProfilService } from '../../services/profile.service';
 import { DatePipe } from '@angular/common';
 import * as ApexCharts from 'apexcharts';
+import { ProjectService } from './../../../projects/services/projects.service';
+import { ActivatedRoute } from '@angular/router';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { ProfilService } from '../../services/profile.service';
 
 @Component({
   selector: 'app-profile-user',
@@ -25,24 +28,34 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
   projects: any[] = []; // Variable pour stocker les projets
   totalHours: { [projectId: string]: number } = {}; // To store total hours for each project
   role: string | null = null;
+  IsAdmin: boolean;
+  isEditing: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private profilService: ProfilService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private projectService: ProjectService,
+    private route: ActivatedRoute, // Ajoutez cette ligne
+    private fireStorage: AngularFireStorage,
+
+
   ) {
+    this.projectService.checkUserAccess().then(li => {
+      this.IsAdmin = li
+    })
     this.currentYear = this.getCurrentYear();
 
     this.chartOptions = {
       series: [
         {
           name: "My-series",
-          data: [10, 41, 35, 51]
         }
       ],
       chart: {
-        height: 350,
+        height: 340,
+        width: 650,
         type: "bar",
         animations: {
           enabled: true,
@@ -57,19 +70,53 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
           }
         }
       },
+      colors: ['#193F77', '#E50060'], // Set the color of the bars here
       title: {
-        text: `Statistique des projets pour ${this.currentYear.toString()}`
-    },
-    
+        text: `Statistique des projets pour ${this.currentYear.toString()}`,
+        style: {
+          color: '#E50060',
+          margin: '20px 0'
+        }
+      },
+
       xaxis: {
-        categories: [] ,// Initialiser sans catégories
+        categories: [],// Initialiser sans catégories
+        labels: {
+          style: {
+            fontSize: '10px',
+            fontFamily: 'Arial',
+            fontWeight: 'bold',
+          }
+        }
+      },
+      yaxis: {
+        labels: {
+          style: {
+            fontSize: '10px',
+            fontFamily: 'Arial',
+            fontWeight: 'bold',
+          }
+        }
       }
     };
   }
 
   ngOnInit(): void {
-  
-   
+    // Récupérer l'ID de l'utilisateur à partir des paramètres de la route
+    this.route.paramMap.subscribe(params => {
+      const userId = params.get('id');
+      if (userId) {
+        this.userId = userId;
+        console.log('User ID:', userId);
+        this.loadUserProfileById(userId);
+      } else {
+        const userId = this.authService.getCurrentUserId();
+        this.userId = userId;
+        console.log('curente User ID:', userId);
+        this.loadUserProfileById(userId!);
+      }
+    });
+
     console.log('Role:', this.role);
     this.profileForm = this.fb.group({
       name: [''],
@@ -78,79 +125,78 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
       phone: [''],
       role: [''],
       typeContrat: [''],
-      dateEmbauche: [''], 
+      dateEmbauche: [''],
       poste: [''],
       conge: [''],
       maladie: [''],
       photoURL: [''],
-      
-  });
 
-    this.userId = this.authService.getCurrentUserId();
+    });
 
-    if (this.userId) {
-      this.loadingProfile = true;
-      this.profilService.getUserProfile(this.userId).then(profileData => {
-        if (profileData) {
-          let dateEmbaucheFormatted = '';
-
-          if (typeof profileData.dateEmbauche === 'string') {
-            dateEmbaucheFormatted = this.datePipe.transform(profileData.dateEmbauche, 'dd MMMM yyyy') || '';
-          }
-
-          this.profileForm.patchValue({
-            name: profileData.displayName || '',
-            Email: profileData.email || '',
-            dateOfBirth: profileData.dateOfBirth || null,
-            phone: profileData.phoneNumber || '',
-            typeContrat: profileData.contratType || '',
-            dateEmbauche: profileData.dateEmbauche || null,
-            poste: profileData.poste || '',
-            conge: profileData.conge || '',
-            maladie: profileData.maladie || '',
-            photoURL: profileData.photoURL || '',
-            this: profileData.role || '',
-          });
-          this.profileImage = profileData.photoURL || null;
-
-                // Appel de la fonction pour récupérer le rôle de l'utilisateur
-                this.profilService.getUserRole(this.userId!).then(role => {
-                    console.log('User role:', role);
-                    this.role = role; // Affecter la valeur du rôle récupérée à la variable du composant
-                }).catch(error => {
-                    console.error('Error fetching user role:', error);
-                });
-            }
-        }).catch(error => {
-            console.error('Error loading user profile:', error);
-        }).finally(() => {
-            this.loadingProfile = false;
-        });
-      // Appel de la fonction getProjects
-      this.profilService.getProjects(this.userId).then(projectIds => {
-        console.log('Project IDs fetched:', projectIds); // Affichage des IDs des projets
-        this.projects = projectIds; // Assigner les IDs des projets à la variable de composant
-
-        // Mettre à jour les catégories de l'axe x
-        this.chartOptions.xaxis.categories = projectIds;
-
-        // Mettre à jour le graphique
-        this.renderChart();
-
-        projectIds.forEach(projectId => {
-          this.profilService.getProjectDetails(this.userId!, projectId).then(projectData => {
-            if (projectData) {
-             // console.log(`Project Data for ID ${projectId}:`, projectData);
-              this.calculateTotalHours(projectData, projectId);
+    /*
+        if (this.userId) {
+          this.loadingProfile = true;
+          this.profilService.getUserProfile(this.userId).then(profileData => {
+            if (profileData) {
+              let dateEmbaucheFormatted = '';
+    
+              if (typeof profileData.dateEmbauche === 'string') {
+                dateEmbaucheFormatted = this.datePipe.transform(profileData.dateEmbauche, 'dd MMMM yyyy') || '';
+              }
+    
+              this.profileForm.patchValue({
+                name: profileData.displayName || '',
+                Email: profileData.email || '',
+                dateOfBirth: profileData.dateOfBirth || null,
+                phone: profileData.phoneNumber || '',
+                typeContrat: profileData.contratType || '',
+                dateEmbauche: profileData.dateEmbauche || null,
+                poste: profileData.poste || '',
+                conge: profileData.conge || '',
+                maladie: profileData.maladie || '',
+                photoURL: profileData.photoURL || '',
+                this: profileData.role || '',
+              });
+              this.profileImage = profileData.photoURL || null;
+    
+              // Appel de la fonction pour récupérer le rôle de l'utilisateur
+              this.profilService.getUserRole(this.userId!).then(role => {
+                console.log('User role:', role);
+                this.role = role; // Affecter la valeur du rôle récupérée à la variable du composant
+              }).catch(error => {
+                console.error('Error fetching user role:', error);
+              });
             }
           }).catch(error => {
-            console.error(`Error fetching details for project ID ${projectId}:`, error);
+            console.error('Error loading user profile:', error);
+          }).finally(() => {
+            this.loadingProfile = false;
           });
-        });
-      }).catch(error => {
-        console.error('Error fetching projects:', error);
-      });
-    }
+          // Appel de la fonction getProjects
+          this.profilService.getProjects(this.userId).then(projectIds => {
+            console.log('Project IDs fetched:', projectIds); // Affichage des IDs des projets
+            this.projects = projectIds; // Assigner les IDs des projets à la variable de composant
+    
+            // Mettre à jour les catégories de l'axe x
+            this.chartOptions.xaxis.categories = projectIds;
+    
+            // Mettre à jour le graphique
+            this.renderChart();
+    
+            projectIds.forEach(projectId => {
+              this.profilService.getProjectDetails(this.userId!, projectId).then(projectData => {
+                if (projectData) {
+                  // console.log(`Project Data for ID ${projectId}:`, projectData);
+                  this.calculateTotalHours(projectData, projectId);
+                }
+              }).catch(error => {
+                console.error(`Error fetching details for project ID ${projectId}:`, error);
+              });
+            });
+          }).catch(error => {
+            console.error('Error fetching projects:', error);
+          });
+        }*/
   }
 
   ngAfterViewInit(): void {
@@ -189,69 +235,72 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
     }
   }
 
-  calculateTotalHours(projectData: any, projectId: string): void {
+  calculateTotalHours(projectData: any, projectId: string): number {
     const currentYear = this.currentYear; // Utiliser l'année actuelle du composant
-    
+
     let totalHours = 0;
-  
+
     // Iterate through each month in the current year
     for (let month = 1; month <= 12; month++) {
       const monthKey = `${this.getMonthName(month)}_${currentYear}`;
-     // console.log(`Checking month: ${monthKey}`);
-  
+      // console.log(`Checking month: ${monthKey}`);
+
       if (projectData[monthKey]) {
         projectData[monthKey].forEach((day: any) => {
           // Ensure nbHeure is a number
           const hours = Number(day.nbHeure);
           if (!isNaN(hours)) {
-          //  console.log(`Before adding: ${totalHours}`);
+            //  console.log(`Before adding: ${totalHours}`);
             totalHours += hours;
             //console.log(`Adding ${hours} hours for ${monthKey}`);
             //console.log(`After adding: ${totalHours}`);
           } else {
-           // console.log(`Invalid nbHeure value for ${monthKey}: ${day.nbHeure}`);
+            // console.log(`Invalid nbHeure value for ${monthKey}: ${day.nbHeure}`);
           }
         });
       } else {
-//console.log(`No data for month: ${monthKey}`);
+        //console.log(`No data for month: ${monthKey}`);
       }
     }
-  
+
     this.totalHours[projectId] = totalHours;
-   // console.log(`Total hours for project ${projectId} in ${currentYear}: ${totalHours}`);
-  
+    // console.log(`Total hours for project ${projectId} in ${currentYear}: ${totalHours}`);
+
     // Update the chart with the new data
     this.updateChartData();
+    return totalHours;
+
   }
- 
-  
+
+
   updateChartData(): void {
     const currentYear = this.currentYear; // Utiliser l'année actuelle du composant
     const seriesData: number[] = [];
-  
+
     // Recalculer les données pour chaque projet en fonction de l'année actuelle
     this.projects.forEach(projectId => {
       seriesData.push(this.totalHours[projectId] || 0); // Ajouter les heures pour chaque projet
     });
-  
+
     this.chartOptions.series = [{ name: 'Total Hours', data: seriesData }];
     this.renderChart();
   }
   getMonthName(monthNumber: number): string {
     const monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June', 
+      'January', 'February', 'March', 'April', 'May', 'June',
       'July', 'August', 'September', 'October', 'November', 'December'
     ];
     return monthNames[monthNumber - 1];
   }
 
   saveProfile(): void {
-    if (!this.userId) {
+    const userId = this.userId; // Utiliser l'ID de l'utilisateur chargé
+
+    if (!userId) {
       console.error('User ID is null or undefined.');
       return;
     }
-
-    if (this.profileForm.valid) {
+    if (this.profileForm.valid && userId) {
       const profileData = {
         displayName: this.profileForm.value.name,
         email: this.profileForm.value.Email,
@@ -261,11 +310,13 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
         dateEmbauche: this.profileForm.value.dateEmbauche,
         poste: this.profileForm.value.poste,
         conge: this.profileForm.value.conge,
-        maladie: this.profileForm.value.maladie
+        maladie: this.profileForm.value.maladie,
+        photoURL: this.profileForm.value.photoURL
       };
 
-      this.profilService.updateUserProfile(this.userId, profileData).then(() => {
-        console.log('Profile updated successfully');
+      this.profilService.updateUserProfile(userId, profileData).then(() => {
+        //console.log('Profile updated successfully', userId);
+        this.isEditing = false;
       }).catch(error => {
         console.error('Error updating profile:', error);
       });
@@ -274,24 +325,41 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
+    const userId = this.authService.getCurrentUserId();
+
     if (input.files && input.files[0]) {
       const file = input.files[0];
       const reader = new FileReader();
-      reader.onload = e => this.profileImage = reader.result as string;
+      reader.onload = async () => {
+        // Upload de l'image dans Firebase Storage
+        const path = `profile_images/${userId}/${file.name}`; // Chemin de stockage dans Firebase Storage
+        const uploadTask = this.fireStorage.upload(path, file);
+
+        try {
+          const snapshot = await uploadTask;
+          const downloadURL = await snapshot.ref.getDownloadURL();
+          // console.log('downloadURL', downloadURL)
+          // Mettre à jour l'URL de l'image dans la base de données
+          await this.profilService.updateUserProfile(userId!, { photoURL: downloadURL });
+
+          // Mettre à jour l'image affichée dans le profil
+          this.profileImage = downloadURL;
+          //console.log('Image uploaded successfully:', downloadURL);
+        } catch (error) {
+          console.error('Error uploading image:', error);
+        }
+      };
       reader.readAsDataURL(file);
     }
   }
-
- 
-
   incrementYear(): void {
     this.currentYear++;
     console.log('Year incremented. Current year:', this.currentYear);
-    
+
     this.updateChartTitle();
-    
+
   }
-  
+
   decrementYear(): void {
     this.currentYear--;
     console.log('Year decremented. Current year:', this.currentYear);
@@ -315,7 +383,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
       console.log('Chart not found. Cannot update title.');
     }
   }
-  
+
   getCongesPercentage(conge: string): string {
     const congeInHours = parseInt(conge, 10); // Supposons que `conge` est une chaîne contenant des heures
     const TOTAL_CONGE_HOURS = 176;
@@ -324,7 +392,153 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
     }
     const percentage = ((congeInHours / TOTAL_CONGE_HOURS) * 100).toFixed(2);
     return `${percentage}%`;
-  
+
   }
-  
+
+  loadUserProfileById(userId: string): void {
+    if (!userId) {
+      console.error('User ID is null or undefined.');
+      return;
+    }
+    console.log('User ID:', userId);
+    this.loadingProfile = true;
+    this.profilService.getUserProfile(userId).then(profileData => {
+      if (profileData) {
+        let dateEmbaucheFormatted = '';
+
+        if (typeof profileData.dateEmbauche === 'string') {
+          dateEmbaucheFormatted = this.datePipe.transform(profileData.dateEmbauche, 'dd MMMM yyyy') || '';
+        }
+
+        this.profileForm.patchValue({
+          name: profileData.displayName || '',
+          Email: profileData.email || '',
+          dateOfBirth: profileData.dateOfBirth || null,
+          phone: profileData.phoneNumber || '',
+          typeContrat: profileData.contratType || '',
+          dateEmbauche: profileData.dateEmbauche || null,
+          poste: profileData.poste || '',
+          conge: profileData.conge || '',
+          maladie: profileData.maladie || '',
+          photoURL: profileData.photoURL || '',
+          this: profileData.role || '',
+        });
+        this.profileImage = profileData.photoURL || null;
+
+        // Appel de la fonction pour récupérer le rôle de l'utilisateur
+        this.profilService.getUserRole(userId).then(role => {
+          console.log('User role:', role);
+          this.role = role; // Affecter la valeur du rôle récupérée à la variable du composant
+        }).catch(error => {
+          console.error('Error fetching user role:', error);
+        });
+      }
+    }).catch(error => {
+      console.error('Error loading user profile:', error);
+    }).finally(() => {
+      this.loadingProfile = false;
+    });
+
+    // Appel de la fonction getProjects
+    this.profilService.getProjects(userId).then(projectIds => {
+      console.log('Project IDs fetched:', projectIds); // Affichage des IDs des projets
+      this.projects = projectIds; // Assigner les IDs des projets à la variable de composant
+
+      // Mettre à jour les catégories de l'axe x
+      this.chartOptions.xaxis.categories = projectIds;
+
+      // Mettre à jour le graphique
+      this.renderChart();
+
+      projectIds.forEach(projectId => {
+        this.profilService.getProjectDetails(userId, projectId).then(projectData => {
+          if (projectData) {
+            this.calculateTotalHours(projectData, projectId);
+          }
+        }).catch(error => {
+          console.error(`Error fetching details for project ID ${projectId}:`, error);
+        });
+      });
+    }).catch(error => {
+      console.error('Error fetching projects:', error);
+    });
+    this.getcongeMaladie(userId);
+
+  }
+  enterEditMode(): void {
+    this.isEditing = true;
+  }
+
+  /*getcongeMaladie(userId: string): number {
+    let remainingHours = 0; // Définir le nombre total d'heures de congé de maladie par défaut
+
+    if (!userId) {
+      console.error('User ID is null or undefined.');
+      //return this.profilService.convertToDaysAndHours(remainingHours);
+    }
+
+    // Récupérer les projets associés à l'utilisateur
+    this.profilService.getProjects(userId).then(projectIds => {
+      projectIds.forEach(projectId => {
+        // Vérifier si le projet est associé au congé de maladie
+        if (projectId === 'Maladie') {
+          this.profilService.getProjectDetails(userId, projectId).then(projectData => {
+            if (projectData) {
+              // Calculer le total des heures du congé de maladie pour ce projet
+              const totalHours = this.calculateTotalHours(projectData, projectId);
+              remainingHours = 32 - totalHours; // Calcul du nombre d'heures restantes
+              console.log('Remaining Maladie hours:', remainingHours);
+              // Convertir les heures restantes en jours et heures et les retourner
+              console.log('Remaining Maladie hours text:', this.profilService.convertToDaysAndHours(remainingHours));
+
+            }
+          }).catch(error => {
+            console.error(`Error fetching details for project ID ${projectId}:`, error);
+          });
+        }
+      });
+    }).catch(error => {
+      console.error('Error fetching projects:', error);
+    });
+
+    // Convertir les heures restantes en jours et heures et les retourner
+    return remainingHours;
+  }*/
+  getcongeMaladie(userId: string): void {
+    if (!userId) {
+      console.error('User ID is null or undefined.');
+      return;
+    }
+
+    let remainingHours = 0; // Définir le nombre total d'heures de congé de maladie par défaut
+
+    // Récupérer les projets associés à l'utilisateur
+    this.profilService.getProjects(userId).then(projectIds => {
+      const maladieProjectId = projectIds.find(projectId => projectId === 'Maladie');
+      if (maladieProjectId) {
+        this.profilService.getProjectDetails(userId, maladieProjectId).then(projectData => {
+          if (projectData) {
+            // Calculer le total des heures du congé de maladie pour ce projet
+            const totalHours = this.calculateTotalHours(projectData, maladieProjectId);
+            remainingHours = 32 - totalHours; // Calcul du nombre d'heures restantes
+            console.log('Remaining Maladie hours:', remainingHours);
+
+            // Convertir les heures restantes en jours et heures
+            const remainingHoursText = this.profilService.convertToDaysAndHours(remainingHours);
+            console.log('Remaining Maladie hours text:', remainingHoursText);
+
+            // Mettre à jour le champ maladie dans le formulaire
+            this.profileForm.patchValue({ maladie: remainingHoursText });
+          }
+        }).catch(error => {
+          console.error(`Error fetching details for project ID ${maladieProjectId}:`, error);
+        });
+      }
+    }).catch(error => {
+      console.error('Error fetching projects:', error);
+    });
+  }
+
+
 }
+

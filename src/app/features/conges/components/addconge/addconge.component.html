@@ -101,9 +101,17 @@
 
 
     <!-- Zone de téléchargement de fichier pour un congé de maladie -->
-    <div class="add-file" *ngIf="natureConge === 'Congé de maladie (1 jour)'|| natureConge === 'Congé Payé' ">
+    <!-- <div class="add-file" *ngIf="natureConge === 'Congé de maladie (1 jour)'|| natureConge === 'Congé Payé' ">
       <input type="file" (change)="onFileChange($event)">
     </div>
+  -->
+    <!-- Zone de téléchargement de fichier pour un congé de maladie ou payé -->
+    <div class="add-file" *ngIf="natureConge === 'Congé de maladie (1 jour)' || natureConge === 'Congé Payé'">
+      <input type="file" (change)="onFileChange($event)">
+    </div>
+    <span *ngIf="fileError" class="error-message">
+      {{ 'features.conge.file_error' | transloco }}
+    </span>
 
 
 

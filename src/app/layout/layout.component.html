@@ -13,10 +13,14 @@
           </div>
         </button>
         <button mat-icon-button class="user-avatar-trigger" routerLink="/profile">
-          <mat-icon class="user-avatar">person</mat-icon>
-          <!--<mat-avatar class="user-avatar">
-            {{ getFirstLetter(user?.email) }} </mat-avatar>-->
+          <ng-container *ngIf="!profileImage; else userImage">
+            <mat-icon class="user-avatar">person</mat-icon>
+          </ng-container>
+          <ng-template #userImage>
+            <img [src]="profileImage" class="user-avatar" alt="User Profile">
+          </ng-template>
         </button>
+
       </div>
       <button mat-icon-button class="user-avatar-trigger" (click)="toggleHorizontalNavbar()">
         <mat-icon class="user-menu">widgets</mat-icon>
@@ -26,8 +30,7 @@
       </button>
       <!--<button class="mat-menu-item" (click)="signOut()">
         <span style="color: white;">{{ 'layout.menu.sign-out' | transloco }}</span>
-      </button>
--->
+      </button>-->
     </div>
   </mat-toolbar-row>
 </mat-toolbar>

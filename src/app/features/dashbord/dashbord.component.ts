@@ -49,7 +49,7 @@ export class DashbordComponent implements OnInit {
     if (this.theDate) {
       this.month2 = this.theDate.getMonth();
       this.year = this.theDate.getFullYear();
-     
+
     }
     this.listuser = [];
     // Assurez-vous que filteredUsers est également initialisé avec la liste complète des utilisateurs
@@ -198,8 +198,11 @@ export class DashbordComponent implements OnInit {
             // Appliquer le style de la police uniquement pour la ligne ou la colonne "Total"
             opts.w.config.dataLabels.style.fontFamily = isTotal ? '30px' : undefined;
 
-            return val.toString().replace('.', ',');
+            if (isTotal && opts.seriesIndex !== 0) {
+              return `${val.toString().replace('.', ',')} h`;
+            }
 
+            return val.toString().replace('.', ',');
           },
           style: {
             colors: ["#193F77"],
@@ -335,6 +338,9 @@ export class DashbordComponent implements OnInit {
 
           // Appliquer le style de la police uniquement pour la ligne ou la colonne "Total"
           opts.w.config.dataLabels.style.fontFamily = isTotal ? '20px' : undefined;
+          if (isTotal && opts.seriesIndex !== 0) {
+            return `${val.toString().replace('.', ',')} h`;
+          }
           return val.toString().replace('.', ',');
         },
         style: {
@@ -426,6 +432,9 @@ export class DashbordComponent implements OnInit {
 
           // Appliquer le style de la police uniquement pour la ligne ou la colonne "Total"
           opts.w.config.dataLabels.style.fontFamily = isTotal ? '60px' : undefined;
+          if (isTotal && opts.seriesIndex !== 0) {
+            return `${val.toString().replace('.', ',')} h`;
+          }
           return val.toString().replace('.', ',');
         },
         style: {

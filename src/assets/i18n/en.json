@@ -233,7 +233,8 @@
       "validate_confirm": "Are you sure you want to accept this leave?",
       "reject_confirm": "Are you sure you want to reject this leave?",
       "enter_comment": "Add a comment",
-      "Request": "Request"
+      "Request": "Request",
+      "file_error": "Please attach your medical certificate for this request."
     },
     "liste_conge": {
       "title": "List of leave",
@@ -264,8 +265,8 @@
       "user_name": "User Name",
       "Date_Birth": "Date of Birth",
       "Phone": "Phone Number",
-      "NumbConger_pay": "Number of Paid Leave Days",
-      "NumbConger_Mal": "Number of Sick Leave Days",
+      "NumbConger_pay": "Paid Leave Balance:",
+      "NumbConger_Mal": "Sick Leave Balance:",
       "Statistic": "Project Statistics",
       "Type_contrat": "Contract Type",
       "Date_embauche": "Date of Hire"

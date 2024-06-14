@@ -20,10 +20,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { Day_offService } from '../day_offs/services/day_off.service';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { TimesheetGuard } from 'src/app/guards/authorize-timesheet.guard';
 
 const routes: Routes = [
   {
     path: ':uid/:date',
+    canActivate: [TimesheetGuard],
     component: TimesheetComponent
   }
 ];

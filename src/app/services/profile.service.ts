@@ -6,6 +6,7 @@ import {
   query,
   getDocs,
   doc,
+  getDoc,
 } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { Profile } from '../models/profile.model';
@@ -58,7 +59,7 @@ export class ProfileService {
 
   public async checkUserSubCollection(uid) {
     const qr = await this.checkDomain();
-    if(qr.docs.length > 0){
+    if (qr.docs.length > 0) {
       // Get the first matching domain document
       const domaineDoc = qr.docs[0];
       const domainRef = doc(this.firestore, 'domaine_CRA', domaineDoc.id);
@@ -71,8 +72,8 @@ export class ProfileService {
       // Check if any documents were found in the subcollection 'users' where 'id' matches the given 'uid'
       const userExists = userDocs.some((userDoc) => userDoc.data()['id'] === uid);
       return userExists;
-    }else{
-      return false ;
+    } else {
+      return false;
     }
   }
 
@@ -86,7 +87,7 @@ export class ProfileService {
 
   public async getUser(user) {
     const qr = await this.checkDomain();
-    if(qr.docs.length > 0){
+    if (qr.docs.length > 0) {
       // Get the first matching domain document
       const domaineDoc = qr.docs[0];
 
@@ -103,7 +104,7 @@ export class ProfileService {
     }
   }
 
-  async getUserRole(){
+  async getUserRole() {
     const queryResult = await getDocs(
       query(collection(this.firestore, 'membership_CRA'), where('uid', '==', this.auth.currentUser?.uid))
     );
@@ -113,8 +114,27 @@ export class ProfileService {
 
     return currentUser['role'];
   }
+  async getUserPhotoURL(id: string): Promise<string | null> {
+    try {
+      console.log('Fetching user photo URL for ID:', id);
+      const docRef = doc(this.firestore, 'membership_CRA', id);
+      const docSnap = await getDoc(docRef);
 
-  async getIdDomaine() {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const photoURL = data['photoURL']; // Récupérer la valeur du champ "photoURL"
+        console.log('User photo URL:', photoURL);
+        return photoURL || null; // Retourner photoURL s'il existe, sinon retourner null
+      } else {
+        console.log("No such document!");
+        return null;
+      }
+    } catch (error) {
+      console.error('Error getting user photo URL:', error);
+      return null;
+    }
+  }
+  public async getIdDomaine() {
     const user = await this.auth.currentUser;
     if (user) {
       const profile = await this.fetchProfile(user);
