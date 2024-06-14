@@ -78,7 +78,7 @@ export class Day_offService {
             querySnapshot.forEach((doc) => {
               dayoff.push(doc.data()); // Type assertion here
             });
-            console.log(dayoff);
+           // console.log(dayoff);
 
             dayoff.map(li => {
               for (const key in li) {
@@ -89,7 +89,7 @@ export class Day_offService {
                   const milliseconds = timestamp.seconds * 1000;
                   // Créez une instance de Date en utilisant le timestamp en millisecondes
                   const date: any = new Date(milliseconds);
-                  console.log(li);
+                //  console.log(li);
                   const annee = date.getFullYear(); // Obtenez l'année au format AAAA
                   const jour = date.getDate(); // Obtenez le jour du mois
                   const monthNames = [
