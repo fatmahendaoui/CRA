@@ -4,6 +4,7 @@ import { RemoteService } from './services/remoteservice.service';
 import { Day_offService } from '../day_offs/services/day_off.service'; 
 import { CongeService } from '../conges/services/conge.service';
 import Swal from 'sweetalert2';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-remote',
@@ -24,11 +25,11 @@ export class RemoteComponent implements OnInit {
   filterText: string = '';
   filteredSelectedImage: { [key: number]: { [key: number]: { image: string } } } = {};
 
-
   constructor(
     private remoteService: RemoteService,
     private dayOffService: Day_offService,
-    private congeService: CongeService
+    private congeService: CongeService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     this.currentWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
   }
@@ -42,6 +43,7 @@ export class RemoteComponent implements OnInit {
       this.fetchApprovedCongesInfo(); 
       this.addTripImageToCurrentWeekDays();
       this.filteredDisplayNames = [...this.displayNames];
+      this.loadFromFirebase(this.getStorageKey());
     });
   }
 
@@ -76,14 +78,12 @@ export class RemoteComponent implements OnInit {
           this.showChoices[i][j] = this.showChoices[i][j] || false;
         });
       });
-      // Initialize filteredDisplayNames with displayNames
       this.filteredDisplayNames = [...this.displayNames];
-      this.filteredSelectedImage = this.filterSelectedImages(); // Mettre à jour filteredSelectedImage
+      this.filteredSelectedImage = this.filterSelectedImages();
     } catch (error) {
       console.error('Error loading display names:', error);
     }
   }
-  
 
   updateCurrentWeekDays() {
     this.currentWeekDays = [];
@@ -153,37 +153,50 @@ export class RemoteComponent implements OnInit {
   selectRemoteImage(i: number, j: number) {
     this.selectedImage[i][j] = { image: 'remote' };
     this.showChoices[i][j] = false;
+    this.saveToLocalStorage(); 
   }
 
   selectTripImage(i: number, j: number) {
     this.selectedImage[i][j] = { image: 'trip' };
     this.showChoices[i][j] = false;
+    this.saveToLocalStorage(); 
   }
 
   selectClientImage(i: number, j: number) {
     this.selectedImage[i][j] = { image: 'client' };
     this.showChoices[i][j] = false;
+    this.saveToLocalStorage(); 
   }
 
   selectAutoImage(i: number, j: number) {
     this.selectedImage[i][j] = { image: 'auto' };
     this.showChoices[i][j] = false;
+    this.saveToLocalStorage(); 
   }
 
   getStorageKey(): string {
-    return `selectedImage_${format(this.currentWeekStart, 'yyyyMMdd')}`;
+    return `${this.formatDate(this.currentWeekStart, 'MMMM d, yyyy')}`;
   }
 
-  saveChanges() {
+  async saveChanges() {
     const storageKey = this.getStorageKey();
     localStorage.setItem(storageKey, JSON.stringify(this.selectedImage));
     
-    Swal.fire({
-      icon: 'success',
-      title: 'Changes saved successfully!',
-      showConfirmButton: false,
-      timer: 2000
-    });
+    try {
+      await this.remoteService.saveToFirebase(storageKey, this.selectedImage);
+      Swal.fire({
+        icon: 'success',
+        title: 'Changes saved successfully!',
+        showConfirmButton: false,
+        timer: 2000
+      });
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Failed to save changes!',
+        showConfirmButton: true
+      });
+    }
   }
 
   loadSavedChanges() {
@@ -219,6 +232,7 @@ export class RemoteComponent implements OnInit {
 
   removeImage(i: number, j: number) {
     this.selectedImage[i][j] = { image: 'plus' };
+    this.saveToLocalStorage(); 
   }
 
   convertUnixTimestamp(unixTimestamp: number): string {
@@ -277,20 +291,20 @@ export class RemoteComponent implements OnInit {
       const nature = conge.nature;
       let nombreHeures = conge.nombreHeures;
       let dayIndex = this.currentWeekDays.findIndex(day => day.date === formattedDateDebut);
-
+  
       console.log(`Processing leave for: ${displayName}`);
       console.log(`Start date: ${formattedDateDebut}`);
       console.log(`Nature: ${nature}`);
       console.log(`Total hours: ${nombreHeures}`);
-
+  
       while (dayIndex !== -1 && nombreHeures > 0) {
         const i = this.displayNames.findIndex(name => name.name === displayName);
-
+  
         if (i !== -1) {
           const j = dayIndex;
-
+  
           console.log(`Adding image for ${displayName} on ${this.currentWeekDays[j].date}`);
-
+  
           switch (nature) {
             case 'Congé payé':
               this.selectedImage[i][j] = { image: 'trip' };
@@ -309,15 +323,21 @@ export class RemoteComponent implements OnInit {
               console.log('Added default trip image');
               break;
           }
-
+  
+          this.saveToLocalStorage(); 
+  
+         
+  
+          console.log('Selected image state:', this.selectedImage);
+  
           nombreHeures -= 8;
           console.log(`Remaining hours: ${nombreHeures}`);
-
+  
           dayIndex++;
           while (dayIndex < this.currentWeekDays.length && this.currentWeekDays[dayIndex].isDayOff) {
             dayIndex++;
           }
-
+  
           if (dayIndex < this.currentWeekDays.length && nombreHeures > 0) {
             console.log(`Adding image for ${displayName} on next day ${this.currentWeekDays[dayIndex].date}`);
           } else if (nombreHeures > 0) {
@@ -330,7 +350,16 @@ export class RemoteComponent implements OnInit {
         }
       }
     });
+  
+    this.updateCurrentWeekDays();
+    this.loadSavedChanges();
   }
+  
+ 
+  refreshUI() {
+    this.changeDetectorRef.detectChanges(); // Utiliser ChangeDetectorRef pour forcer la détection des changements
+  }
+  
 
   filterSelectedImages(): { [key: number]: { [key: number]: { image: string } } } {
     const filteredImages: { [key: number]: { [key: number]: { image: string } } } = {};
@@ -343,11 +372,24 @@ export class RemoteComponent implements OnInit {
     return filteredImages;
   }
 
-  applyFilter() {
-    this.filteredDisplayNames = this.displayNames.filter(displayName =>
-      displayName.name && typeof displayName.name === 'string' && 
-      displayName.name.toLowerCase().includes(this.filterText.toLowerCase())
-    );
-    this.filteredSelectedImage = this.filterSelectedImages(); // Mettre à jour filteredSelectedImage
+ 
+
+  async loadFromFirebase(storageKey: string): Promise<void> {
+    try {
+      const data = await this.remoteService.loadFromFirebase(storageKey);
+      if (data) {
+        console.log('Data loaded from Firestore:', data);
+        this.selectedImage = data;
+      } else {
+        console.log('No data found in Firestore for the given key.');
+      }
+    } catch (error) {
+      console.error('Error loading data from Firestore:', error);
+    }
+  }
+
+  private saveToLocalStorage() {
+    const storageKey = this.getStorageKey();
+    localStorage.setItem(storageKey, JSON.stringify(this.selectedImage));
   }
 }
