@@ -269,7 +269,8 @@
       "NumbConger_Mal": "Sick Leave Balance:",
       "Statistic": "Project Statistics",
       "Type_contrat": "Contract Type",
-      "Date_embauche": "Date of Hire"
+      "Date_embauche": "Date of Hire",
+      "hr_data": "HR Data"
     },
     "months": {
       "january": "January",

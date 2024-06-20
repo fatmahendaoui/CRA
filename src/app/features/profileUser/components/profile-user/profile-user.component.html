@@ -66,15 +66,20 @@
                 <div class="side-cards">
                     <!-- Nombre de congé payé -->
                     <mat-card class="Conge-payee">
-                        <h4 class="texte">Solde congés payé :</h4>
-                        <img src="assets/images/Badge.png">
-                        <p style="text-align: center;">{{ profileForm.value.conge }}</p>
+                        <div class="texte-img-container">
+                            <h4 class="texte">{{ 'features.profile.NumbConger_pay' | transloco }}</h4>
+                            <img src="assets/images/Badge.png" class="card-image">
+                        </div>
+                        <p class="solde-conge">{{ profileForm.value.conge }}</p>
                     </mat-card>
                     <br>
                     <!-- Nombre de congé maladie -->
                     <mat-card class="Conge-maladie">
-                        <h4 class="texte">Solde congé de maladie :</h4>
-                        <p style="text-align: center;">{{ profileForm.value.maladie }}</p>
+                        <div class="texte-img-container">
+                            <h4 class="texte">{{ 'features.profile.NumbConger_Mal' | transloco }}</h4>
+                            <img src="assets/images/Badge.png" class="card-image">
+                        </div>
+                        <p class="solde-conge">{{ profileForm.value.maladie }}</p>
                     </mat-card>
                 </div>
                 <!-- Statistic -->
@@ -93,7 +98,7 @@
 
             <mat-card class="Embauche">
                 <h3 style="color: #E50060;">
-                    <b>Données RH</b>
+                    <b>{{ 'features.profile.hr_data' | transloco }}</b>
                 </h3>
                 <form [formGroup]="profileForm">
                     <div class="form-row">

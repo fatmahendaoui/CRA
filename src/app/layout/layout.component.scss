@@ -388,20 +388,9 @@ span {
 .content-container {
   transition: margin-top 0.3s ease; /* Ajoutez une transition fluide */
 }
-//select option 
-/*
-  .custom-icon-select {
-  align-items: center;
-  gap: 8px;
-  font-size: small;
-  border: none;
-  color: white;
-  background-color: transparent;
-    display: block; // Assurez-vous que les boutons sont affichés en tant que blocs pour pouvoir appliquer la marge
-    margin: 4px; // Ajoute une marge en bas de chaque bouton
-  }
-*/
+
 .select-button{
-    display: block; // Assurez-vous que les boutons sont affichés en tant que blocs pour pouvoir appliquer la marge
-    margin: 8px; // Ajoute une marge en bas de chaque bouton
+  display: block; // Assurez-vous que les boutons sont affichés en tant que blocs pour pouvoir appliquer la marge
+  margin: 8px; // Ajoute une marge en bas de chaque bouton
 }
+

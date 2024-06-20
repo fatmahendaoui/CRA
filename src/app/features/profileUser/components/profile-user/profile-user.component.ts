@@ -7,6 +7,7 @@ import { ProjectService } from './../../../projects/services/projects.service';
 import { ActivatedRoute } from '@angular/router';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { ProfilService } from '../../services/profile.service';
+import { th } from 'date-fns/locale';
 
 @Component({
   selector: 'app-profile-user',
@@ -51,6 +52,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
       series: [
         {
           name: "My-series",
+          data: [0]
         }
       ],
       chart: {
@@ -463,47 +465,13 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
       console.error('Error fetching projects:', error);
     });
     this.getcongeMaladie(userId);
+    this.getcongePaye(userId);
 
   }
   enterEditMode(): void {
     this.isEditing = true;
   }
-
-  /*getcongeMaladie(userId: string): number {
-    let remainingHours = 0; // Définir le nombre total d'heures de congé de maladie par défaut
-
-    if (!userId) {
-      console.error('User ID is null or undefined.');
-      //return this.profilService.convertToDaysAndHours(remainingHours);
-    }
-
-    // Récupérer les projets associés à l'utilisateur
-    this.profilService.getProjects(userId).then(projectIds => {
-      projectIds.forEach(projectId => {
-        // Vérifier si le projet est associé au congé de maladie
-        if (projectId === 'Maladie') {
-          this.profilService.getProjectDetails(userId, projectId).then(projectData => {
-            if (projectData) {
-              // Calculer le total des heures du congé de maladie pour ce projet
-              const totalHours = this.calculateTotalHours(projectData, projectId);
-              remainingHours = 32 - totalHours; // Calcul du nombre d'heures restantes
-              console.log('Remaining Maladie hours:', remainingHours);
-              // Convertir les heures restantes en jours et heures et les retourner
-              console.log('Remaining Maladie hours text:', this.profilService.convertToDaysAndHours(remainingHours));
-
-            }
-          }).catch(error => {
-            console.error(`Error fetching details for project ID ${projectId}:`, error);
-          });
-        }
-      });
-    }).catch(error => {
-      console.error('Error fetching projects:', error);
-    });
-
-    // Convertir les heures restantes en jours et heures et les retourner
-    return remainingHours;
-  }*/
+  /////
   getcongeMaladie(userId: string): void {
     if (!userId) {
       console.error('User ID is null or undefined.');
@@ -538,7 +506,41 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
       console.error('Error fetching projects:', error);
     });
   }
+  /////
+  getcongePaye(userId: string): void {
+    if (!userId) {
+      console.error('User ID is null or undefined.');
+      return;
+    }
 
+    let remainingHours = 0; // Définir le nombre total d'heures de congé de maladie par défaut
+
+    // Récupérer les projets associés à l'utilisateur
+    this.profilService.getProjects(userId).then(projectIds => {
+      const vacancesProjectId = projectIds.find(projectId => projectId === 'Vacances');
+      if (vacancesProjectId) {
+        this.profilService.getProjectDetails(userId, vacancesProjectId).then(projectData => {
+          if (projectData) {
+            // Calculer le total des heures du congé de maladie pour ce projet
+            const totalHours = this.calculateTotalHours(projectData, vacancesProjectId);
+            remainingHours = 176 - totalHours; // Calcul du nombre d'heures restantes
+            console.log('Remaining Maladie hours:', remainingHours);
+
+            // Convertir les heures restantes en jours et heures
+            const remainingHoursText = this.profilService.convertToDaysAndHours(remainingHours);
+            console.log('Remaining Maladie hours text:', remainingHoursText);
+
+            // Mettre à jour le champ maladie dans le formulaire
+            this.profileForm.patchValue({ conge: remainingHoursText });
+          }
+        }).catch(error => {
+          console.error(`Error fetching details for project ID ${vacancesProjectId}:`, error);
+        });
+      }
+    }).catch(error => {
+      console.error('Error fetching projects:', error);
+    });
+  }
 
 }
-
+//exports.monthlyTimesheetReminder = functions.pubsub.schedule('00 10 28 * *')

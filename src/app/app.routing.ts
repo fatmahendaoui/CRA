@@ -11,7 +11,7 @@ import { DashbordComponent } from './features/dashbord/dashbord.component';
 import { AddcongeComponent } from './features/conges/components/addconge/addconge.component';
 import { ListcongeComponent } from './features/conges/components/listconge/listconge.component';
 import { DetailscongeComponent } from './features/conges/components/detailsconge/detailsconge.component';
-import { TimesheetGuard } from './guards/authorize-timesheet.guard';
+import { RemoteComponent } from './features/remote/remote.component';
 
 
 
@@ -130,7 +130,11 @@ export const routes: Routes = [
 
 
 
-
+      {
+        path: 'remote',
+        loadChildren: () => import('./features/remote/remote/remote.module').then(m => m.RemoteModule),
+        component: RemoteComponent
+      },
 
       {
         path: 'day_off',

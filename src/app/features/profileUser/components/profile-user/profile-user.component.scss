@@ -120,17 +120,34 @@ h4 {
   padding: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   border-radius: 10px;
-  .texte {
-    margin: 2px;
-    font-size: 12px;
-  
-  }
-  img{
-    width: 10%;
-    height: 15%;
-  
-  }
 }
+.solde-conge{
+  //display: flex;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+.texte-img-container {
+  display: flex;
+  margin: 5px;
+  justify-content: space-between; /* Assure que le texte et l'image sont espacés */
+  align-items: center; /* Aligne les éléments au centre verticalement */
+}
+.texte {
+ margin-left: 8px;
+  font-size: 13px;
+  flex: 1; /* Permet au texte de prendre tout l'espace disponible à gauche */
+  font-weight: 500;
+}
+.card-image {
+  width: auto; /* Ajuster la largeur de l'image selon vos besoins */
+  height: auto;
+  margin-left: 40px; 
+  margin-bottom: 12px;
+}
+
+
 .side-cards {
  width: 100%; /* Ajuster la largeur selon vos besoins */
   //margin-left: 50px; /* Ajouter un espace entre les cartes */

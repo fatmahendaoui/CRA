@@ -1,0 +1,92 @@
+<div class="main-container">
+  <h1>Remote File</h1>
+
+  <div class="container">
+    <div class="header">
+      <!--  <div class="left-section">
+        <input type="text" class="mat-form-field custom-input" [(ngModel)]="filterText" (input)="applyFilter()" placeholder="Rechercher">
+      </div>-->
+      <div class="left-section">
+        <div class="week-navigation">
+          <mat-icon color="primary" (click)="previousWeek()">navigate_before</mat-icon>
+          <h3 style="color: #E50060;">Week starting {{ formatDate(currentWeekStart, 'MMMM d, yyyy') }}</h3>
+          <mat-icon color="primary" (click)="nextWeek()">navigate_next</mat-icon>
+        </div>
+      </div>
+      <div class="right-section">
+        <button class="pink-button" (click)="saveChanges()">Save</button>
+      </div>
+    </div>
+  </div>
+  
+
+  <div class="table-container" *ngIf="filteredDisplayNames && filteredDisplayNames.length > 0">
+    <table class="table table-bordered">
+   
+
+
+      <thead>
+        <tr>
+          <th class="text-color">Name</th>
+          <th *ngFor="let day of currentWeekDays" class="day-separator text-color">{{ day.date }}</th>
+        </tr>
+      </thead>
+     
+
+
+      <tbody>
+        <ng-container *ngFor="let displayName of filteredDisplayNames; let i = index">
+          <tr *ngIf="displayName.name">
+            <td class="name-cell">
+              <div class="name-container">
+                <img *ngIf="displayName.photoURL" [src]="displayName.photoURL" class="photo" />
+                <mat-icon *ngIf="!displayName.photoURL" class="user-avatar">person</mat-icon>
+                <span class="text-color">{{ displayName.name }}</span>
+              </div>
+            </td>
+            <td *ngFor="let day of currentWeekDays; let j = index" class="day-separator">
+              <div class="image-container">
+                <div *ngIf="day.isDayOff">
+                  <img src="assets/images/dayoff.jpg" class="example-image" />
+                </div>
+                <div *ngIf="!day.isDayOff">
+                  <div class="plus-image" *ngIf="selectedImage[i]?.[j]?.image === 'plus'" (click)="showImageChoices(i, j)">
+                    <img src="assets/images/plus.jpg" class="example-image" />
+                  </div>
+                  <div *ngIf="selectedImage[i]?.[j]?.image !== 'plus'">
+                    <img [src]="getImageUrl(selectedImage[i][j].image)" class="example-image" (click)="toggleImageChoices(i, j)" />
+                    <mat-icon class="cancel-icon" (click)="removeImage(i, j)">cancel</mat-icon>
+                  </div>
+                  <div *ngIf="showChoices[i]?.[j]" class="image-choices">
+                    <div (click)="selectRemoteImage(i, j)">
+                      <img src="assets/images/remote.jpg" class="example-image" />
+                      <span>Remote</span>
+                    </div>
+                    <div (click)="selectTripImage(i, j)">
+                      <img src="assets/images/trip.jpg" class="example-image" />
+                      <span>Congé</span>
+                    </div>
+                    <div (click)="selectClientImage(i, j)">
+                      <img src="assets/images/client.jpg" class="example-image" />
+                      <span>Client</span>
+                    </div>
+                    <div (click)="selectAutoImage(i, j)">
+                      <img src="assets/images/auto.jpg" class="example-image" />
+                      <span>Auto</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+
+
+  
+  <div *ngIf="!filteredDisplayNames || filteredDisplayNames.length === 0">
+    <p>No display names available.</p>
+  </div>
+</div>

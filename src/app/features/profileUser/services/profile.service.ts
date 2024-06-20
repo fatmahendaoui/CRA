@@ -18,8 +18,11 @@ export class ProfilService {
   public convertToDaysAndHours(hours: number): string {
     const days = Math.floor(hours / 8);
     const remainingHours = hours % 8;
-
-    return `${days} jours et ${remainingHours} heures`;
+    if (remainingHours === 0) {
+      return `${days} jours`;
+    } else {
+      return `${days} jours et ${remainingHours} heures`;
+    }
   }
 
   // Fonction pour convertir une Timestamp en Date

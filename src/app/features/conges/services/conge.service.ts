@@ -145,8 +145,24 @@ export class CongeService {
 
       // Envoyer un email à chaque administrateur
       for await (const adminUser of adminUsers) {
+        const normalizeDate = (date) => {
+          const normalizedDate = new Date(date);
+          normalizedDate.setHours(0, 0, 0, 0); // Set time to midnight
+          return normalizedDate;
+        };
+
+        // const today = normalizeDate(new Date());
+        const dateDebut = normalizeDate(new Date(emailData.dateDebut));
+        const dateFin = new Date(emailData.dateFin);
+
+        /*if (dateDebut.getTime() !== today.getTime()) {
+          dateDebut.setDate(dateDebut.getDate() + 1);
+          dateFin.setDate(dateFin.getDate() + 1);
+        }*/
         const adminEmailData = {
           ...emailData,
+          dateDebut: dateDebut.toDateString(),
+          dateFin: dateFin.toDateString(),
           emailData: adminUser.email,
           AdminName: adminUser.displayName,
 
@@ -219,5 +235,28 @@ export class CongeService {
       throw error;
     }
   }
+  async getApprovedConges(): Promise<any[]> {
+    try {
+      const congeCollectionRef = collection(this.firestore, 'conge');
+      const q = query(congeCollectionRef, where('status', '==', 1));
+      const querySnapshot = await getDocs(q);
+      const approvedConges: any[] = [];
+      querySnapshot.forEach((doc) => {
+        approvedConges.push(doc.data());
+      });
+      // console.log('Liste des congés approuvés:', approvedConges); // Ajout de la console log
+      return approvedConges;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des congés approuvés :', error);
+      return [];
+    }
+  }
+  ////////
+  blockConge(congeId: string): void {
+    const donnePrject = collection(this.firestore, 'conge');
+
+  }
+
 }
+
 
