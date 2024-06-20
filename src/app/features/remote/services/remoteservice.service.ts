@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { getFirestore, collection, getDocs, QuerySnapshot, QueryDocumentSnapshot, query, where } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, query, where, setDoc, doc,getDoc } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,7 @@ export class RemoteService {
     try {
       const membershipCollectionRef = collection(this.firestore, 'membership_CRA');
       const q = query(membershipCollectionRef, where('idDomaine', '==', '110a6215-76c0-48c6-bf68-429e28a19fbc'));
-      const querySnapshot: QuerySnapshot = await getDocs(q);
+      const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
         console.log('No documents found in collection.');
@@ -23,16 +23,42 @@ export class RemoteService {
       }
 
       const displayNames: { name: string, photoURL: string }[] = [];
-      querySnapshot.forEach((doc: QueryDocumentSnapshot) => {
+      querySnapshot.forEach(doc => {
         const data = doc.data();
-        const displayName = data['displayName']; // Replace 'displayName' with the actual field you want to retrieve
-        const photoURL = data['photoURL']; // Replace 'photoURL' with the actual field you want to retrieve
+        const displayName = data['displayName'];
+        const photoURL = data['photoURL']; 
         displayNames.push({ name: displayName, photoURL: photoURL });
       });
 
       return displayNames;
     } catch (error) {
       console.error('Error getting documents:', error);
+      throw error;
+    }
+  }
+
+  async saveToFirebase(storageKey: string, data: any): Promise<void> {
+    try {
+      const docRef = doc(this.firestore, 'remote', storageKey);
+      await setDoc(docRef, data, { merge: true });
+      console.log('Data successfully written to Firestore!');
+    } catch (error) {
+      console.error('Error writing document: ', error);
+      throw error;
+    }
+  }
+  async loadFromFirebase(storageKey: string): Promise<any> {
+    try {
+      const docRef = doc(this.firestore, 'remote', storageKey);
+      const docSnapshot = await getDoc(docRef);
+      if (docSnapshot.exists()) {
+        return docSnapshot.data();
+      } else {
+        console.log('No document found in Firestore for the given key.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error loading document from Firestore:', error);
       throw error;
     }
   }

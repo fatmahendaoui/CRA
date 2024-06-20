@@ -1,4 +1,4 @@
-/* Style général */
+
 html, body {
   height: 100%;
   margin: 0;
@@ -15,29 +15,29 @@ html, body {
 table {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 10px; /* Espace entre les cellules du tableau */
+  border-spacing: 10px; 
 }
 
 .table th, .table td {
-  background-color: white; /* Coloration des cellules en blanc */
-  border: none; /* Supprime les bordures du tableau */
+  background-color: white;
+  border: none; 
   text-align: center;
-  padding: 10px; /* Espace dans les cellules */
+  padding: 10px; 
 }
 
 /* Image */
 .example-image {
-  width: 40px; /* Ajuster la taille au besoin */
-  height: 40px; /* Ajuster la taille au besoin */
+  width: 40px; 
+  height: 40px; 
   cursor: pointer;
 }
 
-/* Séparateur de jour */
+
 .day-separator {
   padding: 8px;
 }
 
-/* Photo */
+
 .photo {
   width: 40px;
   height: 40px;
@@ -49,29 +49,28 @@ table {
 /* Header */
 .header {
   display: flex;
-  justify-content: space-between; /* Aligner les éléments sur la même ligne avec de l'espace entre eux */
-  align-items: center; /* Aligner verticalement */
+  justify-content: space-between; 
+  align-items: center; 
   padding: 20px;
   width: 100%;
 }
 
-/* Navigation semaine */
+
 .week-navigation {
   display: flex;
-  align-items: center; /* Aligner verticalement */
-  gap: 16px; /* Espace entre les éléments */
-}
+  align-items: center; 
+  gap: 16px; }
 
 .week-navigation mat-icon {
   cursor: pointer;
 }
 
-/* Conteneur d'images */
+
 .image-container {
   position: relative;
 }
 
-/* Choix d'image */
+
 .image-choices {
   position: absolute;
   top: 0;
@@ -90,10 +89,10 @@ table {
   cursor: pointer;
 }
 
-/* Avatar utilisateur */
+
 .user-avatar {
-  width: 40px; /* Taille de l'icône */
-  height: 40px; /* Taille de l'icône */
+  width: 40px; 
+  height: 40px; 
   border-radius: 50%; 
   background-color: #E50060; 
   color: white; 
@@ -103,13 +102,13 @@ table {
   font-size: 24px; 
 }
 
-/* Conteneur de nom */
+
 .name-container {
   display: flex;
   align-items: center;
 }
 
-/* Photo dans la cellule de nom */
+
 .name-cell img.photo, 
 .name-cell mat-icon.user-avatar {
   margin-right: 8px;
