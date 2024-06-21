@@ -13,7 +13,7 @@ export class AuthService {
   private readonly router = inject(Router);
   private readonly profileService = inject(ProfileService);
   public profile: Profile;
-  private readonly firestore= inject(Firestore); // Modified: Firestore instance
+  private readonly firestore = inject(Firestore); // Modified: Firestore instance
 
   public async CheckUserExist(uid: string): Promise<boolean> {
     // Check if the user is an admin
@@ -50,13 +50,13 @@ export class AuthService {
 
       if (!domaineQuery.empty) {
         // Domain name already exists
-        return { profile : null, exists: true };
+        return { profile: null, exists: true };
       }
 
-       // Get the current date
-       const currentDate = new Date();
+      // Get the current date
+      const currentDate = new Date();
 
-       // Calculate the trial end date by adding 15 days to the current date
+      // Calculate the trial end date by adding 15 days to the current date
 
       // Save profile data to 'domaine_BQDS' collection
       await setDoc(doc(this.firestore, 'domaine_CRA', domaineId), {
@@ -81,9 +81,9 @@ export class AuthService {
       // Save profile data to 'membership_BQDS' collection
       await setDoc(doc(this.firestore, 'membership_CRA', user.uid), profile);
 
-       await this.addNewProject("Disponible", user.uid);
-       await  this.addNewProject("Vacances", user.uid);
-       await this.addNewProject("Maladie", user.uid);
+      await this.addNewProject("Disponible", user.uid);
+      await this.addNewProject("Vacances", user.uid);
+      await this.addNewProject("Maladie", user.uid);
       // Navigate to settings page
       this.router.navigate(['/dashbord']);
 
@@ -97,7 +97,6 @@ export class AuthService {
 
   async addNewProject(newproject: string, iduser: string): Promise<void> {
     if (newproject.trim() === "") {
-      console.log('champ vide');
       return;
     }
     // resultTimesheet.map(li=>{
@@ -110,41 +109,39 @@ export class AuthService {
       // [resultTimesheet[0].month+'_'+resultTimesheet[0].year] : resultTimesheet, // Array of timesheet items for each day
       'projectTotal': 0,
     };
-    const domaineRef = 
+    const domaineRef =
       collection(
         this.firestore,
         'membership_CRA',
-        iduser,'Projects'
+        iduser, 'Projects'
       ) as CollectionReference<DocumentData>
-    
+
     try {
-      await setDoc(doc(domaineRef,newproject), projectData);
-      console.log('Project added to Firestore:', newproject);
+      await setDoc(doc(domaineRef, newproject), projectData);
     } catch (error) {
       console.error('Error adding project to Firestore:', error);
     }
   }
 
-// Method to retrieve domain name from Firebase using domaineId
-async getDomainName(domaineId: string): Promise<string | null> {
-  try {
-    const docRef = doc(this.firestore, 'domaine_CRA', domaineId);
-    const docSnap = await getDoc(docRef);
-    
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      return data['domaineName']; // Accessing property using bracket notation
-    } else {
-      console.log("No such document!");
-      return null;
+  // Method to retrieve domain name from Firebase using domaineId
+  async getDomainName(domaineId: string): Promise<string | null> {
+    try {
+      const docRef = doc(this.firestore, 'domaine_CRA', domaineId);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        return data['domaineName']; // Accessing property using bracket notation
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error('Error getting domain name:', error);
+      throw error;
     }
-  } catch (error) {
-    console.error('Error getting domain name:', error);
-    throw error;
   }
-}
-getCurrentUserId(): string | null {
-  const user = this.auth.currentUser;
-  return user ? user.uid : null;
-}
+  getCurrentUserId(): string | null {
+    const user = this.auth.currentUser;
+    return user ? user.uid : null;
+  }
 }

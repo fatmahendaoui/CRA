@@ -31,7 +31,7 @@
                 <app-loader>Chargement ...</app-loader>
             </ng-container>
         </mat-tab>
-        <mat-tab class="mat-tab" label="{{ 'features.dashbord.User-by-project' | transloco }}">
+        <mat-tab class="mat-tab" label="{{ 'features.dashbord.Project-by-user' | transloco }}">
             <div class="cra" *ngIf="data">
                 <div class="col-12 header-timesheet">
                     <div class="filter-table">
@@ -39,8 +39,9 @@
                         <mat-form-field appearance="outline" class="filter-field">
 
                             <div class="filter-wrapper">
-                                <input matInput type="text" placeholder="Search Project" [(ngModel)]="projectFilter"
-                                    (ngModelChange)="applyProjectFilter()">
+                                <input matInput type="text"
+                                    placeholder="{{ 'features.dashbord.Search_Project' | transloco }}"
+                                    [(ngModel)]="projectFilter" (ngModelChange)="applyProjectFilter()">
                                 <mat-select [(ngModel)]="currentProject" (ngModelChange)="fetchProjects()">
                                     <ng-container *ngFor="let element of filteredProjects">
                                         <mat-option [value]="element.name">{{element.name}}</mat-option>
@@ -68,14 +69,15 @@
         </mat-tab>
 
 
-        <mat-tab class="mat-tab" label="{{ 'features.dashbord.Project-by-user' | transloco }}">
+        <mat-tab class="mat-tab" label="{{ 'features.dashbord.User-by-project' | transloco }}">
             <div class="cra" *ngIf="data">
                 <div class="col-12 header-timesheet">
                     <div class="filter-table">
                         <mat-form-field appearance="outline" class="filter-field">
                             <div class="form-field-content">
-                                <input matInput type="text" placeholder="Search User" [(ngModel)]="searchUser"
-                                    (keyup)="filterUsers()">
+                                <input matInput type="text"
+                                    placeholder="{{ 'features.dashbord.Search_User' | transloco }}"
+                                    [(ngModel)]="searchUser" (keyup)="filterUsers()">
 
                                 <mat-select [(ngModel)]="currentuser" (ngModelChange)="fetchUser()"
                                     class="custom-select">
@@ -87,11 +89,6 @@
                     </div>
                 </div>
             </div>
-
-
-
-
-
 
             <div *ngIf="!dataProject && data">
                 <div class="error-page">

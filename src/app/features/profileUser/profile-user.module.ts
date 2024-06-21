@@ -14,7 +14,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import * as ApexCharts from 'apexcharts';
 import { NgApexchartsModule } from "ng-apexcharts";
-
+import { AngularFireStorageModule } from '@angular/fire/compat/storage';
+import { AngularFireModule } from '@angular/fire/compat';
+import { environment } from 'src/environments/environment';
 
 
 const routes: Routes = [
@@ -45,12 +47,10 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule,
     NgApexchartsModule,
-   
-    
-    
+    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireStorageModule
 
+  ], exports: [RouterModule],
 
-    
-  ]
 })
 export class ProfileUserModule { }

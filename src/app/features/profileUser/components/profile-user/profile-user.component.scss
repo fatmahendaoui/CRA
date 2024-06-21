@@ -1,24 +1,48 @@
 
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.btn-add {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  //margin-top: 20px;
+}
+
 .MatCard-profile {
   width: 30%;
+  height: 652px;
   border: none;
   border-radius: 10px;
-  padding: 9px 18px; /* Ajustez les valeurs de padding selon vos besoins */
-  font-size: 0.80rem; /* Ajustez la taille de la police selon vos besoins */
+  padding: 9px 18px;
+  font-size: 0.80rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+
   .profile-image-container {
-    margin: 20px auto;
+    margin: 10px auto;
     width: 140px;
     height: 140px;
     position: relative;
-    border-radius: 50%; 
-    overflow: hidden;
+    border-radius: 50%;
   }
-  
+
   .user-avatar-container {
-    width: 150%;
-    height: 150%;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
     overflow: hidden;
@@ -27,9 +51,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    object-fit: cover;
   }
-  
+
   .user-avatar {
     color: #fff;
     font-size: 80px;
@@ -39,9 +62,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  
   }
-  //ajouter une photo
+
   .add-photo-icon {
     position: absolute;
     bottom: 0;
@@ -54,64 +76,162 @@
     align-items: center;
     justify-content: center;
   }
-  
+
   .add-photo-icon mat-icon {
     font-size: 24px;
     color: #E50060;
   }
- 
-  .User-name ,
+
+  .User-name,
   .Email,
   .Date,
-  .Phone
-  {
+  .Phone {
     display: flex;
     flex-direction: column;
-    margin-left: 20px;
+    //margin-left: 20px;
   }
-  .Phone
-  {
+
+  .Phone {
     margin-top: 20px;
   }
 }
-
 
 h4 {
   color: #193F77;
   font-family: Roboto, sans-serif;
   letter-spacing: normal;
   margin-bottom: 6px;
-  font-weight: 400; // Semi-bold
+  font-weight: 400;
 }
-mat-form-field {
-  width: 90%;
-}
-.cards-container {
+
+.side-and-state-container {
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 20px;
-  width: 80%;
+  width: 100%;
 }
-.side-cards {
+.Conge-payee,
+.Conge-maladie {
+  width: 94%; /* Ajuster la largeur selon vos besoins */
+  height: 171px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  flex: 1 1 30%;
+  justify-content: left;
+  align-items: left;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
 }
-.cards-container mat-card {
-  flex: 1 1 calc(33.333% - 20px);
-  border: none;
+.solde-conge{
+  //display: flex;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+.texte-img-container {
+  display: flex;
+  margin: 5px;
+  justify-content: space-between; /* Assure que le texte et l'image sont espacés */
+  align-items: center; /* Aligne les éléments au centre verticalement */
+}
+.texte {
+ margin-left: 8px;
+  font-size: 13px;
+  flex: 1; /* Permet au texte de prendre tout l'espace disponible à gauche */
+  font-weight: 500;
+}
+.card-image {
+  width: auto; /* Ajuster la largeur de l'image selon vos besoins */
+  height: auto;
+  margin-left: 40px; 
+  margin-bottom: 12px;
+}
+
+
+.side-cards {
+ width: 100%; /* Ajuster la largeur selon vos besoins */
+  //margin-left: 50px; /* Ajouter un espace entre les cartes */
+  justify-content: space-between; /* Distribuer l'espace entre les cartes */
+}
+
+
+.State-Project {  
+  width: 100%; /* Increase width of State-Project */
+  max-height: 364px;
   border-radius: 10px;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+align-items: left;
+  padding: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+
+  h4 {
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  p {
+    margin: 5px 0 0;
+    text-align: center;
+  }
 }
 
-.small-image {
-  width: 130px; 
-  height: auto; 
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+.year-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  span {
+    font-size: 1.2rem;
+    margin: 0 10px;
+  }
 }
 
+.Embauche {
+  width: 100%;
+  max-height: 278px;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.Embauche h3 {
+  color: #E50060;
+}
+
+.disabled {
+  pointer-events: none;
+  //opacity: 0.5;
+}
+
+.mat-mdc-form-field {
+  width: 100%;
+}
+.mixte {
+  width: 69%; /* Adjust width according to your layout */
+  display: flex;
+  flex-direction: column;
+}
+.Embauche .form-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  //margin-bottom: 20px;
+}
+
+.Embauche .User-name {
+  width: calc(50% - 10px); /* Adjust as needed, considering margin and padding */
+}

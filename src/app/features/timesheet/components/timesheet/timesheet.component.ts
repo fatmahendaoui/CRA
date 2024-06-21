@@ -115,13 +115,6 @@ export class TimesheetComponent implements OnInit {
   getMonth(op: boolean): void {
     const newMonth = op ? this.month2 + 1 : this.month2 - 1;
     let newYear = this.year;
-
-    if (newMonth > 11) {
-      newYear++;
-    } else if (newMonth < 0) {
-      newYear--;
-    }
-
     const wrappedMonth = (newMonth + 12) % 12;
 
     this.updateMonthYear(wrappedMonth, newYear);
@@ -131,19 +124,17 @@ export class TimesheetComponent implements OnInit {
   // get by year
   getYear(op: boolean): void {
     const newYear = this.year + (op ? 1 : -1);
+    this.year = newYear;
     this.updateMonthYear(this.month2, newYear);
     this.filterprojects();
   }
 
   async Save() {
     try {
-        this.tabProject.forEach((project) => {
-            console.log(`Project ID: ${project.id}`);
-            console.log(`Current User: ${this.currentUser}`);
-            console.log(`Project Days:`, project.days);
+      this.tabProject.forEach((project) => {
 
-            this.projectService.updateProjectsMonth(project.id, this.currentUser, project.days);
-        });
+        this.projectService.updateProjectsMonth(project.id, this.currentUser, project.days);
+      });
       if (!this.IsAdmin) {
         handleResponseSuccessWithAlerts(
           this.transloco.translate('features.projects.dialog.success.title'),
@@ -190,7 +181,6 @@ export class TimesheetComponent implements OnInit {
       this.tabProject.forEach((project) => {
         this.projectService.updateProjectsMonth(project.id, this.currentUser, project.days);
       });
-      console.log(this.nameMonth + '_' + this.year);
 
       let data = {
         "nameRequest": this.displayNamecurent,
@@ -276,9 +266,9 @@ export class TimesheetComponent implements OnInit {
     const timesheet: TimesheetItem[] = [];
     let currentWeek: TimesheetItem[] = [];
 
-    for (let i = 1; i <= numberOfDays ; i++) {
+    for (let i = 1; i <= numberOfDays; i++) {
       // Vérifiez si le jour est un jour de week-end ou un jour férié avant de l'ajouter
-      if (!this.isWeekendDay(year, this.monthToNumber(month), i) ) {
+      if (!this.isWeekendDay(year, this.monthToNumber(month), i)) {
         currentWeek.push({
           project: this.projectName,
           year: year,
@@ -299,7 +289,7 @@ export class TimesheetComponent implements OnInit {
       }
     }
 
-    
+
     return timesheet;
   }
 
@@ -369,31 +359,30 @@ export class TimesheetComponent implements OnInit {
   }
   day_offs: number[] = []
   init_total() {
-    
+
     this.resultTimesheet = this.generateTimesheet(this.year, this.nameMonth, this.numberDayNextMonth)
       .map((day) => ({
         ...day,
         isWeekend: this.isWeekendDay(day.year, this.month2, day.day),
         inputValue: day.nbHeure || '',
       }));
-      console.log('Days off:', this.day_offs);
-  
-    }
+
+  }
   isDayOff(day: number): boolean {
     const isDayOff = this.day_offs.includes(day);
     return isDayOff;
   }
-  
+
   filterprojects() {
     this.day_offs = []
-    this.day_offService.fetchAllKeyDay_off(this.nameMonth, this.year,this.profileService.profile.idDomaine).then(day_offs => {
+    this.day_offService.fetchAllKeyDay_off(this.nameMonth, this.year, this.profileService.profile.idDomaine).then(day_offs => {
       this.day_offs = day_offs;
       this.init_total()
       this.tabProject.forEach((project) => {
         for (const key in project) {
           const MonthNumber = this.monthToNumber(this.getmonth(key));
           if (MonthNumber == this.month2 && this.year == this.getyear(key)) {
-            project.days = project[key].filter((day) => !this.isWeekendDay(day.year, this.month2, day.day) );
+            project.days = project[key].filter((day) => !this.isWeekendDay(day.year, this.month2, day.day));
             for (let index = 0; index < project.days.length; index++) {
               const element = project.days[index] === 0 ? '' : project.days[index] || '';
               element.nbHeure = element.nbHeure === 0 ? '' : element.nbHeure || '';

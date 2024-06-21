@@ -35,13 +35,13 @@ export class tovalidateTableComponent extends AbstractTableComponent<any> {
   public deletetovalidate = new EventEmitter<any>();
 
   public override readonly displayedColumns: string[] = [
-    'name','month','actions'
+    'name', 'month', 'actions'
   ];
 
   public onDelete(tovalidate: any): void {
     this.deletetovalidate.emit(tovalidate);
   }
-  transfertdate(x){
+  transfertdate(x) {
     let result
     const parts = x.split('_');
     if (parts.length === 2) {

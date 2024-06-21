@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CongeService } from '../../services/conge.service';
-import { differenceInDays, addDays, isSaturday, isSunday } from 'date-fns';
+import { differenceInDays, addDays, isSaturday, isSunday, add } from 'date-fns';
 import { Router } from '@angular/router';
-
 import { TranslocoService } from '@ngneat/transloco';
 import { handleResponseSuccessWithAlerts } from 'src/app/common/alerts.utils';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { getFirestore, collection, query, where, getDocs, DocumentData } from 'firebase/firestore';
+import { ProfileService } from 'src/app/services/profile.service';
 
 
 
@@ -31,6 +31,10 @@ export class AddcongeComponent implements OnInit {
   displayNamecurent;
   status: string;
   userId: string | null;
+  congeId: string | null; // Nouvelle variable de classe pour stocker l'ID du congé
+  private readonly profileService = inject(ProfileService);
+
+  fileError: boolean = false; // Variable to track file validation error
 
   congesParUtilisateur: any;
   leavesByUser: any;
@@ -67,6 +71,15 @@ export class AddcongeComponent implements OnInit {
 
 
   async onSubmit(): Promise<void> {
+    // Reset file error
+    this.fileError = false;
+
+    // Check if the leave type is "Congé de maladie" and if a file is selected
+    if (this.natureConge === 'Congé de maladie (1 jour)' && !this.selectedFile) {
+      this.fileError = true;
+      return;
+    }
+
     const userId = this.user ? this.user.uid : null;
     let nombreJours: number = differenceInDays(this.dateFin, this.dateDebut) + 1; // Ajouter 1 pour inclure la date de début
     let nombreHeures: number;
@@ -115,6 +128,7 @@ export class AddcongeComponent implements OnInit {
         return;
     }
     // Définir la valeur de this.natureConge avant la condition
+    let photourl = await this.profileService.getUserPhotoURL(userId);
 
     const conge: any = {
       nature: this.natureConge,
@@ -122,22 +136,20 @@ export class AddcongeComponent implements OnInit {
       dateDebut: this.dateDebut,
       dateFin: this.dateFin,
       commentaires: this.commentaires,
-      photourl: this.user ? this.user.photoURL : null,
+      photourl: photourl,
       displayName: this.user ? this.user.displayName : null,
       email: this.user ? this.user.email : null,
       domainId: this.domainId,
       nombreHeures: nombreHeures,
       userId: userId,
       status: 0,
+      dateEnvoi: currentDate.toISOString().split('T')[0],
+      heureEnvoi: currentDate.toLocaleTimeString(),
     };
-    // Définissez les propriétés de date et d'heure dans l'objet conge
-    conge.dateEnvoi = currentDate.toISOString().split('T')[0]; // Date au format ISO
-    conge.heureEnvoi = currentDate.toLocaleTimeString(); // Heure au format local
     try {
       const congeId = await this.congeService.addConge(conge);
-
       if (congeId) {
-
+        this.congeId = congeId;
 
         // Vérifier si la nature du congé est 'Congé de maladie (1 jour)'
         if (this.natureConge === 'Congé de maladie (1 jour)' && this.selectedFile) {
@@ -146,7 +158,6 @@ export class AddcongeComponent implements OnInit {
 
           uploadTask.then(async (snapshot) => {
             const downloadURL = await snapshot.ref.getDownloadURL();
-            console.log('URL de téléchargement:', downloadURL);
             await this.congeService.updateCongeWithFileURLAndCongeId(downloadURL, congeId);
             conge.url_certif = downloadURL;
 
@@ -154,7 +165,17 @@ export class AddcongeComponent implements OnInit {
             console.error('Erreur lors du téléchargement du fichier:', error);
           });
         }
-
+        let data = {
+          nameRequest: this.user.displayName,
+          uid: this.user.uid,
+          nature: this.natureConge,
+          duree: this.dureeConge,
+          dateDebut: this.dateDebut,
+          dateFin: this.dateFin,
+          commentaires: this.commentaires,
+          congeId: this.congeId
+        };
+        await this.congeService.submitCongeWithEmail(data);
         // Réinitialiser les champs du formulaire après l'ajout du congé
         this.natureConge = '';
         this.dureeConge = '';
@@ -174,29 +195,6 @@ export class AddcongeComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error adding congé:', error);
-    }
-  }
-  async Savewithemail() {
-
-    try {
-
-      let data = {
-        nameRequest: this.user.displayName,
-        uid: this.user.uid,
-        nature: this.natureConge, // Ajoutez d'autres données nécessaires pour la notification
-        duree: this.dureeConge,
-        dateDebut: this.dateDebut,
-        dateFin: this.dateFin,
-        commentaires: this.commentaires,
-      }
-
-      // Appel de la méthode pour soumettre la demande de congé et envoyer l'email à l'admin
-      await this.congeService.submitCongeWithEmail(data);
-
-      // Autres actions après la soumission du congé
-      this.status = 'Submitted';
-    } catch (error) {
-      console.error('Error adding project via ProjectService:', error);
     }
   }
 
@@ -247,7 +245,6 @@ export class AddcongeComponent implements OnInit {
       for (const userId in congesParUtilisateur) {
         if (Object.prototype.hasOwnProperty.call(congesParUtilisateur, userId)) {
           const congesLength = congesParUtilisateur[userId].length;
-          console.log(`Longueur des congés de maladie pour l'utilisateur avec l'ID ${userId}: ${congesLength}`);
           this.congesLengths[userId] = congesLength;
         }
       }
@@ -299,13 +296,9 @@ export class AddcongeComponent implements OnInit {
         leavesByUser[userId].push(leave);
       });
 
-      // Afficher les congés pour chaque utilisateur
-      console.log('autorisation  par utilisateur:', leavesByUser);
-
       for (const userId in leavesByUser) {
         if (Object.prototype.hasOwnProperty.call(leavesByUser, userId)) {
           const leavesLength = leavesByUser[userId].length;
-          console.log(`Longueur des autorisation pour l'utilisateur avec l'ID ${userId}: ${leavesLength}`);
           this.leavesLengths[userId] = leavesLength; // Assurez-vous que leavesLengths est correctement défini dans votre classe
         }
       }

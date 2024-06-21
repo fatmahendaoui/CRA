@@ -84,16 +84,24 @@ export const routes: Routes = [
             ({ tovalidateComponent }) => tovalidateComponent
           ),
       },
+
       {
         path: 'timesheet',
         loadChildren: () => import('./features/timesheet/timesheet.module')
-          .then(({ TimesheetModule }) => TimesheetModule)
+          .then(({ TimesheetModule }) => TimesheetModule),
       },
       {
         path: 'profile',
         loadChildren: () => import('./features/profileUser/profile-user.module')
           .then(({ ProfileUserModule }) => ProfileUserModule)
       },
+      {
+        path: 'profile/:id',
+        loadChildren: () => import('./features/profileUser/profile-user.module')
+          .then(({ ProfileUserModule }) => ProfileUserModule)
+      },
+
+
       {
         path: 'conge/details/:id',
         canActivate: [() => isAdmin()],
@@ -120,12 +128,12 @@ export const routes: Routes = [
         component: DetailscongeComponent
       },
 
-     
+
 
       {
         path: 'remote',
         loadChildren: () => import('./features/remote/remote/remote.module').then(m => m.RemoteModule),
-        component:RemoteComponent
+        component: RemoteComponent
       },
 
       {
@@ -137,9 +145,6 @@ export const routes: Routes = [
             ({ day_offComponent }) => day_offComponent
           ),
       },
-
-
-
     ],
   },
 

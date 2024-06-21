@@ -60,10 +60,13 @@ export class UsersTableComponent extends AbstractTableComponent<Profile> {
   }
   public onDelete(user: Profile): void {
     this.deleteUser.emit(user);
+
   }
 
   public onToggleAdmin(element: Profile, event: MatSlideToggleChange): void {
     // Appel de la méthode onToggleAdmin du service UserService
     this.usersService.onToggleAdmin(element, event);
+    console.log('element', element);
+
   }
 }

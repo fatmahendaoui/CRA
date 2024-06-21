@@ -53,7 +53,9 @@
       "user": "User",
       "Project-by-month": "Project By Month",
       "Project-by-user": "Project By Month by user",
-      "User-by-project": "User By Month by project"
+      "User-by-project": "User By Month by project",
+      "Search_User": "Search User",
+      "Search_Project": "Search Project"
     },
     "users": {
       "title": "Users",
@@ -132,7 +134,8 @@
         "update": "The project is successfully updated"
       },
       "button": {
-        "save": "Save Changes",
+        "save": "Save",
+        "saveCh": "Save Changes",
         "approved": "Approve",
         "reject": "Reject",
         "Envoye": "Submit to Approve"
@@ -179,7 +182,8 @@
       "Maladie": "Sickness",
       "Vacances": "Holiday",
       "update": "Holiday is successfully changed",
-      "name": "Name"
+      "name": "Name",
+      "Time-cards": "Time Sheets"
     },
     "settings": {
       "title": "Settings",
@@ -229,7 +233,8 @@
       "validate_confirm": "Are you sure you want to accept this leave?",
       "reject_confirm": "Are you sure you want to reject this leave?",
       "enter_comment": "Add a comment",
-      "Request": "Request"
+      "Request": "Request",
+      "file_error": "Please attach your medical certificate for this request."
     },
     "liste_conge": {
       "title": "List of leave",
@@ -260,11 +265,26 @@
       "user_name": "User Name",
       "Date_Birth": "Date of Birth",
       "Phone": "Phone Number",
-      "NumbConger_pay": "Number of Paid Leave Days",
-      "NumbConger_Mal": "Number of Sick Leave Days",
+      "NumbConger_pay": "Paid Leave Balance:",
+      "NumbConger_Mal": "Sick Leave Balance:",
       "Statistic": "Project Statistics",
       "Type_contrat": "Contract Type",
-      "Date_embauche": "Date of Hire"
+      "Date_embauche": "Date of Hire",
+      "hr_data": "HR Data"
+    },
+    "months": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
     }
   }
 }

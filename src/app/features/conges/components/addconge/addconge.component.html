@@ -6,7 +6,7 @@
 </div>
 <!-- Formulaire de création de congé -->
 <mat-card>
-  <form class="form-container" (ngSubmit)="onSubmit();Savewithemail()">
+  <form class="form-container" (ngSubmit)="onSubmit();"><!--Savewithemail()-->
     <!-- Titre du formulaire -->
     <mat-toolbar>
       <h1>
@@ -26,8 +26,8 @@
             <mat-option *ngIf="userId && congesLengths[userId] !== 4" value="Congé de maladie (1 jour)">
               {{ 'features.conge.sick_leave' | transloco }}
             </mat-option>
-            
-            
+
+
             <mat-option *ngIf="userId && leavesLengths[userId] !== 1" value="Autorisation de sortie">
               {{ 'features.conge.exit_permission' | transloco }}
             </mat-option>
@@ -91,7 +91,7 @@
         <mat-form-field class="mat-mdc-form-field" subscriptSizing="dynamic" appearance="outline">
           <!-- Champ de saisie de la date de début -->
           <input matInput [matDatepicker]="picker1" placeholder="Date de début" [(ngModel)]="dateDebut" name="dateDebut"
-            (focus)="picker1.open()" [matDatepickerInput]="myDatepicker"  />
+            (focus)="picker1.open()" [matDatepickerInput]="myDatepicker" />
           <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
           <mat-datepicker #picker1></mat-datepicker>
         </mat-form-field>
@@ -101,9 +101,17 @@
 
 
     <!-- Zone de téléchargement de fichier pour un congé de maladie -->
-    <div class="add-file" *ngIf="natureConge === 'Congé de maladie (1 jour)'">
+    <!-- <div class="add-file" *ngIf="natureConge === 'Congé de maladie (1 jour)'|| natureConge === 'Congé Payé' ">
       <input type="file" (change)="onFileChange($event)">
     </div>
+  -->
+    <!-- Zone de téléchargement de fichier pour un congé de maladie ou payé -->
+    <div class="add-file" *ngIf="natureConge === 'Congé de maladie (1 jour)' || natureConge === 'Congé Payé'">
+      <input type="file" (change)="onFileChange($event)">
+    </div>
+    <span *ngIf="fileError" class="error-message">
+      {{ 'features.conge.file_error' | transloco }}
+    </span>
 
 
 

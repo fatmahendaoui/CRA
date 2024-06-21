@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { getFirestore, collection, getDocs, query, where, setDoc, doc,getDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, query, where, setDoc, doc, getDoc } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +18,6 @@ export class RemoteService {
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
-        console.log('No documents found in collection.');
         return [];
       }
 
@@ -26,7 +25,7 @@ export class RemoteService {
       querySnapshot.forEach(doc => {
         const data = doc.data();
         const displayName = data['displayName'];
-        const photoURL = data['photoURL']; 
+        const photoURL = data['photoURL'];
         displayNames.push({ name: displayName, photoURL: photoURL });
       });
 
@@ -41,7 +40,6 @@ export class RemoteService {
     try {
       const docRef = doc(this.firestore, 'remote', storageKey);
       await setDoc(docRef, data, { merge: true });
-      console.log('Data successfully written to Firestore!');
     } catch (error) {
       console.error('Error writing document: ', error);
       throw error;
@@ -54,7 +52,6 @@ export class RemoteService {
       if (docSnapshot.exists()) {
         return docSnapshot.data();
       } else {
-        console.log('No document found in Firestore for the given key.');
         return null;
       }
     } catch (error) {

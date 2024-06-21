@@ -66,10 +66,6 @@ export class CongeService {
       // Crée le champ dateF au format "Month_Year" pour la date de fin
       const dateFormattedF = `${monthCapitalizedF}_${yearF}`;
 
-      console.log('Year:', yearF);
-      console.log('Month:', monthCapitalizedF);
-      console.log('Day:', dayF);
-      console.log('Date FormattedF:', dateFormattedF);
 
       // Création d'un nouvel objet congé avec les champs year, month, day, date et dateF ajoutés
       const newConge = {
@@ -86,7 +82,6 @@ export class CongeService {
 
       const congeCollectionRef = collection(this.firestore, 'conge');
       const docRef = await addDoc(congeCollectionRef, newConge);
-      console.log('Congé ajouté avec succès, ID:', docRef.id);
       return docRef.id; // Retourne l'ID du document ajouté
     } catch (error) {
       console.error('Erreur lors de l\'ajout du congé dans Firestore :', error);
@@ -135,28 +130,42 @@ export class CongeService {
     try {
       const congeDocRef = doc(this.firestore, 'conge', congeId);
       await updateDoc(congeDocRef, { url_sertif: downloadURL });
-      console.log('URL de téléchargement ajoutée au document Congé.');
     } catch (error) {
       console.error('Erreur lors de l\'ajout de l\'URL de téléchargement au document Congé :', error);
     }
   }
 
   /*************************** */
-  async submitCongeWithEmail(data) {
+  async submitCongeWithEmail(emailData): Promise<void> {
     try {
       // Récupérer les administrateurs
       const adminUsers: Profile[] = await this.getAdminUsers();
 
       // Envoyer un email à chaque administrateur
       for await (const adminUser of adminUsers) {
-        const emailData = { ...data }; // Cloner les données pour chaque admin
-        emailData.emailData = adminUser.email; // Utiliser emailData au lieu de email
-        emailData.AdminName = adminUser.displayName;
+        const normalizeDate = (date) => {
+          const normalizedDate = new Date(date);
+          normalizedDate.setHours(0, 0, 0, 0); // Set time to midnight
+          return normalizedDate;
+        };
 
-        console.log(emailData); // Optionnel : journalisation des données avant l'envoi
+        // const today = normalizeDate(new Date());
+        const dateDebut = normalizeDate(new Date(emailData.dateDebut));
+        const dateFin = new Date(emailData.dateFin);
 
-        // Appel de la fonction de Cloud pour envoyer l'email
-        await this.sendEmailToAdmin(emailData);
+        /*if (dateDebut.getTime() !== today.getTime()) {
+          dateDebut.setDate(dateDebut.getDate() + 1);
+          dateFin.setDate(dateFin.getDate() + 1);
+        }*/
+        const adminEmailData = {
+          ...emailData,
+          dateDebut: dateDebut.toDateString(),
+          dateFin: dateFin.toDateString(),
+          emailData: adminUser.email,
+          AdminName: adminUser.displayName,
+
+        }; // Cloner les données pour chaque admin
+        await this.sendEmailToAdmin(adminEmailData);
       }
     } catch (error) {
       console.error('Error submitting congé with email:', error);
@@ -232,13 +241,19 @@ export class CongeService {
       querySnapshot.forEach((doc) => {
         approvedConges.push(doc.data());
       });
-     // console.log('Liste des congés approuvés:', approvedConges); // Ajout de la console log
+      // console.log('Liste des congés approuvés:', approvedConges); // Ajout de la console log
       return approvedConges;
     } catch (error) {
       console.error('Erreur lors de la récupération des congés approuvés :', error);
       return [];
     }
   }
-}  
+  ////////
+  blockConge(congeId: string): void {
+    const donnePrject = collection(this.firestore, 'conge');
+
+  }
+
+}
 
 

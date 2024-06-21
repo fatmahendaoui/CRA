@@ -18,11 +18,13 @@
           </div>
         </div>
         <div class="filter-table-end">
-          <mat-chip class="chips" *ngIf="status && status != 'Improved'" style="background-color: #EA3380;"
-            disabled><span style="color: white;">{{status}}</span></mat-chip>
-          <mat-chip class="chips" *ngIf="!status" style="background-color: #EA3380;" disabled><span
+          <mat-chip class="chips" *ngIf="status && status != 'Improved'" [ngStyle]="{
+            'background-color': status == 'On going' ? '#193F77' : status == 'Submitted' ? '#EA3380' : '',
+            'color': 'white'
+        }" disabled><span style="color: white;">{{status}}</span></mat-chip>
+          <mat-chip class="chips" *ngIf="!status" style="  background-color: #193F77;" disabled><span
               style="color: white;">On going</span></mat-chip>
-          <mat-chip class="chips" *ngIf="status == 'Improved'" style="background-color: #EA3380;" disabled><span
+          <mat-chip class="chips" *ngIf="status == 'Improved'" style="  background-color: #17ba68;" disabled><span
               style="color: white;">Approved </span></mat-chip>
         </div>
         <div class="name-month">
@@ -56,26 +58,35 @@
       <div class="table-responsive table-cra">
         <table class="table table-sm table-bordered1" *ngIf="resultTimesheet">
           <thead class="sticky-header">
-            <tr >
+            <tr>
               <th class="vide">
               </th>
               <ng-container *ngFor="let week of weeks">
                 <th *ngFor="let day of resultTimesheet; let dayIndex = index">
-                  <div class="days"
-                    [ngClass]="{'width36': isWeekendDay(day.year, this.month2, day.day),
-                                'day-off': isDayOff(day.day) }"> 
+                  <div class="days" [ngClass]="{'width36': isWeekendDay(day.year, this.month2, day.day),
+                                'day-off': isDayOff(day.day) }"
+                    [ngStyle]="{'background':isDayOff(day.day) ? '#DEDDDE' : '',}">
                     <p class="day-name"
                       [ngStyle]="{'background': isWeekendDay(day.year, this.month2, day.day),
-                                  'color': isWeekendDay(day.year, this.month2, day.day) }">{{ day.nameDay }}</p>
-                                  <p class="day-number" [ngClass]="{ 'disabled-input': isWeekend }"
-                                  [ngStyle]="{'background': isWeekendDay(day.year, this.month2, day.day) || isDayOff(day.day) ? '#B6BDC2' : 'transparent',
-                                              'color': isWeekendDay(day.year, this.month2, day.day),
-                                              'font-weight': isDayOff(day.day) ? 'bold' : 'normal' }">{{ day.day }}</p>
+                                  'color': isWeekendDay(day.year, this.month2, day.day),'font-weight': isDayOff(day.day) ? 'bold' : 'normal','background':isDayOff(day.day) ? '#fee9ba' : '' }">
+                      <ng-container *ngIf="isDayOff(day.day); else noDayOffName">
+                        Day Off
+                      </ng-container>
+                      <ng-template #noDayOffName>{{ day.nameDay }}</ng-template>
+                    </p>
+                    <p class="day-number" [ngClass]="{ 'disabled-input': isWeekend }"
+                      [ngStyle]="{'background': isWeekendDay(day.year, this.month2, day.day) || isDayOff(day.day) ? '#fee9ba' : '',
+                                              'color': isWeekendDay(day.year, this.month2, day.day),'font-weight': isDayOff(day.day) ? 'bold' : 'normal'}">
+                      <ng-container *ngIf="isDayOff(day.day); else noDayOff">
+                        <img src="../../assets/images/Frame.png" alt=" Day Off" style="width: 20px; height: 20px;">
+                      </ng-container>
+                      <ng-template #noDayOff>{{ day.day }}</ng-template>
+                    </p>
                   </div>
                 </th>
               </ng-container>
-              
-              
+
+
               <th class="totaldays" style="right: -1px !important;"> {{ 'features.timeshet.total' | transloco }}
               </th>
               <!-- transparent -->
@@ -86,24 +97,29 @@
               <tr>
 
                 <td class="col-projects" style="border-bottom: 0.01rem solid white;"
-                [ngStyle]="{'background-color': project.name == 'Disponible' || project.name == 'Maladie' || project.name == 'Vacances' ? '#193F77' : '', 'color': project.name == 'Disponible' || project.name == 'Maladie' || project.name == 'Vacances' ? 'white' : ''}">
-                <div class="name-project" *ngIf="project.name != 'Disponible' && project.name != 'Maladie' && project.name != 'Vacances'">{{ project.name }}</div>
-                <div class="name-project" *ngIf="project.name == 'Disponible'">{{ 'features.day_off.Disponible' | transloco }}</div>
-                <div class="name-project" *ngIf="project.name == 'Maladie'">{{ 'features.day_off.Maladie' | transloco }}</div>
-                <div class="name-project" *ngIf="project.name == 'Vacances'">{{ 'features.day_off.Vacances' | transloco }}</div>
-            </td>
-            
-                <td *ngFor="let day of project.days; let dayIndex = index"  >
+                  [ngStyle]="{'background-color': project.name == 'Disponible' || project.name == 'Maladie' || project.name == 'Vacances' ? '#193F77' : '', 'color': project.name == 'Disponible' || project.name == 'Maladie' || project.name == 'Vacances' ? 'white' : ''}">
+                  <div class="name-project"
+                    *ngIf="project.name != 'Disponible' && project.name != 'Maladie' && project.name != 'Vacances'">{{
+                    project.name }}</div>
+                  <div class="name-project" *ngIf="project.name == 'Disponible'">{{ 'features.day_off.Disponible' |
+                    transloco }}</div>
+                  <div class="name-project" *ngIf="project.name == 'Maladie'">{{ 'features.day_off.Maladie' | transloco
+                    }}</div>
+                  <div class="name-project" *ngIf="project.name == 'Vacances'">{{ 'features.day_off.Vacances' |
+                    transloco }}</div>
+                </td>
+
+                <td *ngFor="let day of project.days; let dayIndex = index"
+                  [ngStyle]="{'background':isDayOff(day.day) ? '#fee9ba' : ''}">
 
                   <div class="form-group div-heure" [ngClass]="{
                     'border-empty': !day.nbHeure,
                     'border-filled': day.nbHeure
-                 }"
-                    *ngIf="!isWeekendDay(day.year, this.month2, day.day) ">
+                 }" *ngIf="!isWeekendDay(day.year, this.month2, day.day) ">
                     <input type="number" class="form-control input-heure input"
                       (input)="getInputValeur($event.target.value, day)" [value]="day.inputValue || ''" min="0"
-                      [disabled]="isWeekendDay(day.year, this.month2, day.day)"
-                      [(ngModel)]="day.nbHeure" (change)="changetotal()" />
+                      [disabled]="isWeekendDay(day.year, this.month2, day.day)" [(ngModel)]="day.nbHeure"
+                      (change)="changetotal()" />
                   </div>
                 </td>
                 <td class="totaldays" *ngIf="project.days">
@@ -117,9 +133,9 @@
               <td class="col-projects" style="border-bottom: 0.01rem solid white;">
                 <div class="name-project">Total Hours</div>
               </td>
-              <td *ngFor="let day of resultTimesheet; let dayIndex = index">
-                <div class="form-group div-heure"
-                  *ngIf="!isWeekendDay(day.year, this.month2, day.day)">
+              <td *ngFor="let day of resultTimesheet; let dayIndex = index"
+                [ngStyle]="{'background':isDayOff(day.day) ? '#fee9ba' : ''}">
+                <div class="form-group div-heure" *ngIf="!isWeekendDay(day.year, this.month2, day.day)">
                   <input type="number" class="form-control input-heure input" [(ngModel)]="day.nbHeure"
                     [value]="totalHours[dayIndex] || ''" [disabled]="true" [ngStyle]="{'background':   day.nbHeure != 8 && day.nbHeure != 0 ? '#E50060' :  '',
                 'color':   day.nbHeure != 8 && day.nbHeure != 0 ? 'white' :  ''}" />
@@ -135,7 +151,7 @@
     </div>
 
 
-    
+
 
 
     <!-- ---------------------Description-------------------------  -->
@@ -149,11 +165,11 @@
       <div class="button-container">
         <button mat-flat-button color="primary"
           *ngIf="IsAdmin && (status =='On going' || !status || status =='Improved' ) " (click)="Save()">
-          {{ 'features.projects.button.save' | transloco }}
+          {{ 'features.projects.button.saveCh' | transloco }}
         </button>
 
         <button mat-flat-button color="primary" *ngIf="!IsAdmin && (status =='On going' || !status)" (click)="Save()">
-          {{ 'features.projects.button.save' | transloco }}
+          {{ 'features.projects.button.saveCh' | transloco }}
         </button>
 
 

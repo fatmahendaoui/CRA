@@ -12,12 +12,12 @@ import { UserRole } from '../models/profile.model';
 
 export const extractRole = async (user: User | null): Promise<boolean> => {
   const firestore = inject(Firestore);
-  const queryResult =  await getDocs(
+  const queryResult = await getDocs(
     query(collection(firestore, 'membership_CRA'), where('uid', '==', user?.uid))
-  );  
+  );
   // Extract the role from the first document in the query result
   const currentUser = queryResult.docs.length > 0 &&
-  queryResult.docs[0].data()['role'] === 'admin';
+    queryResult.docs[0].data()['role'] === 'admin';
 
   return currentUser;
 };
@@ -39,7 +39,7 @@ export const isAdmin = async (): Promise<boolean> => {
 
   // If the role is not 'UserRole.Admin', navigates to the 'not-authorized' page and returns 'false'
   if (!role) {
-    router.navigate(['/timesheet/'+auth.currentUser.uid+'/'+new Date()]);
+    router.navigate(['/timesheet/' + auth.currentUser.uid + '/' + new Date()]);
     return false;
   }
 
