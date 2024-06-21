@@ -89,7 +89,16 @@ export class tovalidateComponent implements OnInit {
   month: string[] = Months;
   year: number;
   status: string = 'Submitted';
-
+  private monthNames = {
+    en: [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ],
+    fr: [
+      'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+      'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+    ]
+  };
   public ngOnInit() {
     this.year = new Date().getFullYear();
     this.setMonthName();
@@ -99,24 +108,10 @@ export class tovalidateComponent implements OnInit {
 
   private setMonthName() {
     const currentMonthIndex = new Date().getMonth();
-    const monthNamesKeys = [
-      'features.months.january',
-      'features.months.february',
-      'features.months.march',
-      'features.months.april',
-      'features.months.may',
-      'features.months.june',
-      'features.months.july',
-      'features.months.august',
-      'features.months.september',
-      'features.months.october',
-      'features.months.november',
-      'features.months.december'
-    ];
     const currentLang = this.transloco.getActiveLang();
-    this.transloco.selectTranslate(monthNamesKeys[currentMonthIndex], {}, currentLang).subscribe((translation) => {
-      this.nameMonth = translation;
-    });
+    this.nameMonth = this.monthNames[currentLang][currentMonthIndex];
+
+
   }
 
   public fetchAll(): void {
@@ -140,9 +135,9 @@ export class tovalidateComponent implements OnInit {
   }
 
   getMonth(op: boolean): void {
-    const currentMonthIndex = this.month.indexOf(this.nameMonth);
+    const currentLang = this.transloco.getActiveLang();
+    const currentMonthIndex = this.monthNames[currentLang].indexOf(this.nameMonth);
     let newMonthIndex = currentMonthIndex + (op ? 1 : -1);
-    console.log(newMonthIndex);
     if (newMonthIndex < 0) {
       newMonthIndex = 11; // décembre
       this.year--;
@@ -150,8 +145,8 @@ export class tovalidateComponent implements OnInit {
       newMonthIndex = 0; // janvier
       this.year++;
     }
+    this.nameMonth = this.monthNames[currentLang][newMonthIndex];
 
-    this.nameMonth = this.month[newMonthIndex];
     this.fetchAll();
   }
 }

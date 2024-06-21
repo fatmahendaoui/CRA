@@ -381,7 +381,6 @@ export class DashbordComponent implements OnInit {
     let result: any = [];
     this.dataProject = null;
     result = this.calculateHoursWorkedByMonthinuser(this.allvalues, this.currentuser, this.year);
-    console.log(result);
 
     this.dataProject = result;
     this.chartOptionsproject = {

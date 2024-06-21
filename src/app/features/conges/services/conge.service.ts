@@ -82,7 +82,6 @@ export class CongeService {
 
       const congeCollectionRef = collection(this.firestore, 'conge');
       const docRef = await addDoc(congeCollectionRef, newConge);
-      console.log('Congé ajouté avec succès, ID:', docRef.id);
       return docRef.id; // Retourne l'ID du document ajouté
     } catch (error) {
       console.error('Erreur lors de l\'ajout du congé dans Firestore :', error);
@@ -131,7 +130,6 @@ export class CongeService {
     try {
       const congeDocRef = doc(this.firestore, 'conge', congeId);
       await updateDoc(congeDocRef, { url_sertif: downloadURL });
-      console.log('URL de téléchargement ajoutée au document Congé.');
     } catch (error) {
       console.error('Erreur lors de l\'ajout de l\'URL de téléchargement au document Congé :', error);
     }
@@ -167,7 +165,6 @@ export class CongeService {
           AdminName: adminUser.displayName,
 
         }; // Cloner les données pour chaque admin
-        console.log("email envoyer avec les", adminEmailData);
         await this.sendEmailToAdmin(adminEmailData);
       }
     } catch (error) {

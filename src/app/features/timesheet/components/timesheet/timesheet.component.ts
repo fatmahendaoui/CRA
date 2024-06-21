@@ -132,9 +132,6 @@ export class TimesheetComponent implements OnInit {
   async Save() {
     try {
       this.tabProject.forEach((project) => {
-        console.log(`Project ID: ${project.id}`);
-        console.log(`Current User: ${this.currentUser}`);
-        console.log(`Project Days:`, project.days);
 
         this.projectService.updateProjectsMonth(project.id, this.currentUser, project.days);
       });
@@ -184,7 +181,6 @@ export class TimesheetComponent implements OnInit {
       this.tabProject.forEach((project) => {
         this.projectService.updateProjectsMonth(project.id, this.currentUser, project.days);
       });
-      console.log(this.nameMonth + '_' + this.year);
 
       let data = {
         "nameRequest": this.displayNamecurent,
@@ -370,7 +366,6 @@ export class TimesheetComponent implements OnInit {
         isWeekend: this.isWeekendDay(day.year, this.month2, day.day),
         inputValue: day.nbHeure || '',
       }));
-    console.log('Days off:', this.day_offs);
 
   }
   isDayOff(day: number): boolean {

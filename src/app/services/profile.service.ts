@@ -116,17 +116,14 @@ export class ProfileService {
   }
   async getUserPhotoURL(id: string): Promise<string | null> {
     try {
-      console.log('Fetching user photo URL for ID:', id);
       const docRef = doc(this.firestore, 'membership_CRA', id);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
         const data = docSnap.data();
         const photoURL = data['photoURL']; // Récupérer la valeur du champ "photoURL"
-        console.log('User photo URL:', photoURL);
         return photoURL || null; // Retourner photoURL s'il existe, sinon retourner null
       } else {
-        console.log("No such document!");
         return null;
       }
     } catch (error) {

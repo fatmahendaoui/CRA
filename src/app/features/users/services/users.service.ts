@@ -58,7 +58,6 @@ export class UsersService {
   private readonly http = inject(HttpClient);
   async getAllUsersForProject(newproject: string, iduser: string): Promise<boolean> {
     if (newproject.trim() === "") {
-      console.log('champ vide');
       return false;
     }
 
@@ -79,7 +78,6 @@ export class UsersService {
     const projectDoc = await getDoc(projectDocRef);
 
     if (projectDoc.exists()) {
-      console.log('Project already exists:', newproject);
       return true;
     }
     return false;
@@ -190,7 +188,6 @@ export class UsersService {
 
         // Effectuer la mise à jour dans Firestore
         await updateDoc(userDocRef, newData);
-        console.log(userId)
       } else {
         // Si l'utilisateur n'est pas un administrateur, ne rien faire
         console.warn('User is not an admin');

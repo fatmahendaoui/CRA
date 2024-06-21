@@ -158,7 +158,6 @@ export class AddcongeComponent implements OnInit {
 
           uploadTask.then(async (snapshot) => {
             const downloadURL = await snapshot.ref.getDownloadURL();
-            console.log('URL de téléchargement:', downloadURL);
             await this.congeService.updateCongeWithFileURLAndCongeId(downloadURL, congeId);
             conge.url_certif = downloadURL;
 
@@ -198,32 +197,7 @@ export class AddcongeComponent implements OnInit {
       console.error('Error adding congé:', error);
     }
   }
-  /*
-  async Savewithemail() {
 
-    try {
-      let data = {
-        nameRequest: this.user.displayName,
-        uid: this.user.uid,
-        nature: this.natureConge, // Ajoutez d'autres données nécessaires pour la notification
-        duree: this.dureeConge,
-        dateDebut: this.dateDebut,
-        dateFin: this.dateFin,
-        commentaires: this.commentaires,
-        congeId: this.congeId
-      }
-      if (this.congeId) {
-        // Appel de la méthode pour soumettre la demande de congé et envoyer l'email à l'admin
-        await this.congeService.submitCongeWithEmail(this.congeId, data);
-        console.log("email envoyer avec les", data);
-        // Autres actions après la soumission du congé
-        this.status = 'Submitted';
-      }
-    } catch (error) {
-      console.error('Error adding project via ProjectService:', error);
-    }
-  }
-*/
   async onFileChange(event: any) {
     this.selectedFile = event.target.files[0];
   }
@@ -271,7 +245,6 @@ export class AddcongeComponent implements OnInit {
       for (const userId in congesParUtilisateur) {
         if (Object.prototype.hasOwnProperty.call(congesParUtilisateur, userId)) {
           const congesLength = congesParUtilisateur[userId].length;
-          console.log(`Longueur des congés de maladie pour l'utilisateur avec l'ID ${userId}: ${congesLength}`);
           this.congesLengths[userId] = congesLength;
         }
       }
@@ -323,13 +296,9 @@ export class AddcongeComponent implements OnInit {
         leavesByUser[userId].push(leave);
       });
 
-      // Afficher les congés pour chaque utilisateur
-      console.log('autorisation  par utilisateur:', leavesByUser);
-
       for (const userId in leavesByUser) {
         if (Object.prototype.hasOwnProperty.call(leavesByUser, userId)) {
           const leavesLength = leavesByUser[userId].length;
-          console.log(`Longueur des autorisation pour l'utilisateur avec l'ID ${userId}: ${leavesLength}`);
           this.leavesLengths[userId] = leavesLength; // Assurez-vous que leavesLengths est correctement défini dans votre classe
         }
       }

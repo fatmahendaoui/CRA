@@ -1,7 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { startOfWeek, addDays, format, addWeeks, subWeeks } from 'date-fns';
 import { RemoteService } from './services/remoteservice.service';
-import { Day_offService } from '../day_offs/services/day_off.service'; 
+import { Day_offService } from '../day_offs/services/day_off.service';
 import { CongeService } from '../conges/services/conge.service';
 import Swal from 'sweetalert2';
 import { ChangeDetectorRef } from '@angular/core';
@@ -40,7 +40,7 @@ export class RemoteComponent implements OnInit {
     this.loadSavedChanges();
     this.loadDaysOff();
     this.loadApprovedConges().then(() => {
-      this.fetchApprovedCongesInfo(); 
+      this.fetchApprovedCongesInfo();
       this.addTripImageToCurrentWeekDays();
       this.filteredDisplayNames = [...this.displayNames];
       this.loadFromFirebase(this.getStorageKey());
@@ -153,25 +153,25 @@ export class RemoteComponent implements OnInit {
   selectRemoteImage(i: number, j: number) {
     this.selectedImage[i][j] = { image: 'remote' };
     this.showChoices[i][j] = false;
-    this.saveToLocalStorage(); 
+    this.saveToLocalStorage();
   }
 
   selectTripImage(i: number, j: number) {
     this.selectedImage[i][j] = { image: 'trip' };
     this.showChoices[i][j] = false;
-    this.saveToLocalStorage(); 
+    this.saveToLocalStorage();
   }
 
   selectClientImage(i: number, j: number) {
     this.selectedImage[i][j] = { image: 'client' };
     this.showChoices[i][j] = false;
-    this.saveToLocalStorage(); 
+    this.saveToLocalStorage();
   }
 
   selectAutoImage(i: number, j: number) {
     this.selectedImage[i][j] = { image: 'auto' };
     this.showChoices[i][j] = false;
-    this.saveToLocalStorage(); 
+    this.saveToLocalStorage();
   }
 
   getStorageKey(): string {
@@ -181,7 +181,7 @@ export class RemoteComponent implements OnInit {
   async saveChanges() {
     const storageKey = this.getStorageKey();
     localStorage.setItem(storageKey, JSON.stringify(this.selectedImage));
-    
+
     try {
       await this.remoteService.saveToFirebase(storageKey, this.selectedImage);
       Swal.fire({
@@ -232,7 +232,7 @@ export class RemoteComponent implements OnInit {
 
   removeImage(i: number, j: number) {
     this.selectedImage[i][j] = { image: 'plus' };
-    this.saveToLocalStorage(); 
+    this.saveToLocalStorage();
   }
 
   convertUnixTimestamp(unixTimestamp: number): string {
@@ -291,20 +291,20 @@ export class RemoteComponent implements OnInit {
       const nature = conge.nature;
       let nombreHeures = conge.nombreHeures;
       let dayIndex = this.currentWeekDays.findIndex(day => day.date === formattedDateDebut);
-  
+
       console.log(`Processing leave for: ${displayName}`);
       console.log(`Start date: ${formattedDateDebut}`);
       console.log(`Nature: ${nature}`);
       console.log(`Total hours: ${nombreHeures}`);
-  
+
       while (dayIndex !== -1 && nombreHeures > 0) {
         const i = this.displayNames.findIndex(name => name.name === displayName);
-  
+
         if (i !== -1) {
           const j = dayIndex;
-  
+
           console.log(`Adding image for ${displayName} on ${this.currentWeekDays[j].date}`);
-  
+
           switch (nature) {
             case 'Congé payé':
               this.selectedImage[i][j] = { image: 'trip' };
@@ -323,21 +323,21 @@ export class RemoteComponent implements OnInit {
               console.log('Added default trip image');
               break;
           }
-  
-          this.saveToLocalStorage(); 
-  
-         
-  
+
+          this.saveToLocalStorage();
+
+
+
           console.log('Selected image state:', this.selectedImage);
-  
+
           nombreHeures -= 8;
           console.log(`Remaining hours: ${nombreHeures}`);
-  
+
           dayIndex++;
           while (dayIndex < this.currentWeekDays.length && this.currentWeekDays[dayIndex].isDayOff) {
             dayIndex++;
           }
-  
+
           if (dayIndex < this.currentWeekDays.length && nombreHeures > 0) {
             console.log(`Adding image for ${displayName} on next day ${this.currentWeekDays[dayIndex].date}`);
           } else if (nombreHeures > 0) {
@@ -350,16 +350,16 @@ export class RemoteComponent implements OnInit {
         }
       }
     });
-  
+
     this.updateCurrentWeekDays();
     this.loadSavedChanges();
   }
-  
- 
+
+
   refreshUI() {
     this.changeDetectorRef.detectChanges(); // Utiliser ChangeDetectorRef pour forcer la détection des changements
   }
-  
+
 
   filterSelectedImages(): { [key: number]: { [key: number]: { image: string } } } {
     const filteredImages: { [key: number]: { [key: number]: { image: string } } } = {};
@@ -372,7 +372,7 @@ export class RemoteComponent implements OnInit {
     return filteredImages;
   }
 
- 
+
 
   async loadFromFirebase(storageKey: string): Promise<void> {
     try {
@@ -381,7 +381,7 @@ export class RemoteComponent implements OnInit {
         console.log('Data loaded from Firestore:', data);
         this.selectedImage = data;
       } else {
-        console.log('No data found in Firestore for the given key.');
+        console.error('No data found in Firestore for the given key.');
       }
     } catch (error) {
       console.error('Error loading data from Firestore:', error);

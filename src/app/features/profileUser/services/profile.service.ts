@@ -49,7 +49,6 @@ export class ProfilService {
 
   } | null> {
     try {
-      console.log('Fetching user profile for ID:', id);
       const docRef = doc(this.firestore, 'membership_CRA', id);
       const docSnap = await getDoc(docRef);
 
@@ -68,7 +67,6 @@ export class ProfilService {
           dateOfBirth = this.convertToDate(data['dateOfBirth']);
         }
 
-        console.log('User profile data:', data);
 
         // Convertir les champs conge et maladie en jours et heures
         const conge = data['conge'] ? this.convertToDaysAndHours(data['conge']) : null;
@@ -121,24 +119,21 @@ export class ProfilService {
 
       // Récupérer les IDs des documents
       const projectIds = querySnapshot.docs.map(doc => doc.id);
-      //console.log('Project IDs:', projectIds); // Affichage des IDs des documents
       return projectIds;
     } catch (error) {
       console.error('Error getting projects:', error);
       throw error;
     }
   }
-
+  // Méthode pour obtenir les détails du projet
   async getProjectDetails(userId: string, projectId: string): Promise<any> {
     try {
       const docRef = doc(this.firestore, 'membership_CRA', userId, 'Projects', projectId);
       const docSnapshot = await getDoc(docRef);
 
       if (!docSnapshot.exists()) {
-        console.log(`No details found for project ID: ${projectId}`);
         return null;
       }
-
       const projectData = docSnapshot.data();
 
       return projectData;
@@ -148,24 +143,22 @@ export class ProfilService {
     }
   }
 
-  ///////
+  // Méthode pour retuner le role de l'utilisateur
   async getUserRole(id: string): Promise<string | null> {
     try {
-      console.log('Fetching user role for ID:', id);
       const docRef = doc(this.firestore, 'membership_CRA', id);
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
         const data = docSnap.data();
         const role = data['role']; // Récupérer la valeur du champ "role"
-        console.log('User role:', role);
         return role;
       } else {
         console.log("No such document!");
         return null;
       }
     } catch (error) {
-      console.error('Error getting user role:', error);
+      console.error('Error getting for user role:', error);
       return null;
     }
   }
@@ -177,11 +170,9 @@ export class ProfilService {
 
   // Méthode pour obtenir l'ID du profil ouvert
   getCurrentProfileId(): string | null {
-    console.log('Current profile ID:', this.currentProfileId);
-
     return this.currentProfileId;
   }
-  ////
+  // Méthode pour obtenir les jours de congé restants
   calculateTotalHours(projectData: any): number {
     let totalHours = 0;
 
@@ -196,7 +187,6 @@ export class ProfilService {
         });
       }
     }
-
     return totalHours;
   }
 

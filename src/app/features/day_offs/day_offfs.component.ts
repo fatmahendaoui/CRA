@@ -93,7 +93,6 @@ export class day_offComponent implements OnInit {
     )
       .then((result) => {
         if (result.isConfirmed) {
-          console.log("rrrrrrrr", result.isConfirmed);
           this.Day_offService.deletedaysoff(Date.date)
             .then(() => {
               this.fetchAll();
@@ -158,7 +157,6 @@ export class day_offComponent implements OnInit {
       .afterDismissed()
       .pipe(filter((Day_off) => !!Day_off))
       .subscribe((Day_offs: any) => {
-        console.log(Day_offs);
 
         this.Day_offService.UpdateDayOffName(Day_offs).then(li => {
           this.fetchAll();
