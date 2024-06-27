@@ -20,7 +20,7 @@ export const TimesheetGuard = async (next: ActivatedRouteSnapshot, state: Router
 
   const urlUserProfile = await fetchUserProfile(urlUserId, firestore);
 
-  if ((role === 'admin' && profileService.profile.idDomaine === urlUserProfile?.idDomaine) || userId === urlUserId) {
+  if (role === 'admin' || userId === urlUserId) {
     //console.log('Authorized', userId);
     return true; // The user can access the page
   } else {
