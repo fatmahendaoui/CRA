@@ -3,9 +3,6 @@
 
   <div class="container">
     <div class="header">
-      <!--  <div class="left-section">
-        <input type="text" class="mat-form-field custom-input" [(ngModel)]="filterText" (input)="applyFilter()" placeholder="Rechercher">
-      </div>-->
       <div class="left-section">
         <div class="week-navigation">
           <mat-icon color="primary" (click)="previousWeek()">navigate_before</mat-icon>
@@ -18,22 +15,15 @@
       </div>
     </div>
   </div>
-  
 
   <div class="table-container" *ngIf="filteredDisplayNames && filteredDisplayNames.length > 0">
     <table class="table table-bordered">
-   
-
-
       <thead>
         <tr>
-          <th class="text-color">Name</th>
-          <th *ngFor="let day of currentWeekDays" class="day-separator text-color">{{ day.date }}</th>
+          <th class="text-color sticky-header">Name</th>
+          <th *ngFor="let day of currentWeekDays" class="day-separator text-color sticky-header">{{ day.date }}</th>
         </tr>
       </thead>
-     
-
-
       <tbody>
         <ng-container *ngFor="let displayName of filteredDisplayNames; let i = index">
           <tr *ngIf="displayName.name">
@@ -84,8 +74,6 @@
     </table>
   </div>
 
-
-  
   <div *ngIf="!filteredDisplayNames || filteredDisplayNames.length === 0">
     <p>No display names available.</p>
   </div>
