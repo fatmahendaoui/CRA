@@ -41,12 +41,12 @@
     <mat-nav-list>
       <div class="user-container-metadata" *ngIf="user">
         <button class="custom-icon .admin" routerLink="/dashbord" *ngIf="isAdmin">
-          <img src="../../assets/images/dashboard.png">
+          <mat-icon>dashboard</mat-icon>
           Dashboard</button>
         <mat-list *ngIf="isAdmin">
           <mat-list-item [matMenuTriggerFor]="matTime">
             <button class="custom-icon">
-              <img src="../../assets/images/timecard.png">
+              <mat-icon>work_history</mat-icon>
               {{ 'features.day_off.Time-cards' | transloco }}
               <mat-icon mat-list-icon>keyboard_arrow_down</mat-icon>
             </button>
@@ -54,12 +54,12 @@
           <mat-menu #matTime="matMenu" class="custeme" class="mat-menu-time">
             <span class="select-button">
               <button class="custom-icon" [routerLink]="'timesheet/'+auth.currentUser.uid+'/'+today">
-                <img src="../../assets/images/schedule.png">
-                <span>Timesheet</span>
+                <mat-icon style="color:#E50060;">calendar_clock</mat-icon>
+                <span>{{ 'features.timeshet.Time_Sheet' | transloco }}</span>
               </button></span>
             <span class="select-button">
               <button class="custom-icon" routerLink="toValide" *ngIf="isAdmin">
-                <img src="../../assets/images/timesheetValid.png">
+                <mat-icon style="color: #E50060;">pending_actions</mat-icon>
                 <span>{{ 'features.day_off.titre' | transloco }}</span>
               </button>
             </span>
@@ -70,45 +70,46 @@
           Timesheet
         </button>
         <button class="custom-icon" routerLink="users" *ngIf="isAdmin">
-          <img src="../../assets/images/management.png">{{ 'layout.menu.users' | transloco }}
+          <mat-icon>manage_accounts</mat-icon>
+          {{ 'layout.menu.users' | transloco }}
         </button>
         <button class="custom-icon" routerLink="projects" *ngIf="isAdmin">
-          <img src="../../assets/images/completed-task.png">
+          <mat-icon>format_list_bulleted</mat-icon>
           {{ 'features.projects.List_Project' | transloco }}
         </button>
         <button class="custom-icon" routerLink="day_off" *ngIf="isAdmin">
-          <img src="../../assets/images/calendar.png">
+          <mat-icon>today</mat-icon>
           {{ 'features.day_off.list_day_off' | transloco }}
         </button>
         <mat-list *ngIf="isAdmin">
           <mat-list-item [matMenuTriggerFor]="matRequest">
             <button class="custom-icon">
-              <img src="../../assets/images/request.png">
+              <mat-icon>library_add_check</mat-icon>
               {{ 'features.conge.Request' | transloco }} <mat-icon mat-list-icon>keyboard_arrow_down</mat-icon>
             </button>
           </mat-list-item>
           <mat-menu #matRequest="matMenu" class="custeme">
             <span class="select-button">
               <button routerLink="conge/add" class="custom-icon">
-                <img src="../../assets/images/leave.png">
+                <mat-icon style="color: #E50060;">domain_add</mat-icon>
                 <span> {{ 'features.conge.title' | transloco }}
                 </span> </button></span>
             <span class="select-button">
               <button routerLink="/listconge" *ngIf="isAdmin" class="custom-icon">
-                <img src="../../assets/images/verification.png">
+                <mat-icon style="color: #E50060;">free_cancellation</mat-icon>
                 <span>{{ 'layout.menu.leaveToValidate' | transloco }}</span>
               </button></span>
           </mat-menu>
         </mat-list>
         <button class="custom-icon" *ngIf="!isAdmin" routerLink="conge/add">
-          <img src="../../assets/images/leaveWhite.png">
+          <mat-icon style="color: #E50060;">add</mat-icon>
           {{ 'features.conge.title' | transloco }}
         </button>
         <button class="custom-icon" [routerLink]="['/remote']">
-          <img src="../../assets/images/tele.png" class="icon-large"> 
-          Remote
+          <mat-icon>home_work</mat-icon>
+          {{ 'features.remote.titre' | transloco }}
         </button>
-        
+
 
 
       </div>
@@ -118,11 +119,13 @@
     <span class="select-button">
       <button (click)="onSelectionChange('en')" class="custom-icon">
         <img src="../../assets/images/En.png" alt="En">
+        <mat-icon>language</mat-icon>
         <span>En</span>
       </button></span>
     <span class="select-button">
       <button (click)="onSelectionChange('fr')" class="custom-icon">
         <img src="../../assets/images/Fr.png" alt="Fr">
+        <mat-icon>language</mat-icon>
         <span>Fr</span>
       </button></span>
   </mat-menu>

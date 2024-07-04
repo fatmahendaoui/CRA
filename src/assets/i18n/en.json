@@ -211,7 +211,8 @@
       "jours": "days",
       "total": "Monthly Total",
       "Save_Changes": "Save Changes",
-      "Submit_for_Validation": "Submit to Approve"
+      "Submit_for_Validation": "Submit to Approve",
+      "Time_Sheet": "Timesheet"
     },
     "conge": {
       "title": "Leave Request",
@@ -285,6 +286,12 @@
       "october": "October",
       "november": "November",
       "december": "December"
+    },
+    "remote": {
+      "titre": "Remote",
+      "title": "Remote File",
+      "Name": "Name",
+      "Week_starting": "Week starting"
     }
   }
 }

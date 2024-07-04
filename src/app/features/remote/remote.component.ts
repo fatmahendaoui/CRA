@@ -175,7 +175,7 @@ export class RemoteComponent implements OnInit {
   }
 
   getStorageKey(): string {
-    return `${this.formatDate(this.currentWeekStart, 'MMMM d, yyyy')}`;
+    return `${this.formatDate(this.currentWeekStart, 'd MMMM , yyyy')}`;
   }
 
   async saveChanges() {

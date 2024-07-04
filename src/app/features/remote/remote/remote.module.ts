@@ -2,11 +2,12 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RemoteComponent } from '../remote.component';
 import { RemoteService } from '../services/remoteservice.service';
-import {MatIconModule} from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { Day_offService } from '../../day_offs/services/day_off.service';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatSelectModule} from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
+import { TranslocoModule } from '@ngneat/transloco';
 
 
 
@@ -19,8 +20,8 @@ import { FormsModule } from '@angular/forms';
     MatIconModule,
     MatFormFieldModule,
     MatSelectModule,
-    FormsModule
- 
+    FormsModule,
+    TranslocoModule
   ],
   providers: [
     RemoteService,

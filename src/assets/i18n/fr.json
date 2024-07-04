@@ -183,7 +183,7 @@
       "Vacances": "Congé",
       "update": "Le jour férié est modifié avec succès",
       "name": "Nom",
-      "Time-cards": "Time Sheet"
+      "Time-cards": "CRA"
     },
     "settings": {
       "title": "Paramètres",
@@ -211,7 +211,8 @@
       "jours": "jours",
       "total": "Total Mensuel",
       "Save_Changes": "Enregistrer les modification",
-      "Submit_for_Validation": "Envoyer pour validation"
+      "Submit_for_Validation": "Envoyer pour validation",
+      "Time_Sheet": "CRA"
     },
     "conge": {
       "title": "Demandes de congé",
@@ -285,6 +286,12 @@
       "october": "Octobre",
       "november": "Novembre",
       "december": "Décembre"
+    },
+    "remote": {
+      "titre": "Télétravail",
+      "title": "Fichier Teletravail",
+      "Name": "Nom",
+      "Week_starting": "Semaine commençant le"
     }
   }
 }
