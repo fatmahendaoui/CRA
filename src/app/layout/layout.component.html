@@ -54,7 +54,7 @@
           <mat-menu #matTime="matMenu" class="custeme" class="mat-menu-time">
             <span class="select-button">
               <button class="custom-icon" [routerLink]="'timesheet/'+auth.currentUser.uid+'/'+today">
-                <mat-icon style="color:#E50060;">calendar_clock</mat-icon>
+                <mat-icon style="color:#E50060;">event_note</mat-icon>
                 <span>{{ 'features.timeshet.Time_Sheet' | transloco }}</span>
               </button></span>
             <span class="select-button">
@@ -66,8 +66,8 @@
           </mat-menu>
         </mat-list>
         <button class="custom-icon" *ngIf="!isAdmin" [routerLink]="'timesheet/'+auth.currentUser.uid+'/'+today">
-          <img src="../../assets/images/scheduleW.png">
-          Timesheet
+          <mat-icon>event_note</mat-icon>
+          {{ 'features.timeshet.Time_Sheet' | transloco }}
         </button>
         <button class="custom-icon" routerLink="users" *ngIf="isAdmin">
           <mat-icon>manage_accounts</mat-icon>
@@ -102,7 +102,7 @@
           </mat-menu>
         </mat-list>
         <button class="custom-icon" *ngIf="!isAdmin" routerLink="conge/add">
-          <mat-icon style="color: #E50060;">add</mat-icon>
+          <mat-icon>domain_add</mat-icon>
           {{ 'features.conge.title' | transloco }}
         </button>
         <button class="custom-icon" [routerLink]="['/remote']">
@@ -119,13 +119,11 @@
     <span class="select-button">
       <button (click)="onSelectionChange('en')" class="custom-icon">
         <img src="../../assets/images/En.png" alt="En">
-        <mat-icon>language</mat-icon>
         <span>En</span>
       </button></span>
     <span class="select-button">
       <button (click)="onSelectionChange('fr')" class="custom-icon">
         <img src="../../assets/images/Fr.png" alt="Fr">
-        <mat-icon>language</mat-icon>
         <span>Fr</span>
       </button></span>
   </mat-menu>

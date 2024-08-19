@@ -84,13 +84,6 @@
         color: #E50060;
         align-items: center;
 
-     /*   span {
-          display: flex;
-          align-items: center;
-          border-bottom: 2px solid #F286B4;
-          flex-grow: 1;
-        }*/
-
         .text-center {
           flex-grow: 1;
           display: flex;
@@ -128,6 +121,7 @@
   justify-items: center;
   align-items: center;
   margin-bottom: 4px;
+
 
   // height: calc(100vh - 50px);
   .vide {
@@ -320,6 +314,7 @@
 
     }
   }
+
   /*--------------- scroll : Table-TimeSheet -----------------*/
 ::-webkit-scrollbar-thumb {
   background-color: #DEDDDE;
@@ -338,8 +333,34 @@
 }
 
 } 
+/*-------------------- Total Hours fixed -----------------------------------*/
+.total-hours-row {
+  position: sticky;
+  bottom: 0;
+ // background-color: white; 
+  z-index: 1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  //box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+.table-responsive.table-cra {
+  display: flex;
+  flex-direction: column;
+}
 
-    /*-------------- Description -----------------*/
+.scrollable-tbody {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  //background-color: white;
+  z-index: 2; 
+}
+
+ 
+/*-------------- Description -----------------*/
     .form {
       padding: 16px;
       display: flex;

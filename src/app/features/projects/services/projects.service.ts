@@ -49,9 +49,10 @@ export class ProjectService {
       console.log('Project already exists:', newproject);
       return true;
     }
+
     return false;
   }
-  async addNewProject(idproject: string, newprojects: string, iduser: string): Promise<void> {
+  async addNewProject(idproject: string, newprojects: string, iduser: string, managerId: string): Promise<void> {
     if (idproject.trim() === "") {
       console.log('champ vide');
       return;
@@ -59,17 +60,22 @@ export class ProjectService {
     const projectData = {
       'name': newprojects,
       'projectTotal': 0,
-    };
+      managerId: managerId, // Store the manager's user ID
+    };/*
     const domaineRef =
       collection(
         this.firestore,
         'membership_CRA',
         iduser, 'Projects'
       ) as CollectionReference<DocumentData>
+*/
+    const projectDocRef = doc(this.firestore, 'membership_CRA', iduser, 'Projects', newprojects);
 
     try {
-      await setDoc(doc(domaineRef, idproject), projectData);
-      console.log('Project added to Firestore:', idproject);
+      /* await setDoc(doc(domaineRef, idproject), projectData);
+       console.log('Project added to Firestore:', idproject);*/
+      return setDoc(projectDocRef, projectData);
+
     } catch (error) {
       console.error('Error adding project to Firestore:', error);
     }
@@ -85,6 +91,19 @@ export class ProjectService {
       console.log('Project name updated:', newProjectName);
     } catch (error) {
       console.error('Error updating project name:', error);
+    }
+  }
+
+  async updateProjectManager(projectId: string, iduser: string, newManagerId: string): Promise<void> {
+    const projectRef = doc(this.firestore, 'membership_CRA', iduser, 'Projects', projectId);
+
+    try {
+      await updateDoc(projectRef, {
+        managerId: newManagerId,
+      });
+      console.log('Project manager updated:', newManagerId);
+    } catch (error) {
+      console.error('Error updating project manager:', error);
     }
   }
 

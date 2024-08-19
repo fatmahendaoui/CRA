@@ -119,12 +119,13 @@
         "added_at": "Created on",
         "identifier": "Identifier",
         "submitted": "Submitted",
-        "on-going": "On going"
+        "ongoing": "On going"
       },
       "add-dialog": {
         "title": "Add project",
         "name": "Project name",
         "users": "Users",
+        "maneger": "Maneger",
         "action": "Create",
         "update": "Update"
       },
@@ -174,6 +175,7 @@
       "list_day_off": "List Day Off",
       "add-dialig-title": "Add Day",
       "title": "Days off",
+      "Day_off": "Day off",
       "titre": "Time Sheet to validate",
       "confirmation": "Are you sure you want to delete this day ?",
       "success": "The day is successfully added",
@@ -291,7 +293,15 @@
       "titre": "Remote",
       "title": "Remote File",
       "Name": "Name",
-      "Week_starting": "Week starting"
+      "Week_starting": "Week starting",
+      "Month": "Month",
+      "Week": "Week",
+      "Today": "Today"
+    },
+    "status": {
+      "On going": "On going",
+      "Improved": "Approved",
+      "Submitted": "Submitted"
     }
   }
 }

@@ -51,7 +51,7 @@ import { MatIconModule } from '@angular/material/icon';
           <mat-select [(ngModel)]="status" (ngModelChange)="fetchAll()">
             <mat-option value="Submitted">{{ 'features.projects.table.submitted' | transloco }}</mat-option>
             <mat-option value="Improved">{{ 'features.liste_conge.approved' | transloco }}</mat-option>
-            <mat-option value="On going">{{ 'features.projects.table.on-going' | transloco }} ({{ nameMonth }} {{ year }})</mat-option>
+            <mat-option value="On going">{{ 'features.projects.table.ongoing' | transloco }} ({{ nameMonth }} {{ year }})</mat-option>
           </mat-select>
         </mat-form-field>
         <app-tovalidate-table *ngIf="tovalidate" [data]="tovalidate"></app-tovalidate-table>

@@ -1,0 +1,319 @@
+
+html, body {
+    height: 100%;
+    margin: 0;
+  }
+  
+  .main-container {
+   /* background-color: #f0f0f0;*/
+    min-height: 20vh;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  /* Tableau */
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 10px; 
+  }
+  
+  .table th, .table td {
+    background-color: white;
+    border: none; 
+    text-align: center;
+    padding: 10px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  /* +++++*/
+  .plus-icon {
+    color: #C4C4C4 ;
+     cursor: pointer;
+     font-weight: bolder;
+     font-size: 28px;
+  }
+  
+  /* Image */
+  .example-image {
+    width: 40px; 
+    height: 40px; 
+    cursor: pointer;
+  }
+  
+  
+  .day-separator {
+    padding: 8px;
+  }
+  
+  
+  .photo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+  
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 20px;
+    width: 100%;
+  }.week-navigation {
+    display: flex;
+    align-items: center;
+    gap: 16px; 
+    margin: 0 auto; /* Centre l'élément horizontalement */
+  }
+  
+  
+  .week-navigation mat-icon {
+    cursor: pointer;
+  }
+  
+  
+  .image-container {
+    position: relative;
+  }
+  
+  
+  .image-choices {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: row-reverse;
+    background: white;
+    border: 1px solid #ccc;
+    z-index: 10;
+  }
+  
+  .choice-image {
+    width: 40px;
+    height: 40px;
+    margin: 5px;
+    cursor: pointer;
+  }
+  
+  
+  .user-avatar {
+    width: 40px; 
+    height: 40px; 
+    border-radius: 50%; 
+    background-color: #E50060; 
+    color: white; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 24px; 
+  }
+  
+  
+  .name-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  
+  .name-cell img.photo, 
+  .name-cell mat-icon.user-avatar {
+    margin-right: 8px;
+  }
+  
+  
+  .name-cell span {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  
+  
+  .text-color {
+    color: #193F77;
+    font-weight: bold;
+  }
+  
+  
+  .pink-button {
+    background-color: #E50060;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 15px;
+    cursor: pointer;
+  }
+  
+  .pink-button:hover {
+    background-color: #FF4081; 
+  }
+  
+  
+  .container {
+    background-color: white;
+    //padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    align-items: center; 
+    height: 70px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    text-align: center;
+  }
+  
+  
+  h3 {
+    margin: 0; 
+  }
+  
+  
+  .table-container {
+    max-height: 460px; 
+    overflow-y: auto; 
+    scrollbar-width: thin; 
+    scrollbar-color: #E50060 white; 
+  }
+  
+  
+  .cancel-icon {
+    color: #E50060; 
+    font-size: 20px; 
+    cursor: pointer; 
+  }
+  
+  
+  .custom-input {
+    border: 2px solid #E50060; 
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    width: 40%; /* Largeur de l'input */
+    box-sizing: border-box; 
+  }
+  
+  .custom-input:focus {
+    outline: none; 
+    border-color: #E50060; 
+  }
+  .left-section {
+    flex: 1; 
+    display: flex;
+    align-items: center;
+  }
+  .middle-section {
+    flex: 1; 
+    display: flex;
+    justify-content: center;
+  }
+  
+  .right-section {
+    flex: 1; 
+    display: flex;
+    justify-content: flex-end;
+  }
+  .sticky-header {
+    position: -webkit-sticky; 
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 10; 
+  }
+  
+  .table-container {
+    height: 70vh; 
+    overflow-y: auto;
+  }
+  /* day off icon */
+  
+  .day-off-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .day-off-text {
+    font-weight: bold;
+    font-size: 12px;
+    color: #FDBA22;
+  }
+  
+  .day-off-icon {
+    font-size: 26px;
+    color: #FDBA22;
+  }
+  mat-toolbar {
+    background-color: white;
+    height: 50px;
+    margin-top: 0px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    position: relative; // Ajout pour positionner correctement le dégradé
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  }
+////
+.today{
+  background-color: #E50060;
+  color: white;
+  height: 30px; 
+
+}
+.mat-button-toggle-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 0 4px;
+height: 35px; 
+}
+
+.modern-button-toggle {
+  background-color: #fff;
+  border: 1px solid #E50060;
+  color: #E50060;
+  font-size: 14px;
+
+  &.mat-button-toggle-checked {
+    background-color: #E50060;
+    color: #fff;
+  }
+}
+//////
+.table-week{
+  margin-top: 13px;
+}
+.fc{
+ // font-family: Arial, sans-serif;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  border-radius: 5px;
+  // color: #193F77;
+  
+}
+::ng-deep .fc .fc-col-header-cell {
+  //background-color: #193F77 !important;
+  background-color: #fff !important;
+  font-size: 12px !important; 
+  //color: white !important;
+  //background-color: #fff;
+  color: #193F77 !important;
+  border-radius: 2px;  
+}
+
+/* Adjust Full Calendar size */
+::ng-deep .fc {
+ // margin-top: 20px;
+  width: 98%;
+  margin: 0 auto;
+  height: 80vh; /* Adjust this value as needed */
+  color: #193F77;
+  font-size: 12px  ;
+
+}
+
+::ng-deep .fc-toolbar {
+  display: none !important;
+}

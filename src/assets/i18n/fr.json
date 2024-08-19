@@ -119,12 +119,13 @@
         "added_at": "Ajouté le",
         "identifier": "Identifiant",
         "submitted": "Soumis",
-        "on-going": "En cours"
+        "ongoing": "En cours"
       },
       "add-dialog": {
         "title": "Ajouter un projet",
         "name": "Nom du projet",
         "users": "Utilisateurs",
+        "maneger": "Manager",
         "action": "Ajouter",
         "update": "Modifier"
       },
@@ -174,6 +175,7 @@
       "list_day_off": "Liste des Jours Fériés",
       "add-dialig-title": "Ajouter un jour",
       "title": "Jours Fériés",
+      "Day_off": "Jour Férié",
       "titre": "Time Sheet à valider",
       "confirmation": "Êtes-vous sûr de vouloir supprimer cet jour ?",
       "success": "Le jour a été ajouté avec succès",
@@ -291,7 +293,15 @@
       "titre": "Télétravail",
       "title": "Fichier Teletravail",
       "Name": "Nom",
-      "Week_starting": "Semaine commençant le"
+      "Week_starting": "Semaine commençant le",
+      "Month": "Mois",
+      "Week": "Semaine",
+      "Today": "Aujourd'hui"
+    },
+    "status": {
+      "On going": "En cours",
+      "Improved": "Approuvé",
+      "Submitted": "Soumis"
     }
   }
 }
