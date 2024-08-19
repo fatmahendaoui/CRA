@@ -1,19 +1,28 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild } from '@angular/core';
 import { startOfWeek, addDays, format, addWeeks, subWeeks } from 'date-fns';
 import { RemoteService } from './services/remoteservice.service';
 import { Day_offService } from '../day_offs/services/day_off.service';
 import { CongeService } from '../conges/services/conge.service';
 import Swal from 'sweetalert2';
 import { ChangeDetectorRef } from '@angular/core';
-
+import { AuthService } from '../sign-in/services/auth.service';
+import { ProfileService } from 'src/app/services/profile.service';
+/**** */
+import interactionPlugin from '@fullcalendar/interaction';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import { CalendarOptions } from '@fullcalendar/core';
+import { FullCalendarComponent } from '@fullcalendar/angular';
+/**** */
 @Component({
   selector: 'app-remote',
   templateUrl: './remote.component.html',
-  styleUrls: ['./remote.component.css']
+  styleUrls: ['./remote.component.scss']
 })
 export class RemoteComponent implements OnInit {
-  displayNames: { name: string, photoURL: string }[] = [];
-  currentWeekStart: Date;
+  @ViewChild('calendar') calendarComponent: FullCalendarComponent;
+
+  displayNames: { name: string, photoURL: string, id: string }[] = [];
+  currentWeekStart: Date = new Date();
   currentWeekDays: { date: string, isDayOff: boolean }[] = [];
   selectedImage: { [key: number]: { [key: number]: { image: string } } } = {};
   showChoices: { [key: number]: { [key: number]: boolean } } = {};
@@ -24,17 +33,37 @@ export class RemoteComponent implements OnInit {
   filteredDisplayNames: { name: string, photoURL: string }[] = [];
   filterText: string = '';
   filteredSelectedImage: { [key: number]: { [key: number]: { image: string } } } = {};
+  userRole: string; // Ajoutez cette propriété
+  selectedView: string = 'week';
+  headerText: string;
 
+  /**** */
+  //Events = [];
+  Events: Array<{
+    title: string;
+    start: string;
+    display?: string;
+    backgroundColor?: string;
+    borderColor?: string;
+    textColor?: string;
+  }> = [];
+  calendarToolbarTitle: string = '';
+  calendarOptions!: CalendarOptions;
+
+  /**** */
   constructor(
     private remoteService: RemoteService,
     private dayOffService: Day_offService,
     private congeService: CongeService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private auth: AuthService,
+    private profileService: ProfileService
   ) {
     this.currentWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    await this.loadUserRole();
     this.loadDisplayNames();
     this.updateCurrentWeekDays();
     this.loadSavedChanges();
@@ -45,8 +74,77 @@ export class RemoteComponent implements OnInit {
       this.filteredDisplayNames = [...this.displayNames];
       this.loadFromFirebase(this.getStorageKey());
     });
+    /*** */
+    this.currentWeekStart = new Date();
+    /* setTimeout(() => {
+       this.calendarOptions = {
+         plugins: [interactionPlugin, dayGridPlugin],
+         initialView: 'dayGridMonth',
+         dateClick: this.onDateClick.bind(this),
+         events: this.Events,
+         headerToolbar: {
+           left: 'prev,next today',
+           center: 'title',
+           right: 'dayGridMonth,timeGridWeek,timeGridDay'
+         },
+         datesSet: this.updateCalendarToolbarTitle.bind(this)
+       };
+     }, 3500);*/
+    this.updateHeaderText();
+    /*** */
   }
-
+  /////
+  ngAfterViewInit() {
+    this.calendarOptions = {
+      plugins: [interactionPlugin, dayGridPlugin],
+      initialView: 'dayGridMonth',
+      dateClick: this.onDateClick.bind(this),
+      events: this.Events,
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      eventContent: this.renderEventContent.bind(this),
+      datesSet: this.updateCalendarToolbarTitle.bind(this)
+    };
+    this.updateHeaderText();
+  }
+  onDateClick(res: { dateStr: string }) {
+    console.log('you click : ', res.dateStr);
+  }
+  updateCalendarToolbarTitle(info: any) {
+    console.log('updateCalendarToolbarTitle called with:', info);
+    if (info && info.view) {
+      console.log('info.view:', info.view);
+      if (this.selectedView === 'month') {
+        this.calendarToolbarTitle = info.view.title;
+        console.log('Calendar toolbar title:', this.calendarToolbarTitle);
+      } else {
+        console.error('Error: info.view.title is undefined.');
+      }
+    } else {
+      console.error('Error: info.view or info.view.title is undefined.');
+    }
+  }
+  navigate(direction: string) {
+    const calendarApi = this.calendarComponent?.getApi();
+    if (calendarApi) {
+      if (direction === 'prev') {
+        calendarApi.prev();
+      } else if (direction === 'next') {
+        calendarApi.next();
+      } const view = calendarApi.view;
+      if (view) {
+        this.updateCalendarToolbarTitle(view);
+      } else {
+        console.error('Error: calendarApi.view is undefined.');
+      }
+    } else {
+      console.error('calendarApi is undefined');
+    }
+  }
+  //////
   @HostListener('document:click', ['$event'])
   handleClickOutside(event: Event) {
     if (!this.isInsideChoice) {
@@ -54,7 +152,15 @@ export class RemoteComponent implements OnInit {
     }
     this.isInsideChoice = false;
   }
-
+  // 
+  async loadUserRole(): Promise<void> {
+    try {
+      this.userRole = await this.profileService.getUserRole();
+      console.log('User role:', this.userRole);
+    } catch (error) {
+      console.error('Error loading user role:', error);
+    }
+  }
   markAsInsideChoice() {
     this.isInsideChoice = true;
   }
@@ -66,10 +172,21 @@ export class RemoteComponent implements OnInit {
       });
     });
   }
-
+  // 
   async loadDisplayNames() {
     try {
       this.displayNames = await this.remoteService.getAllDisplayNames();
+      // Récupérer l'utilisateur actuel
+      const currentUserId = await this.auth.getCurrentUserId(); // Méthode fictive, ajustez selon votre AuthService
+      console.log("test 11111", currentUserId);
+      // Trier les noms par ordre alphabétique
+      this.displayNames.sort((a, b) => {
+        if (a.id === currentUserId) return -1; // Mettre l'utilisateur actuel en premier
+        if (b.id === currentUserId) return 1;
+        if (a.name < b.name) { return -1; }
+        if (a.name > b.name) { return 1; }
+        return 0;
+      });
       this.displayNames.forEach((_, i) => {
         this.selectedImage[i] = this.selectedImage[i] || {};
         this.showChoices[i] = this.showChoices[i] || {};
@@ -78,6 +195,7 @@ export class RemoteComponent implements OnInit {
           this.showChoices[i][j] = this.showChoices[i][j] || false;
         });
       });
+      // Assigner les noms triés à filteredDisplayNames
       this.filteredDisplayNames = [...this.displayNames];
       this.filteredSelectedImage = this.filterSelectedImages();
     } catch (error) {
@@ -115,10 +233,10 @@ export class RemoteComponent implements OnInit {
     this.addTripImageToCurrentWeekDays();
   }
 
-  formatDate(date: Date, dateFormat: string): string {
+  /*formatDate(date: Date, dateFormat: string): string {
     return format(date, dateFormat);
   }
-
+*/
   getImageUrl(image: string): string {
     switch (image) {
       case 'remote':
@@ -137,14 +255,14 @@ export class RemoteComponent implements OnInit {
   }
 
   showImageChoices(i: number, j: number) {
-    if (this.selectedImage[i][j].image === 'plus') {
+    if (this.selectedImage[i][j].image === 'plus' && this.userCanModify(i, j)) {
       this.markAsInsideChoice();
       this.showChoices[i][j] = !this.showChoices[i][j];
     }
   }
 
   toggleImageChoices(i: number, j: number) {
-    if (this.selectedImage[i][j].image !== 'plus') {
+    if (this.selectedImage[i][j].image !== 'plus' && this.userCanModify(i, j)) {
       this.markAsInsideChoice();
       this.showChoices[i][j] = !this.showChoices[i][j];
     }
@@ -153,29 +271,33 @@ export class RemoteComponent implements OnInit {
   selectRemoteImage(i: number, j: number) {
     this.selectedImage[i][j] = { image: 'remote' };
     this.showChoices[i][j] = false;
-    this.saveToLocalStorage();
+    //this.saveToLocalStorage();
+    this.saveChanges();
   }
 
   selectTripImage(i: number, j: number) {
     this.selectedImage[i][j] = { image: 'trip' };
     this.showChoices[i][j] = false;
-    this.saveToLocalStorage();
+    //this.saveToLocalStorage();
+    this.saveChanges();
   }
 
   selectClientImage(i: number, j: number) {
     this.selectedImage[i][j] = { image: 'client' };
     this.showChoices[i][j] = false;
-    this.saveToLocalStorage();
+    // this.saveToLocalStorage();
+    this.saveChanges();
   }
 
   selectAutoImage(i: number, j: number) {
     this.selectedImage[i][j] = { image: 'auto' };
     this.showChoices[i][j] = false;
-    this.saveToLocalStorage();
+    //this.saveToLocalStorage();
+    this.saveChanges();
   }
 
   getStorageKey(): string {
-    return `${this.formatDate(this.currentWeekStart, 'MMMM d, yyyy')}`;
+    return `${this.formatDate(this.currentWeekStart, 'd MMMM , yyyy')}`;
   }
 
   async saveChanges() {
@@ -184,18 +306,18 @@ export class RemoteComponent implements OnInit {
 
     try {
       await this.remoteService.saveToFirebase(storageKey, this.selectedImage);
-      Swal.fire({
+      /*Swal.fire({
         icon: 'success',
         title: 'Changes saved successfully!',
         showConfirmButton: false,
         timer: 2000
-      });
+      });*/
     } catch (error) {
-      Swal.fire({
+      /*Swal.fire({
         icon: 'error',
         title: 'Failed to save changes!',
         showConfirmButton: true
-      });
+      });*/
     }
   }
 
@@ -223,6 +345,8 @@ export class RemoteComponent implements OnInit {
         this.daysOff = daysOff.map(dayOff => format(new Date(dayOff.date), 'EEEE, MMMM d'));
         console.log('Days off:', this.daysOff);
         this.updateCurrentWeekDays();
+        this.addDayOffEvents();
+        this.refreshCalendar(); // Assurez-vous que les événements sont rafraîchis
       },
       error: (error) => {
         console.error('Error loading days off:', error);
@@ -231,8 +355,11 @@ export class RemoteComponent implements OnInit {
   }
 
   removeImage(i: number, j: number) {
-    this.selectedImage[i][j] = { image: 'plus' };
-    this.saveToLocalStorage();
+    if (this.userCanModify(i, j)) {
+      this.selectedImage[i][j] = { image: 'plus' };
+      //this.saveToLocalStorage();
+      this.saveChanges();
+    }
   }
 
   convertUnixTimestamp(unixTimestamp: number): string {
@@ -391,5 +518,101 @@ export class RemoteComponent implements OnInit {
   private saveToLocalStorage() {
     const storageKey = this.getStorageKey();
     localStorage.setItem(storageKey, JSON.stringify(this.selectedImage));
+  }
+  userCanModify(i: number, j: number): boolean {
+    if (this.userRole === 'admin') {
+      return true; // L'admin peut modifier toutes les lignes
+    } else {
+      const userId = this.displayNames[i].id; // ID de l'utilisateur pour cette ligne
+      return userId === this.auth.getCurrentUserId(); // Seul l'utilisateur peut modifier sa propre ligne
+    }
+  }
+
+
+  updateHeaderText() {
+    if (this.selectedView === 'week') {
+      this.headerText = `${this.translocoService.translate('features.remote.Week_starting')} ${this.formatDate(this.currentWeekStart, 'MMMM d, yyyy')}`;
+    } else if (this.selectedView === 'month') {
+      this.headerText = `${this.translocoService.translate('features.remote.Month_starting')} ${this.formatDate(this.currentWeekStart, 'MMMM yyyy')}`;
+    }
+  }
+
+  // Dummy method for translation, replace with actual method from Transloco service
+  translocoService = {
+    translate: (key: string) => {
+      const translations = {
+        'features.remote.Week_starting': 'Week starting',
+        'features.remote.Month_starting': 'Month of'
+      };
+      return translations[key];
+    }
+  };
+
+  // Dummy formatDate method, replace with actual implementation
+  formatDate(date: Date, format: string): string {
+    // Implement date formatting logic here
+    return new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(date);
+  }
+  goToToday() {
+
+    if (this.selectedView === 'week') {
+      this.currentWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+      this.updateCurrentWeekDays();
+      this.loadSavedChanges();
+      this.loadDaysOff();
+      this.addTripImageToCurrentWeekDays();
+      this.updateHeaderText();
+    } else if (this.selectedView === 'month') {
+      const calendarApi = this.calendarComponent.getApi();
+      calendarApi.today();
+      this.updateCalendarToolbarTitle(calendarApi.view);
+    }
+  }
+  //////
+
+  addDayOffEvents() {
+    // Supprimer les anciens événements de jour férié
+    this.Events = this.Events.filter(event => event.title == 'Jour férié');
+
+    this.daysOff.forEach(dayOff => {
+      this.Events.push({
+        title: 'Jour férié',
+        start: format(new Date(dayOff), 'yyyy-MM-dd'),
+        display: 'background',
+        backgroundColor: 'red',
+        borderColor: 'red',
+        textColor: 'white'
+      });
+    });
+    console.log('Day off events:', this.Events);
+    this.refreshCalendar(); // Rafraîchir le calendrier après avoir ajouté les événements
+  }
+  refreshCalendar() {
+    if (this.calendarComponent) {
+      const calendarApi = this.calendarComponent.getApi();
+      if (calendarApi) {
+        calendarApi.removeAllEvents(); // Supprimer tous les événements actuels
+        calendarApi.addEventSource(this.Events); // Ajouter les événements mis à jour
+        calendarApi.render(); // Rendre les changements visibles
+        console.log('Calendar refreshed');
+      } else {
+        console.error('calendarApi is undefined');
+      }
+    }
+  }
+
+  renderEventContent(eventInfo) {
+    let content = '';
+    if (eventInfo.event.title === 'Jour férié') {
+      content = `<div class="fc-event-main"><img src="assets/images/trip.jpg" alt="Image" class="event-image"><span class="event-title">${eventInfo.event.title}</span></div>`;
+    } else {
+      content = `<div class="fc-event-main"><span class="event-title">${eventInfo.event.title}</span></div>`;
+    }
+    return { html: content };
+  }
+  onViewChange(event: any) {
+    this.selectedView = event.value;
+    this.updateHeaderText();
+
   }
 }

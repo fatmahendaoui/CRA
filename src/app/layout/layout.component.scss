@@ -114,7 +114,6 @@ mat-toolbar {
     position: relative;
     top: 0px;;
 
-
   }
   @media screen and (max-width: 599px) {
     .horizontal-navbar {
@@ -123,7 +122,7 @@ mat-toolbar {
   }
 }
 @media screen and (max-width: 1026px) {
-  .horizontal-navbar .custom-icon img {
+  .horizontal-navbar .custom-icon img mat-icon {
     width: 18px; /* Réduire la taille de l'image */
     height: 18px;
   }
@@ -143,11 +142,11 @@ mat-toolbar {
   }
 }
 @media screen and (max-width: 768px) {
-  .horizontal-navbar .custom-icon img {
+  .horizontal-navbar .custom-icon img mat-icon{
     width: 26px; /* Réduire la taille de l'image */
     height: 26px;
   }
-  .horizontal-navbar .custom-icon mat-icon {
+  .horizontal-navbar .custom-icon mat-icon  {
     width: 0px; /* Réduire la taille de l'image */
     height: 0px;
   }

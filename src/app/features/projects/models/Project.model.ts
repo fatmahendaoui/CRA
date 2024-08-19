@@ -1,7 +1,8 @@
 import { TimesheetItem } from './TimesheetItem.model';
 
-export interface Project  {
+export interface Project {
   name: string;
-  id:string;
+  id: string;
   projectTotal: number;
+  managerId: string;
 }
