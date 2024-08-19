@@ -14,9 +14,9 @@ import { Profile } from "src/app/models/profile.model";
 import { ProjectService } from "../services/projects.service";
 
 @Component({
-    standalone: true,
-    selector: 'app-invite-user',
-    template: `
+  standalone: true,
+  selector: 'app-invite-user',
+  template: `
     <mat-toolbar>
       <mat-toolbar-row>
         <span>
@@ -42,6 +42,15 @@ import { ProjectService } from "../services/projects.service";
           {{ 'common.form.name' | transloco }}
         </mat-error>
       </mat-form-field>
+      
+      <mat-form-field appearance="outline">
+        <mat-label>
+          {{ 'features.projects.add-dialog.maneger' | transloco }}
+        </mat-label>
+        <mat-select formControlName="manager">
+          <mat-option *ngFor="let element of users" [value]="element.uid">{{element.email}}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>
@@ -58,7 +67,7 @@ import { ProjectService } from "../services/projects.service";
       </button>
     </form>
   `,
-    styles: [`
+  styles: [`
     :host {
       display: flex;
       flex-direction: column;
@@ -77,68 +86,73 @@ import { ProjectService } from "../services/projects.service";
       font-size: 1rem;
     }
   `],
-    providers: [
-        UsersService,
-        ProjectService,
-    ],
-    imports: [
-        NgIf, NgFor,
-        MatToolbarModule,
-        MatInputModule,
-        MatSelectModule,
-        MatButtonModule,
-        MatFormFieldModule,
-        ReactiveFormsModule,
-        TranslocoModule,
-        MatIconModule,
-    ],
+  providers: [
+    UsersService,
+    ProjectService,
+  ],
+  imports: [
+    NgIf, NgFor,
+    MatToolbarModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    TranslocoModule,
+    MatIconModule,
+  ],
 })
 export class editProjectComponent implements OnInit {
-    private readonly bottomSheetRef = inject(MatBottomSheetRef<editProjectComponent>);
-    private readonly formBuilder = inject(FormBuilder);
-    public formGroup: FormGroup;
-    private readonly usersService = inject(UsersService);
-    users: Profile[]
-    initialUsersArray
-    constructor(@Inject(MAT_BOTTOM_SHEET_DATA) public data: any) {
-    }
-    public ngOnInit(): void {
-        this.formGroup = this.formBuilder.group({
-            users: [[], Validators.required],
-            name: ['', Validators.required]
-          });
-        this.initialUsersArray = []
-        this.usersService.fetchAllUsers().subscribe((list) => {
-            this.users = list;
-      
-            const promises = this.users.map((user) => {
-              return this.usersService.getAllUsersForProject(this.data.idproject, user.uid).then((bol) => {
-                if (bol) {                  
-                  this.initialUsersArray.push(user);
-                }
-              });
-            });
-      
-            Promise.all(promises).then(() => {
-              this.formGroup.get('users')?.setValue(this.initialUsersArray.map((user) => user.uid));
-              this.formGroup.get('name')?.setValue(this.data.nameproject);
+  private readonly bottomSheetRef = inject(MatBottomSheetRef<editProjectComponent>);
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly projectService = inject(ProjectService);
+  public formGroup: FormGroup;
+  private readonly usersService = inject(UsersService);
+  users: Profile[] = [];
+  initialManager: Profile | undefined;
+  constructor(@Inject(MAT_BOTTOM_SHEET_DATA) public data: any) {
+  }
+  public ngOnInit(): void {
+    this.formGroup = this.formBuilder.group({
+      users: [[], Validators.required],
+      manager: ['', Validators.required],
+      name: ['', Validators.required]
+    });
+    this.usersService.fetchAllUsers().subscribe((list) => {
+      this.users = list;
 
-            });
-          });
+      const promises = this.users.map((user) => {
+        return this.usersService.getAllUsersForProject(this.data.idproject, user.uid).then((isUserInProject) => {
+          if (isUserInProject) {
+            this.formGroup.get('users')?.value.push(user.uid);
+          }
+          if (user.uid === this.data.managerId) {
+            this.initialManager = user;
+          }
 
-        // 
-       
-    }
+        });
+      });
+      Promise.all(promises).then(() => {
+        this.formGroup.get('users')?.setValue(this.formGroup.get('users')?.value);
+        this.formGroup.get('manager')?.setValue(this.initialManager?.uid);
+        this.formGroup.get('name')?.setValue(this.data.nameproject);
 
-    public inviteUser(): void {
-      let data={
-        allusers :this.users,
-        existuser:this.formGroup.value
-      }
-        this.bottomSheetRef.dismiss(data);
-    }
+      });
+    });
 
-    public close(): void {
-        this.bottomSheetRef.dismiss();
+    // 
+
+  }
+
+  public inviteUser(): void {
+    let data = {
+      allusers: this.users,
+      existuser: this.formGroup.value
     }
+    this.bottomSheetRef.dismiss(data);
+  }
+
+  public close(): void {
+    this.bottomSheetRef.dismiss();
+  }
 }

@@ -71,6 +71,16 @@ export class TimesheetComponent implements OnInit {
   status: string | null;
   IsAdmin: boolean;
   displayNamecurent;
+  private monthNames = {
+    en: [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ],
+    fr: [
+      'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+      'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+    ]
+  };
   constructor(
     private dateService: DateService,
     private projectService: ProjectService,

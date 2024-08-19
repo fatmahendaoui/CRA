@@ -91,7 +91,7 @@ export class ProjectsComponent implements OnInit {
     this.allprojects = null;
     this.projectService.fetchAllProjects().then(li => {
       console.log(li);
-      
+
       this.allprojects = li
     })
 
@@ -130,7 +130,9 @@ export class ProjectsComponent implements OnInit {
     this.bottomSheet
       .open(editProjectComponent, {
         panelClass: 'bottom-sheet-without-padding',
-        data: { nameproject: project.name,idproject: project.id } // Add your parameters here
+        data: {
+          nameproject: project.name, idproject: project.id, managerId: project.managerId // Add managerId here
+        } // Add your parameters here
       })
       .afterDismissed()
       .pipe(filter((project) => !!project))
@@ -139,20 +141,22 @@ export class ProjectsComponent implements OnInit {
       });
   }
 
-  updateproject(nomproject, users) {    
+  updateproject(nomproject, users) {
+    const managerId = users.existuser.manager; // Assurez-vous que `manager` existe et est bien défini
     users.allusers.map(li => {
       const foundUser = users.existuser.users.find(user => user === li.uid);
-      if(foundUser){
-        this.projectService.updateProjectName(nomproject,li.uid, users.existuser.name);
-      }      
-      this.projectService.getAllUsersForProject(nomproject, li.uid).then(bool => {        
+      if (foundUser) {
+        this.projectService.updateProjectName(nomproject, li.uid, users.existuser.name);
+        this.projectService.updateProjectManager(nomproject, li.uid, managerId); // Update manager here
+      }
+      this.projectService.getAllUsersForProject(nomproject, li.uid).then(bool => {
         if (bool) {
-          if (!foundUser) {            
+          if (!foundUser) {
             this.projectService.deleteUserProject(nomproject, li.uid);
           }
         } else {
           if (foundUser) {
-            this.projectService.addNewProject(nomproject,users.existuser.name, li.uid);
+            this.projectService.addNewProject(nomproject, users.existuser.name, li.uid, managerId);
           }
         }
       });
@@ -172,9 +176,10 @@ export class ProjectsComponent implements OnInit {
   private inviteproject(project): void {
     // TODO: add a loading spinner
     if (project) {
+      const managerId = project.manager; // Assurez-vous que `manager` existe et est bien défini
       project.users.map(li => {
-        this.projectService.addNewProject(project.name,project.name,li);
-      }) 
+        this.projectService.addNewProject(project.name, project.name, li, managerId);
+      })
       this.fetchAll();
       handleResponseSuccessWithAlerts(
         this.transloco.translate('features.projects.success.title'),

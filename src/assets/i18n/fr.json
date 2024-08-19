@@ -119,12 +119,13 @@
         "added_at": "Ajouté le",
         "identifier": "Identifiant",
         "submitted": "Soumis",
-        "on-going": "En cours"
+        "ongoing": "En cours"
       },
       "add-dialog": {
         "title": "Ajouter un projet",
         "name": "Nom du projet",
         "users": "Utilisateurs",
+        "maneger": "Manager",
         "action": "Ajouter",
         "update": "Modifier"
       },
@@ -174,6 +175,7 @@
       "list_day_off": "Liste des Jours Fériés",
       "add-dialig-title": "Ajouter un jour",
       "title": "Jours Fériés",
+      "Day_off": "Jour Férié",
       "titre": "Time Sheet à valider",
       "confirmation": "Êtes-vous sûr de vouloir supprimer cet jour ?",
       "success": "Le jour a été ajouté avec succès",
@@ -183,7 +185,7 @@
       "Vacances": "Congé",
       "update": "Le jour férié est modifié avec succès",
       "name": "Nom",
-      "Time-cards": "Time Sheet"
+      "Time-cards": "CRA"
     },
     "settings": {
       "title": "Paramètres",
@@ -211,7 +213,8 @@
       "jours": "jours",
       "total": "Total Mensuel",
       "Save_Changes": "Enregistrer les modification",
-      "Submit_for_Validation": "Envoyer pour validation"
+      "Submit_for_Validation": "Envoyer pour validation",
+      "Time_Sheet": "CRA"
     },
     "conge": {
       "title": "Demandes de congé",
@@ -285,6 +288,20 @@
       "october": "Octobre",
       "november": "Novembre",
       "december": "Décembre"
+    },
+    "remote": {
+      "titre": "Télétravail",
+      "title": "Fichier Teletravail",
+      "Name": "Nom",
+      "Week_starting": "Semaine commençant le",
+      "Month": "Mois",
+      "Week": "Semaine",
+      "Today": "Aujourd'hui"
+    },
+    "status": {
+      "On going": "En cours",
+      "Improved": "Approuvé",
+      "Submitted": "Soumis"
     }
   }
 }

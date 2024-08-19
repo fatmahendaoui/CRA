@@ -1,6 +1,5 @@
 <div class="row">
   <div class="cra">
-
     <!-- ---------------------header-filtre-------------------------  -->
     <div class="header-filter">
       <mat-toolbar>
@@ -21,11 +20,12 @@
           <mat-chip class="chips" *ngIf="status && status != 'Improved'" [ngStyle]="{
             'background-color': status == 'On going' ? '#193F77' : status == 'Submitted' ? '#EA3380' : '',
             'color': 'white'
-        }" disabled><span style="color: white;">{{status}}</span></mat-chip>
+        }" disabled><span style="color: white;">{{ 'features.status.' + status | transloco
+              }}</span></mat-chip>
           <mat-chip class="chips" *ngIf="!status" style="  background-color: #193F77;" disabled><span
-              style="color: white;">On going</span></mat-chip>
+              style="color: white;">{{ 'features.status.On going' | transloco}}</span></mat-chip>
           <mat-chip class="chips" *ngIf="status == 'Improved'" style="  background-color: #17ba68;" disabled><span
-              style="color: white;">Approved </span></mat-chip>
+              style="color: white;">{{ 'features.status.Improved' | transloco}} </span></mat-chip>
         </div>
         <div class="name-month">
           <button mat-mini-fab color="primary" (click)="getMonth(false)">
@@ -71,14 +71,14 @@
                                   'color': isWeekendDay(day.year, this.month2, day.day),'font-weight': isDayOff(day.day) ? 'bold' : 'normal','background':isDayOff(day.day) ? '#fee9ba' : '' }">
                       <ng-container *ngIf="isDayOff(day.day); else noDayOffName">
                         Day Off
-                      </ng-container>
+                        <!-- {{ 'features.day_off.Day_off' | transloco }} --> </ng-container>
                       <ng-template #noDayOffName>{{ day.nameDay }}</ng-template>
                     </p>
                     <p class="day-number" [ngClass]="{ 'disabled-input': isWeekend }"
                       [ngStyle]="{'background': isWeekendDay(day.year, this.month2, day.day) || isDayOff(day.day) ? '#fee9ba' : '',
                                               'color': isWeekendDay(day.year, this.month2, day.day),'font-weight': isDayOff(day.day) ? 'bold' : 'normal'}">
                       <ng-container *ngIf="isDayOff(day.day); else noDayOff">
-                        <img src="../../assets/images/Frame.png" alt=" Day Off" style="width: 20px; height: 20px;">
+                        <mat-icon>sentiment_very_satisfied</mat-icon>
                       </ng-container>
                       <ng-template #noDayOff>{{ day.day }}</ng-template>
                     </p>
@@ -128,7 +128,7 @@
                 </td>
               </tr>
             </ng-container>
-            <tr>
+            <tr class="total-hours-row">
               <!-- Display total hours for each day -->
               <td class="col-projects" style="border-bottom: 0.01rem solid white;">
                 <div class="name-project">Total Hours</div>
@@ -149,10 +149,6 @@
         <app-loader *ngIf="!resultTimesheet">Chargement ...</app-loader>
       </div>
     </div>
-
-
-
-
 
     <!-- ---------------------Description-------------------------  -->
     <div class="form">

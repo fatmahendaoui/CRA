@@ -45,6 +45,15 @@ import { ProjectService } from "../services/projects.service";
 
       <mat-form-field appearance="outline">
         <mat-label>
+          {{ 'features.projects.add-dialog.maneger' | transloco }}
+        </mat-label>
+        <mat-select formControlName="manager">
+          <mat-option *ngFor="let element of users" [value]="element.uid">{{element.email}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline">
+        <mat-label>
           {{ 'features.projects.add-dialog.users' | transloco }}
         </mat-label>
         <mat-select formControlName="users" multiple>
@@ -82,7 +91,7 @@ import { ProjectService } from "../services/projects.service";
     ProjectService
   ],
   imports: [
-    NgIf,NgFor,
+    NgIf, NgFor,
     MatToolbarModule,
     MatInputModule,
     MatSelectModule,
@@ -105,7 +114,8 @@ export class addNewProjectComponent implements OnInit {
     })
     this.formGroup = this.formBuilder.group({
       name: ['', Validators.required],
-      users: [[], Validators.required]
+      users: [[], Validators.required],
+      manager: ['', Validators.required]  // Ajoutez ce champ pour le manager
     });
   }
 
