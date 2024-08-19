@@ -7,6 +7,9 @@ import { ProjectService } from './../../../projects/services/projects.service';
 import { ActivatedRoute } from '@angular/router';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { ProfilService } from '../../services/profile.service';
+import { CongeService } from 'src/app/features/conges/services/conge.service';
+
+
 
 @Component({
   selector: 'app-profile-user',
@@ -30,6 +33,9 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
   role: string | null = null;
   IsAdmin: boolean;
   isEditing: boolean = false;
+  congesUtilisateurConnecte: any[] = [];
+
+  showPopup = false;
 
   constructor(
     private fb: FormBuilder,
@@ -39,7 +45,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
     private projectService: ProjectService,
     private route: ActivatedRoute, // Ajoutez cette ligne
     private fireStorage: AngularFireStorage,
-
+    private congeService: CongeService 
 
   ) {
     // Vérifier si l'utilisateur est un administrateur
@@ -105,6 +111,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    
     // Récupérer l'ID de l'utilisateur à partir des paramètres de la route
     this.route.paramMap.subscribe(params => {
       const userId = params.get('id');
@@ -132,6 +139,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
       photoURL: [''],
 
     });
+    this.fetchConges();
   }
   //fonction pour initialiser le graphique après la vue
   ngAfterViewInit(): void {
@@ -436,6 +444,12 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
           if (projectData) {
             // Calculer le total des heures du congé de maladie pour ce projet
             const totalHours = this.calculateTotalHours(projectData, vacancesProjectId);
+            if (totalHours < 4) {
+              console.log('Le nombre d\'heures est inférieur à 4, aucune soustraction ne sera effectuée.');
+              return;
+            }
+          
+          
             remainingHours = 176 - totalHours; // Calcul du nombre d'heures restantes
             // Convertir les heures restantes en jours et heures
             const remainingHoursText = this.profilService.convertToDaysAndHours(remainingHours);
@@ -451,5 +465,55 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
     });
   }
 
+  
+  async fetchConges(): Promise<void> {
+    try {
+      if (!this.userId) {
+        console.error('User ID is null or undefined.');
+        return;
+      }
+  
+      const conges = await this.congeService.getAllConges(); // Récupérer tous les congés
+      this.congesUtilisateurConnecte = conges
+        .filter(conge => conge.userId === this.userId)
+        .map(conge => ({
+          ...conge,
+          dateDebut: conge.dateDebut.toDate(), // Conversion du timestamp en Date
+          dateFin: conge.dateFin.toDate() // Conversion du timestamp en Date
+        }));
+  
+      console.log('Congés récupérés pour l\'utilisateur', this.userId, ':', this.congesUtilisateurConnecte);
+      
+    } catch (error) {
+      console.error('Error fetching congés:', error);
+    }
+  }
+  
+  openPopup(): void {
+    this.fetchConges(); // Appeler la méthode pour récupérer les congés
+    this.showPopup = true; // Activer l'affichage de la popup
+  }
+
+  closePopup(): void {
+    this.showPopup = false;
+  }
+  getStatusLabel(status: number): string {
+    switch (status) {
+      case 1:
+        return 'Approuvé';
+      case 0:
+        return 'En attente';
+      case 2:
+        return 'Sous Réserve';
+      default:
+        return '';
+    }
+  }
+  
 }
+
+
+
+
+
 //exports.monthlyTimesheetReminder = functions.pubsub.schedule('00 10 28 * *')

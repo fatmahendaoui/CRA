@@ -75,7 +75,7 @@ export class AddcongeComponent implements OnInit {
     this.fileError = false;
 
     // Check if the leave type is "Congé de maladie" and if a file is selected
-    if (this.natureConge === 'Congé de maladie (1 jour)' && !this.selectedFile) {
+    if (this.natureConge === 'Congé de maladie (1 jour)' && this.selectedFile) {
       this.fileError = true;
       return;
     }

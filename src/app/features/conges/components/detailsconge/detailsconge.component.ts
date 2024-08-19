@@ -22,17 +22,29 @@ export class DetailscongeComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       this.congId = params.get('id');
-
+      console.log('Paramètre ID du congé:', this.congId);
+  
       if (this.congId) {
         this.congeService.getCongeById(this.congId).then(conge => {
           this.congeDetails = { id: this.congId, ...conge };
+          console.log('Détails du congé récupérés:', this.congeDetails);
         }).catch(error => {
           console.error('Erreur lors de la récupération des détails du congé :', error);
         });
+      } else {
+        console.log('Aucun ID de congé fourni.');
       }
     });
   }
-
+  
+  areDatesEqual(): boolean {
+    if (this.congeDetails) {
+      const dateDebut = this.congeDetails.dateDebut.toDate();
+      const dateFin = this.congeDetails.dateFin.toDate();
+      return dateDebut.getTime() === dateFin.getTime();
+    }
+    return false;
+  }
 
 
   private isWeekendDay(year: number, month: number, day: number): boolean {
