@@ -19,6 +19,8 @@ import { AngularFireModule } from '@angular/fire/compat';
 import { environment } from 'src/environments/environment';
 
 
+
+
 const routes: Routes = [
   {
     path: '',
@@ -28,7 +30,9 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    ProfileUserComponent],
+    ProfileUserComponent,
+  
+   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }],
   imports: [

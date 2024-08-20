@@ -54,10 +54,11 @@
           <h3>{{ 'features.detailsConge.Date de début' | transloco }} :</h3>
           <p>{{ congeDetails.dateDebut.toDate() | date: 'dd/MM/yyyy' }} </p>
         </span>
-        <span class="detail-item">
+        <span class="detail-item" *ngIf="!areDatesEqual()">
           <h3>{{ 'features.detailsConge.Date de fin' | transloco }} :</h3>
           <p>{{ congeDetails.dateFin.toDate() | date: 'dd/MM/yyyy' }} </p>
         </span>
+        
         <span class="detail-item">
           <h3>{{ 'features.detailsConge.NombreHeures' | transloco }} :</h3>
           <p> {{ congeDetails.nombreHeures }} Hours</p>

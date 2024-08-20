@@ -11,6 +11,7 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
+  
 }
 
 .content {
@@ -234,4 +235,95 @@ align-items: left;
 
 .Embauche .User-name {
   width: calc(50% - 10px); /* Adjust as needed, considering margin and padding */
+}
+.popup-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 80%;
+  max-width: 700px;
+  border-radius: 8px;
+}
+
+.popup-content {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.popup-content h3 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.popup-content ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.popup-content li {
+  margin-bottom: 10px;
+}
+
+.conge-item {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  background: #f9f9f9;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.conge-item span {
+  flex: 1;
+  min-width: 100px;
+  margin: 2px 0;
+}
+
+.conge-nature {
+  font-weight: bold;
+}
+
+.conge-date {
+  color: #555;
+}
+
+.approved {
+  background-color: #17ba68;
+  color: white;
+}
+
+.pending {
+  background-color: #ff9814;
+  color: black;
+}
+
+.refused {
+  background-color: #fb4e54;
+  color: white;
+}
+
+button[mat-button] {
+  display: block;
+  margin: 20px auto 0;
+}
+mat-chip {
+  border-radius: 28px;
+  padding: 6px 12px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 13px;
+}
+.right-aligned {
+  margin-left: auto;
+  font-size: 12px;
 }

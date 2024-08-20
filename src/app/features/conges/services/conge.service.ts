@@ -16,6 +16,9 @@ import { ProfileService } from 'src/app/services/profile.service';
   providedIn: 'root'
 })
 export class CongeService {
+  getCongesByUser(userId: string) {
+    throw new Error('Method not implemented.');
+  }
 
   private readonly http = inject(HttpClient);
   private readonly profileService = inject(ProfileService);
@@ -253,7 +256,30 @@ export class CongeService {
     const donnePrject = collection(this.firestore, 'conge');
 
   }
+  async getAllConges(): Promise<any[]> {
+    console.log('Appel de la méthode getAllConges');
+    try {
+      const congeCollectionRef = collection(this.firestore, 'conge');
+      const querySnapshot = await getDocs(congeCollectionRef);
+      const allConges: any[] = [];
+      querySnapshot.forEach((doc) => {
+        allConges.push(doc.data());
+      });
+      console.log('Liste de tous les congés:', allConges); 
+      return allConges;
+    } catch (error) {
+      console.error('Erreur lors de la récupération de tous les congés :', error);
+      return [];
+    }
+  }
 
+  async loadConges(): Promise<void> {
+    try {
+      const conges = await this.getAllConges();
+      console.log('Congés chargés:', conges);
+    } catch (error) {
+      console.error('Erreur lors du chargement des congés :', error);
+    }
+  }
 }
-
 

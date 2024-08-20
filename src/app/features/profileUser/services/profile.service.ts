@@ -18,13 +18,22 @@ export class ProfilService {
   public convertToDaysAndHours(hours: number): string {
     const days = Math.floor(hours / 8);
     const remainingHours = hours % 8;
+    let result: string;
+  
     if (remainingHours === 0) {
-      return `${days} jours`;
+      result = `${days} jours`;
     } else {
-      return `${days} jours et ${remainingHours} heures`;
+      result = `${days} jours et ${remainingHours} heures`;
     }
+  
+    return result;
   }
-
+  
+  public isNegativeDays(hours: number): boolean {
+    const days = Math.floor(hours / 8);
+    return days < 0;
+  }
+  
   // Fonction pour convertir une Timestamp en Date
   private convertToDate(timestamp: Timestamp | null): Date | null {
     if (!timestamp) {

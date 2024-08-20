@@ -1,17 +1,54 @@
 <div class="profile-container">
     <div class="btn-add">
+        
         <h1>{{ 'features.profile.title' | transloco }}</h1>
         <ng-container *ngIf="!isEditing; else editingButtons">
+            <button mat-flat-button color="primary" class="right-aligned" (click)="openPopup()">Mes congés</button>
+            &nbsp;&nbsp;&nbsp;
+          <!-- Popup pour afficher les congés -->
+
+          <div class="popup-container" *ngIf="showPopup">
+            <div class="popup-content">
+              <h3>Mes Congés</h3>
+              <ul>
+                <li *ngFor="let conge of congesUtilisateurConnecte">
+                    <div class="conge-item">
+                        
+                      <span class="conge-nature">{{ conge.nature }}</span> 
+                      <span class="conge-duree">{{ conge.duree }}</span> 
+                      De&nbsp;&nbsp;&nbsp;<span class="conge-date">{{ conge.dateDebut | date: 'dd/MM/yyyy' }}</span>à&nbsp;&nbsp;&nbsp;
+                      <span class="conge-date">{{ conge.dateFin | date: 'dd/MM/yyyy' }}</span> 
+                      <mat-chip-list>
+                        <mat-chip [ngClass]="{'approved': conge.status === 1, 'pending': conge.status === 0, 'refused': conge.status === 2}">
+                          {{ getStatusLabel(conge.status) }}
+                        </mat-chip>
+                      </mat-chip-list>
+                    </div>
+                  </li>
+                </ul>
+                <button mat-button color="warn" (click)="closePopup()">Fermer</button>
+              </div>
+            </div>
+          
+  
+              
+
+            
+
+
             <button mat-flat-button color="primary" (click)="enterEditMode()">
                 {{ 'features.profile.edit' | transloco }}
             </button>
+     
         </ng-container>
         <ng-template #editingButtons>
             <button mat-flat-button color="primary" (click)="saveProfile()">
                 {{ 'features.timeshet.Save_Changes' | transloco }}
             </button>
         </ng-template>
+        
     </div>
+    
     <div class="content">
         <mat-card class="MatCard-profile">
             <form [formGroup]="profileForm">
