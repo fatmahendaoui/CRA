@@ -12,6 +12,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { CalendarOptions } from '@fullcalendar/core';
 import { FullCalendarComponent } from '@fullcalendar/angular';
+
 /**** */
 @Component({
   selector: 'app-remote',
