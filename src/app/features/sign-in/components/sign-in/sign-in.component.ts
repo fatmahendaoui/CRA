@@ -4,18 +4,30 @@ import { MatButtonModule } from "@angular/material/button";
 import { ActivatedRoute, Router } from "@angular/router";
 import { GoogleAuthProvider, Unsubscribe } from '@angular/fire/auth';
 import { take } from "rxjs";
-
 import { MatCardModule } from "@angular/material/card";
 import { AuthService } from "../../services/auth.service";
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from "@angular/material/form-field"; 
+import { MatInputModule } from "@angular/material/input"; 
+import { MatDialog } from '@angular/material/dialog';
+import { SignInDialogComponent } from './sign-in-dialog/sign-in-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+
+
 
 @Component({
   standalone: true,
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss'],
+
   imports: [
     MatButtonModule,
     MatCardModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,SignInDialogComponent,MatDialogModule
   ]
 })
 export class SignInComponent implements OnInit, OnDestroy {
@@ -26,33 +38,29 @@ export class SignInComponent implements OnInit, OnDestroy {
   private readonly ngZone = inject(NgZone);
   private unsubscribeAuthStateChanged: Unsubscribe;
 
-  public signInWithGoogle(): void {
-    const provider = new GoogleAuthProvider();
+  // Form for email and password sign-in
+  signInForm: FormGroup;
 
-  // Sign in with a popup using the specified provider
-signInWithPopup(this.auth, provider)
-.then((result) => {
-  // Retrieve the signed-in user
-  const user = result.user;
-
-  // Call the CheckUser function to validate the user's access
-  this.service.CheckUserExist(user?.uid).then((res) => {
-    if (res == true) {      
-      // If the user is authorized, navigate to the 'folders' route
-      this.router.navigate(['/dashbord']);
-    } else {
-      // If the user is not authorized, navigate to the 'not-authorized' route
-      this.router.navigate(['create-domaine']);
-    }
-  });
-});
-
-
-
+  constructor(
+    private fb: FormBuilder, // FormBuilder injected
+    private authService: AuthService,
+    private dialog: MatDialog
+   
+  
+  ) {}
+  openSignInDialog(): void {
+    this.dialog.open(SignInDialogComponent, {
+      width: '400px',
+      // Optionally set other dialog options
+    });
   }
+  ngOnInit(): void {
+    // Initialize the form with validators
+    this.signInForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+    });
 
-  public ngOnInit(): void {
-   // this.randombg();
     this.unsubscribeAuthStateChanged = this.auth.onAuthStateChanged((user) => {
       if (user) {
         this.activatedRoute
@@ -66,27 +74,40 @@ signInWithPopup(this.auth, provider)
               });
             })
           });
-      }else{
-        
       }
     });
   }
 
-  public ngOnDestroy(): void {
+  ngOnDestroy(): void {
     this.unsubscribeAuthStateChanged();
   }
 
-  public  randombg() {
-    const random: number = Math.floor(Math.random() * 4);
-    const bigSize: string[] = [
-      "url('https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1400&q=60')",
-      "url('https://images.unsplash.com/photo-1477346611705-65d1883cee1e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=60')",
-      "url('https://images.unsplash.com/photo-1441794016917-7b6933969960?ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=60')",
-      "url('https://images.unsplash.com/photo-1491466424936-e304919aada7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjF9&auto=format&fit=crop&w=1400&q=60')"
-    ];
-    const rightElement: HTMLElement | null = document.getElementById("right");
-    if (rightElement) {
-      rightElement.style.backgroundImage = bigSize[random];
-    }
+  // Google Sign-In Method
+  public signInWithGoogle(): void {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(this.auth, provider)
+      .then((result) => {
+        const user = result.user;
+        this.service.CheckUserExist(user?.uid).then((res) => {
+          if (res == true) {      
+            this.router.navigate(['/dashbord']);
+          } else {
+            this.router.navigate(['create-domaine']);
+          }
+        });
+      });
   }
+
+  // Email and Password Sign-Up
+  onSignUp(): void {
+    const { email, password } = this.signInForm.value;
+    this.authService.signUpWithEmail(email, password);
+  }
+
+  // Email and Password Login
+  onLogin(): void {
+    const { email, password } = this.signInForm.value;
+    this.authService.loginWithEmail(email, password);
+  }
+  
 }
