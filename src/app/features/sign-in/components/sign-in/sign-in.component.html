@@ -1,19 +1,23 @@
-<body >
+<body>
   <div class="container">
     <div class="left">
       <div class="logo-container">
         <img src="assets/images/logo.png" style="width: 13rem; margin-bottom: 1rem;">
       </div>
       <div class="header">
-        <h2 class="animation a1" >Streamline Your ERP Journey with CRA!</h2>
-        <p class="animation a2" style="margin-bottom: 2rem;">Simplify Project Organization and More ! </p>
+        <h2 class="animation a1">Streamline Your ERP Journey with CRA!</h2>
+        <p class="animation a2" style="margin-bottom: 2rem;">Simplify Project Organization and More!</p>
       </div>
-        <button class="google-button" mat-flat-button (click)="signInWithGoogle()">
-          <div class="text-with-icon">
-            <img src="assets/images/google.svg" height="28" />
-            <span>Continue with Google</span>
-          </div>
-        </button>
+
+      <!-- Google Sign-In Button -->
+      <button class="google-button" mat-flat-button (click)="signInWithGoogle()">
+        <div class="text-with-icon">
+          <img src="assets/images/google.svg" height="28" />
+          <span>Continue with Google</span>
+        </div>
+      </button>
+      <br>
+      <button mat-raised-button color="primary" (click)="openSignInDialog()">Autre méthode</button>
     </div>
     <div id="right"></div>
   </div>

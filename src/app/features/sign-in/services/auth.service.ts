@@ -4,7 +4,9 @@ import { Router } from '@angular/router';
 import { Profile, UserRole } from 'src/app/models/profile.model';
 import { ProfileService } from 'src/app/services/profile.service';
 import { v4 as uuidv4 } from 'uuid';
-import { CollectionReference, DocumentData, Firestore, QuerySnapshot, collection, doc, getDoc, getDocs, getFirestore, query, setDoc, where } from '@angular/fire/firestore';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, UserCredential } from '@angular/fire/auth';
+import { CollectionReference, DocumentData, Firestore, QuerySnapshot, collection, doc, getDoc, getDocs, setDoc, query, where } from '@angular/fire/firestore';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -12,27 +14,17 @@ export class AuthService {
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);
   private readonly profileService = inject(ProfileService);
-  public profile: Profile;
-  private readonly firestore = inject(Firestore); // Modified: Firestore instance
+  private readonly firestore = inject(Firestore);
 
   public async CheckUserExist(uid: string): Promise<boolean> {
-    // Check if the user is an admin
     const queryResult = await this.profileService.checkAdmin(uid);
-
-
-
-    // Check if the user is an admin
     const isAdmin = queryResult.docs.length > 0;
 
-
-    // Check conditions for authorized access
     if (isAdmin) {
-      // Navigate to the 'folders' route
       this.router.navigate(['/dashbord']);
       return true;
     } else {
-      // Navigate to the 'not-authorized' route
-      this.router.navigate(['/sign-in']);
+      this.router.navigate(['/create-domaine']);
       return false;
     }
   }
@@ -43,22 +35,14 @@ export class AuthService {
       const createdOn = new Date().toISOString().substring(0, 10) + 'T00:00:00.000Z';
       const domaineId = uuidv4();
 
-      // Check if the domain name already exists
       const domaineQuery: QuerySnapshot<DocumentData> = await getDocs(
         query(collection(this.firestore, 'domaine_CRA') as CollectionReference<DocumentData>, where('domaineName', '==', domaineName))
       );
 
       if (!domaineQuery.empty) {
-        // Domain name already exists
         return { profile: null, exists: true };
       }
 
-      // Get the current date
-      const currentDate = new Date();
-
-      // Calculate the trial end date by adding 15 days to the current date
-
-      // Save profile data to 'domaine_BQDS' collection
       await setDoc(doc(this.firestore, 'domaine_CRA', domaineId), {
         domaineId,
         user_id: user.uid,
@@ -78,13 +62,12 @@ export class AuthService {
         notify: false
       };
 
-      // Save profile data to 'membership_BQDS' collection
       await setDoc(doc(this.firestore, 'membership_CRA', user.uid), profile);
 
       await this.addNewProject("Disponible", user.uid);
       await this.addNewProject("Vacances", user.uid);
       await this.addNewProject("Maladie", user.uid);
-      // Navigate to settings page
+
       this.router.navigate(['/dashbord']);
 
       return { profile, exists: false };
@@ -94,19 +77,13 @@ export class AuthService {
     }
   }
 
-
   async addNewProject(newproject: string, iduser: string): Promise<void> {
     if (newproject.trim() === "") {
       return;
     }
-    // resultTimesheet.map(li=>{
-    //   li.nbHeure=0;
-    //   li.project= newproject;
-    // })
 
     const projectData = {
       'name': newproject,
-      // [resultTimesheet[0].month+'_'+resultTimesheet[0].year] : resultTimesheet, // Array of timesheet items for each day
       'projectTotal': 0,
     };
     const domaineRef =
@@ -123,7 +100,6 @@ export class AuthService {
     }
   }
 
-  // Method to retrieve domain name from Firebase using domaineId
   async getDomainName(domaineId: string): Promise<string | null> {
     try {
       const docRef = doc(this.firestore, 'domaine_CRA', domaineId);
@@ -131,7 +107,7 @@ export class AuthService {
 
       if (docSnap.exists()) {
         const data = docSnap.data();
-        return data['domaineName']; // Accessing property using bracket notation
+        return data['domaineName'];
       } else {
         return null;
       }
@@ -140,8 +116,47 @@ export class AuthService {
       throw error;
     }
   }
+
   getCurrentUserId(): string | null {
     const user = this.auth.currentUser;
     return user ? user.uid : null;
+  }
+
+  async signUpWithEmail(email: string, password: string): Promise<void> {
+    try {
+      const userCredential: UserCredential = await createUserWithEmailAndPassword(this.auth, email, password);
+      const user = userCredential.user;
+      console.log('User signed up:', user);
+  
+      const domaineName = "Nom par défaut";
+      const { profile, exists } = await this.createDomaine(domaineName);
+  
+      if (exists) {
+        this.router.navigate(['/dashbord']);
+      } else {
+        this.router.navigate(['create-domaine']);
+      }
+    } catch (error) {
+      console.error('Error signing up:', error);
+      throw error;
+    }
+  }
+  
+  async loginWithEmail(email: string, password: string): Promise<void> {
+    try {
+      const userCredential: UserCredential = await signInWithEmailAndPassword(this.auth, email, password);
+      const user = userCredential.user;
+      console.log('User logged in:', user);
+      
+      const exists = await this.CheckUserExist(user.uid);
+      if (exists) {
+        this.router.navigate(['/dashbord']);
+      } else {
+        this.router.navigate(['create-domaine']);
+      }
+    } catch (error) {
+      console.error('Error logging in:', error);
+      throw error;
+    }
   }
 }
