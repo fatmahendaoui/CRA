@@ -15,7 +15,8 @@
     },
     "role": {
       "user": "User",
-      "admin": "Administrator"
+      "admin": "Administrator",
+      "manager": "Manager"
     },
     "close": "Close",
     "activate": "Account activated",

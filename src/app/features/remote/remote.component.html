@@ -17,7 +17,7 @@
   </div>
   <button mat-button (click)="goToToday()" class="today" style="color: white;">{{ 'features.remote.Today' | transloco
     }}</button>
-
+  <!--
   <div class="view-selection">
     <mat-button-toggle-group [(ngModel)]="selectedView" (change)="onViewChange($event)" aria-label="View selection">
       <mat-button-toggle value="week" class="modern-button-toggle">{{ 'features.remote.Week' | transloco
@@ -25,10 +25,10 @@
       <mat-button-toggle value="month" class="modern-button-toggle">{{ 'features.remote.Month' | transloco
         }}</mat-button-toggle>
     </mat-button-toggle-group>
-  </div>
+  </div>-->
 </mat-toolbar>
 <!----------------- Month---------------------->
-<div class="table-container" *ngIf="selectedView === 'week' && filteredDisplayNames && filteredDisplayNames.length > 0">
+<div class="table-container" *ngIf=" filteredDisplayNames && filteredDisplayNames.length > 0">
   <table class="table table-bordered">
     <thead>
       <tr>
@@ -83,7 +83,8 @@
     </tbody>
   </table>
 </div>
+
 <!----------------- week---------------------->
-<div class="table-week" *ngIf="selectedView === 'month' ">
+<!--<div class="table-week" *ngIf="selectedView === 'month' ">
   <full-calendar #calendar [options]="calendarOptions" (eventClick)="handleEventClick($event)"></full-calendar>
-</div>
+</div>-->

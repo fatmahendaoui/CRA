@@ -142,11 +142,11 @@ mat-toolbar {
   }
 }
 @media screen and (max-width: 768px) {
-  .horizontal-navbar .custom-icon img mat-icon{
+  .horizontal-navbar .custom-icon mat-icon img {
     width: 26px; /* Réduire la taille de l'image */
     height: 26px;
   }
-  .horizontal-navbar .custom-icon mat-icon  {
+  .horizontal-navbar .custom-icon mat-icon img {
     width: 0px; /* Réduire la taille de l'image */
     height: 0px;
   }

@@ -27,6 +27,7 @@
           <mat-select [value]="element.role" (selectionChange)="onSelectionChange($event, element)">
             <mat-option value="user">User</mat-option>
             <mat-option value="admin">Admin</mat-option>
+            <mat-option value="manager">{{ 'common.role.manager' | transloco }}</mat-option>
           </mat-select>
         </mat-form-field>
         <div class="mat-slide-toggle" *ngIf="element.role === 'admin'">
