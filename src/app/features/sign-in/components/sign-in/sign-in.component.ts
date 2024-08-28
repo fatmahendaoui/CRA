@@ -109,5 +109,14 @@ export class SignInComponent implements OnInit, OnDestroy {
     const { email, password } = this.signInForm.value;
     this.authService.loginWithEmail(email, password);
   }
-  
+  loginWithMicrosoft() {
+    this.authService.loginWithMicrosoft()
+      .then(result => {
+        console.log('Connexion réussie avec Microsoft');
+      })
+      .catch(error => {
+        console.error('Erreur de connexion avec Microsoft:', error);
+      });
+  }
 }
+
