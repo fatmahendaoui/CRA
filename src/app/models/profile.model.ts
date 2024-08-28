@@ -12,5 +12,6 @@ export interface Profile {
 
 export const enum UserRole {
   Admin = "admin",
-  User = "user"
+  User = "user",
+  Manager = "manager",
 }

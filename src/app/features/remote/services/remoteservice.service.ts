@@ -63,10 +63,10 @@ export class RemoteService {
       throw error;
     }
   }
-  /*
+
   async getUserRole(): Promise<string> {
     const userRole = await this.profileService.getUserRole();
     console.log("currentUser : ", userRole)
     return userRole;
-  }*/
+  }
 }
