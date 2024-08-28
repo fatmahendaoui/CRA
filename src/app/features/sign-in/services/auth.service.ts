@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Profile, UserRole } from 'src/app/models/profile.model';
 import { ProfileService } from 'src/app/services/profile.service';
 import { v4 as uuidv4 } from 'uuid';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, UserCredential } from '@angular/fire/auth';
+import { createUserWithEmailAndPassword,signInWithPopup, OAuthProvider, signInWithEmailAndPassword, UserCredential } from '@angular/fire/auth';
 import { CollectionReference, DocumentData, Firestore, QuerySnapshot, collection, doc, getDoc, getDocs, setDoc, query, where } from '@angular/fire/firestore';
 
 @Injectable({
@@ -156,6 +156,24 @@ export class AuthService {
       }
     } catch (error) {
       console.error('Error logging in:', error);
+      throw error;
+    }
+  }
+  async loginWithMicrosoft(): Promise<void> {
+    try {
+      const provider = new OAuthProvider('microsoft.com');
+      const userCredential = await signInWithPopup(this.auth, provider);
+      const user = userCredential.user;
+      console.log('User logged in with Microsoft:', user);
+
+      const exists = await this.CheckUserExist(user.uid);
+      if (exists) {
+        this.router.navigate(['/dashbord']);
+      } else {
+        this.router.navigate(['create-domaine']);
+      }
+    } catch (error) {
+      console.error('Error logging in with Microsoft:', error);
       throw error;
     }
   }

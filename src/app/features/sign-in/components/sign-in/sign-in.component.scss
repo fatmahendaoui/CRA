@@ -235,3 +235,29 @@ body {
 .google-button span {
   color: #FF1F70;
 }
+.microsoft-login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  width: 100%; 
+  background-color: #ffffff;
+  color: #333333;
+  border: 1px solid #e1e1e1;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.microsoft-login-btn img {
+  margin-right: 8px;
+  height: 30px;
+  width: 30px;
+}
+
+.microsoft-login-btn:hover {
+  background-color: #f3f3f3;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
