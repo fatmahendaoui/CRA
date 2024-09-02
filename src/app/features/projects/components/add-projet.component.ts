@@ -107,6 +107,7 @@ export class addNewProjectComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   public formGroup: FormGroup;
   private readonly usersService = inject(UsersService);
+  private readonly projectService = inject(ProjectService);
   users: Profile[]
   public ngOnInit(): void {
     this.usersService.fetchAllUsers().subscribe(list => {
@@ -117,9 +118,24 @@ export class addNewProjectComponent implements OnInit {
       users: [[], Validators.required],
       manager: ['', Validators.required]  // Ajoutez ce champ pour le manager
     });
-  }
 
+  }/*
+  public getuserName() {
+    return this.formGroup.get('users')?.value;
+  }*/
   public inviteUser(): void {
+    // this.bottomSheetRef.dismiss(this.formGroup.value);
+    const projectData = this.formGroup.value;
+    const idproject = ''; // Replace this with actual ID logic
+    const iduser = '';
+    this.projectService.addNewProject(
+      idproject,
+      projectData.name,
+      iduser,
+      projectData.manager,
+      projectData.users
+    );
+    console.log('projectData', projectData.users);
     this.bottomSheetRef.dismiss(this.formGroup.value);
   }
 

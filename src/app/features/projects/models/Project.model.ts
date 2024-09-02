@@ -5,4 +5,5 @@ export interface Project {
   id: string;
   projectTotal: number;
   managerId: string;
+  users: string[];
 }

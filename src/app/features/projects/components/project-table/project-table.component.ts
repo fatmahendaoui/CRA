@@ -35,14 +35,17 @@ export class ProjectTableComponent extends AbstractTableComponent<Project> {
 
   @Output()
   public deleteproject = new EventEmitter<Project>();
+  ngInt() {
+
+  }
 
   public override readonly displayedColumns: string[] = [
-    'name','actions'
+    'name', 'actions'
   ];
   public onSelectionChange(change: MatSelectChange, user: Project): void {
 
   }
-  
+
   public onDelete(user: Project): void {
     this.deleteproject.emit(user);
   }

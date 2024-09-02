@@ -70,6 +70,7 @@ export class TimesheetComponent implements OnInit {
   description: string | null = '';
   status: string | null;
   IsAdmin: boolean;
+  IsManager: boolean;
   displayNamecurent;
   private monthNames = {
     en: [
@@ -100,6 +101,9 @@ export class TimesheetComponent implements OnInit {
       this.projectService.checkUserAccess().then(li => {
         this.IsAdmin = li
       })
+      this.projectService.checkUserAccessManager().then(li => {
+        this.IsManager = li
+      })
       this.auth.onAuthStateChanged((user) => {
         if (user) {
           this.displayNamecurent = user.displayName;
@@ -108,11 +112,41 @@ export class TimesheetComponent implements OnInit {
     });
     this.fetchAll()
   }
+  /* public fetchAll(): void {
+     this.usersService.fetchAllUsers().subscribe(users => {
+       if (this.IsManager) {
+         const managerEmails = this.usersService.groupUserManager(this.auth.currentUser!.uid);
+         this.users = users.filter(user => {
+           for (const email of managerEmails) {
+             console.log(email);
+             if (email == user.email) {
+ 
+             }
+           }
+         });
+       } else {
+         this.users = users;
+       }
+ 
+     })
+ 
+   }
+ */
   public fetchAll(): void {
     this.usersService.fetchAllUsers().subscribe(users => {
-      this.users = users;
-    })
-
+      if (this.IsManager) {
+        this.usersService.groupUserManagerObserv(this.auth.currentUser!.uid).subscribe(managerEmails => {
+          // Filter users to exclude those managed by the current user
+          this.users = users.filter(user => managerEmails.includes(user.email));
+        }, error => {
+          console.error('Error fetching manager emails:', error);
+        });
+      } else {
+        this.users = users;
+      }
+    }, error => {
+      console.error('Error fetching users:', error);
+    });
   }
 
 

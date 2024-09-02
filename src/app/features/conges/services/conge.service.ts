@@ -187,7 +187,7 @@ export class CongeService {
 
     querySnapshot.forEach((doc) => {
       const userData = doc.data() as Profile;
-      if (userData.role === 'admin' && userData.notify) {
+      if ((userData.role === 'admin' || userData.role === 'manager') && userData.notify) {
         adminUsers.push(userData);
       }
     });
@@ -265,7 +265,7 @@ export class CongeService {
       querySnapshot.forEach((doc) => {
         allConges.push(doc.data());
       });
-      console.log('Liste de tous les congés:', allConges); 
+      console.log('Liste de tous les congés:', allConges);
       return allConges;
     } catch (error) {
       console.error('Erreur lors de la récupération de tous les congés :', error);
