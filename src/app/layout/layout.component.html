@@ -2,15 +2,27 @@
   <mat-toolbar-row class="max-width-container">
 
     <div class="logo-chips">
-      <img routerLink="/dashbord" class="brand" src="./assets/images/logo.png" alt="Logo" role="presentation">
+      <img 
+        routerLink="/dashbord" 
+        class="brand" 
+        [src]="domaineName !== 'tanitlab' ? '/assets/images/ealan.png' : '/assets/images/logo.png'" 
+        alt="Logo" 
+        role="presentation"
+        style="max-width: 100px; height: auto;">
     </div>
+    
+    
     <div class="user-container-metadata" *ngIf="user">
       <div class="user-name">
-        <button style="background-color: #fff; border: none; " routerLink="/profile">
+        <button style="background-color: #fff; border: none;" routerLink="/profile">
           <div class="user-metadata" style="text-align: end;">
             <strong style="color: #E50060;">{{ user?.displayName }}</strong>
             <span style="font-size: 0.68rem; color: #193F77;">{{ domaineName }}</span>
           </div>
+    
+      
+    
+    
         </button>
         <button mat-icon-button class="user-avatar-trigger" routerLink="/profile">
           <ng-container *ngIf="!profileImage; else userImage">

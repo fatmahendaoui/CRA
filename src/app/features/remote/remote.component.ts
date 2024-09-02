@@ -269,7 +269,7 @@ export class RemoteComponent implements OnInit {
       case 'remote':
         return 'assets/images/remote.jpg';
       case 'trip':
-        return 'assets/images/trip.jpg';
+        return 'assets/images/hol.jpg';
       case 'client':
         return 'assets/images/client.jpg';
       case 'auto':
@@ -303,7 +303,7 @@ export class RemoteComponent implements OnInit {
   }
 
   selectTripImage(i: number, j: number) {
-    this.selectedImage[i][j] = { image: 'trip' };
+    this.selectedImage[i][j] = { image: 'hol' };
     this.showChoices[i][j] = false;
     this.saveToLocalStorage();
     this.saveChanges();
@@ -545,7 +545,7 @@ export class RemoteComponent implements OnInit {
           const j = dayIndex;
           switch (nature) {
             case 'Congé payé':
-              this.selectedImage[i][j] = { image: 'trip' };
+              this.selectedImage[i][j] = { image: 'hol' };
               break;
             case 'Congé de maladie (1 jour)':
               this.selectedImage[i][j] = { image: 'maladie' };
