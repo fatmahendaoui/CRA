@@ -169,9 +169,9 @@ export class UsersService {
       throw error;
     } finally {
       // Clean up resources
-      if (this.authApp) {
-        await deleteApp(this.authApp); // Delete the Firebase app
-      }
+      /* if (this.authApp) {
+         await deleteApp(this.authApp); // Delete the Firebase app
+       }*/
     }
   }
 
