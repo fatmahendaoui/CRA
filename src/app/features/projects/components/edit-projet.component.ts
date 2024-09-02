@@ -48,7 +48,7 @@ import { ProjectService } from "../services/projects.service";
           {{ 'features.projects.add-dialog.maneger' | transloco }}
         </mat-label>
         <mat-select formControlName="manager">
-          <mat-option *ngFor="let element of users" [value]="element.uid">{{element.email}}</mat-option>
+          <mat-option *ngFor="let element of usersMan" [value]="element.uid">{{element.email}}</mat-option>
         </mat-select>
       </mat-form-field>
 
@@ -109,6 +109,7 @@ export class editProjectComponent implements OnInit {
   public formGroup: FormGroup;
   private readonly usersService = inject(UsersService);
   users: Profile[] = [];
+  usersMan: Profile[] = [];
   initialManager: Profile | undefined;
   constructor(@Inject(MAT_BOTTOM_SHEET_DATA) public data: any) {
   }
@@ -120,7 +121,8 @@ export class editProjectComponent implements OnInit {
     });
     this.usersService.fetchAllUsers().subscribe((list) => {
       this.users = list;
-
+      // Filtrer les utilisateurs ayant le rôle "manager"
+      this.usersMan = list.filter(user => user.role === 'manager');
       const promises = this.users.map((user) => {
         return this.usersService.getAllUsersForProject(this.data.idproject, user.uid).then((isUserInProject) => {
           if (isUserInProject) {

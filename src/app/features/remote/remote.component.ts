@@ -71,12 +71,12 @@ export class RemoteComponent implements OnInit {
     this.updateCurrentWeekDays();
     this.loadSavedChanges();
     this.loadDaysOff();
-    this.loadApprovedConges().then(() => {
-      this.fetchApprovedCongesInfo();
-      this.addTripImageToCurrentWeekDays();
-      this.filteredDisplayNames = [...this.displayNames];
-      this.loadFromFirebase(this.getStorageKey());
-    });
+    this.loadApprovedConges()
+    this.fetchApprovedCongesInfo();
+    this.addTripImageToCurrentWeekDays();
+    this.filteredDisplayNames = [...this.displayNames];
+    this.loadFromFirebase(this.getStorageKey());
+
     /*** */
     /* this.currentWeekStart = new Date();
      this.updateHeaderText();

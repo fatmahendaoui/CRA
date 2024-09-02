@@ -135,7 +135,7 @@ export class AddcongeComponent implements OnInit {
       duree: this.dureeConge,
       dateDebut: this.dateDebut,
       dateFin: this.dateFin,
-      commentaires: this.commentaires,
+      commentaires: this.commentaires || '',
       photourl: photourl,
       displayName: this.user ? this.user.displayName : null,
       email: this.user ? this.user.email : null,
@@ -172,7 +172,7 @@ export class AddcongeComponent implements OnInit {
           duree: this.dureeConge,
           dateDebut: this.dateDebut,
           dateFin: this.dateFin,
-          commentaires: this.commentaires,
+          commentaires: this.commentaires || '',
           congeId: this.congeId
         };
         await this.congeService.submitCongeWithEmail(data);

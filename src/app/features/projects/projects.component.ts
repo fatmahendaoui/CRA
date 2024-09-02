@@ -177,7 +177,7 @@ export class ProjectsComponent implements OnInit {
     // TODO: add a loading spinner
     if (project) {
       const managerId = project.manager; // Assurez-vous que `manager` existe et est bien défini
-      const users = project.users;
+      const users = [...project.users, managerId];
       project.users.map(li => {
         this.projectService.addNewProject(project.name, project.name, li, managerId, users);
       })

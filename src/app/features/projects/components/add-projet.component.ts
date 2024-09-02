@@ -48,7 +48,7 @@ import { ProjectService } from "../services/projects.service";
           {{ 'features.projects.add-dialog.maneger' | transloco }}
         </mat-label>
         <mat-select formControlName="manager">
-          <mat-option *ngFor="let element of users" [value]="element.uid">{{element.email}}</mat-option>
+          <mat-option *ngFor="let element of usersMan" [value]="element.uid">{{element.email}}</mat-option>
         </mat-select>
       </mat-form-field>
       
@@ -109,9 +109,12 @@ export class addNewProjectComponent implements OnInit {
   private readonly usersService = inject(UsersService);
   private readonly projectService = inject(ProjectService);
   users: Profile[]
+  usersMan: Profile[];
   public ngOnInit(): void {
     this.usersService.fetchAllUsers().subscribe(list => {
       this.users = list
+      // Filtrer les utilisateurs ayant le rôle "manager"
+      this.usersMan = list.filter(user => user.role === 'manager');
     })
     this.formGroup = this.formBuilder.group({
       name: ['', Validators.required],
@@ -135,6 +138,7 @@ export class addNewProjectComponent implements OnInit {
       projectData.manager,
       projectData.users
     );
+    console.log('manager', projectData.users);
     console.log('projectData', projectData.users);
     this.bottomSheetRef.dismiss(this.formGroup.value);
   }
