@@ -168,6 +168,7 @@ export class UsersService {
       // Reject the promise with the error object, including the code
       throw error;
     } finally {
+
       // Clean up resources
       /* if (this.authApp) {
          await deleteApp(this.authApp); // Delete the Firebase app
