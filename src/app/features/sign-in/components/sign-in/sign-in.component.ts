@@ -8,8 +8,8 @@ import { MatCardModule } from "@angular/material/card";
 import { AuthService } from "../../services/auth.service";
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from "@angular/material/form-field"; 
-import { MatInputModule } from "@angular/material/input"; 
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
 import { MatDialog } from '@angular/material/dialog';
 import { SignInDialogComponent } from './sign-in-dialog/sign-in-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -27,7 +27,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatCardModule,
     ReactiveFormsModule,
     MatFormFieldModule,
-    MatInputModule,SignInDialogComponent,MatDialogModule
+    MatInputModule, SignInDialogComponent, MatDialogModule
   ]
 })
 export class SignInComponent implements OnInit, OnDestroy {
@@ -45,9 +45,9 @@ export class SignInComponent implements OnInit, OnDestroy {
     private fb: FormBuilder, // FormBuilder injected
     private authService: AuthService,
     private dialog: MatDialog
-   
-  
-  ) {}
+
+
+  ) { }
   openSignInDialog(): void {
     this.dialog.open(SignInDialogComponent, {
       width: '400px',
@@ -89,7 +89,7 @@ export class SignInComponent implements OnInit, OnDestroy {
       .then((result) => {
         const user = result.user;
         this.service.CheckUserExist(user?.uid).then((res) => {
-          if (res == true) {      
+          if (res == true) {
             this.router.navigate(['/dashbord']);
           } else {
             this.router.navigate(['create-domaine']);
