@@ -34,17 +34,16 @@
           style="margin-right: 50px;">
           <mat-slide-toggle [checked]="element.notify" (change)="onToggleAdmin(element, $event)"></mat-slide-toggle>
         </div>
-        <div class="group-Users" *ngIf="element.role === 'manager'">
+        <!--<div class="group-Users" *ngIf="element.role === 'manager'">
           <button mat-icon-button (click)="loadManagedUsersEmails(element.uid)" [matMenuTriggerFor]="userMenu">
             <mat-icon>groups</mat-icon>
           </button>
           <mat-menu #userMenu="matMenu">
-            <!-- Ensure that `mat-menu-item` is used for the items in the menu -->
             <button mat-menu-item *ngFor="let email of managedUserEmails">
               {{ email }}
             </button>
           </mat-menu>
-        </div>
+        </div>-->
 
       </div>
     </td>

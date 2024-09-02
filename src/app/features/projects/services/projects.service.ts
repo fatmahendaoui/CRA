@@ -60,12 +60,15 @@ export class ProjectService {
       return;
     }
     console.log('userssssssssss:', users);
+    const usersWithManager = [...users, managerId];
+
     const projectData = {
       'name': newprojects,
       'projectTotal': 0,
       managerId: managerId, // Store the manager's user ID
-      users: users // Add the users' IDs to the project data
+      users: usersWithManager // Add the users' IDs to the project data
     };
+    console.log('Project data: testtetetettetette', projectData);
     /*
     const domaineRef =
       collection(
