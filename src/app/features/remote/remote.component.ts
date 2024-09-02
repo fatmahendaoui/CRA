@@ -208,8 +208,8 @@ export class RemoteComponent implements OnInit {
       console.log("test 11111", currentUserId);
       // Trier les noms par ordre alphabétique
       this.displayNames.sort((a, b) => {
-        if (a.id === currentUserId) return -1; // Mettre l'utilisateur actuel en premier
-        if (b.id === currentUserId) return 1;
+        /* if (a.id === currentUserId) return -1; // Mettre l'utilisateur actuel en premier
+         if (b.id === currentUserId) return 1;*/
         if (a.name < b.name) { return -1; }
         if (a.name > b.name) { return 1; }
         return 0;
