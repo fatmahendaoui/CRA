@@ -57,7 +57,7 @@ import { editProjectComponent } from './components/edit-projet.component';
     </ng-container>
   `,
   providers: [
-    ProjectService,
+    ProjectService
   ],
   imports: [
     NgIf,
@@ -156,7 +156,7 @@ export class ProjectsComponent implements OnInit {
           }
         } else {
           if (foundUser) {
-            this.projectService.addNewProject(nomproject, users.existuser.name, li.uid, managerId);
+            this.projectService.addNewProject(nomproject, users.existuser.name, li.uid, managerId, []);
           }
         }
       });
@@ -177,8 +177,9 @@ export class ProjectsComponent implements OnInit {
     // TODO: add a loading spinner
     if (project) {
       const managerId = project.manager; // Assurez-vous que `manager` existe et est bien défini
+      const users = project.users;
       project.users.map(li => {
-        this.projectService.addNewProject(project.name, project.name, li, managerId);
+        this.projectService.addNewProject(project.name, project.name, li, managerId, users);
       })
       this.fetchAll();
       handleResponseSuccessWithAlerts(

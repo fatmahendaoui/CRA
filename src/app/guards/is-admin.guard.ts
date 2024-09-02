@@ -17,7 +17,7 @@ export const extractRole = async (user: User | null): Promise<boolean> => {
   );
   // Extract the role from the first document in the query result
   const currentUser = queryResult.docs.length > 0 &&
-    queryResult.docs[0].data()['role'] === 'admin';
+    queryResult.docs[0].data()['role'] === 'admin' || queryResult.docs[0].data()['role'] === 'manager';
 
   return currentUser;
 };

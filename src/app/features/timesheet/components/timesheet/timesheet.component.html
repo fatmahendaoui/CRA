@@ -8,7 +8,8 @@
           <div class="select">
             <span class="mat-form-field">
               <mat-form-field subscriptSizing="dynamic" appearance="outline">
-                <mat-select [(ngModel)]="currentUser" (ngModelChange)="fetchProjects()" [disabled]="!IsAdmin">
+                <mat-select [(ngModel)]="currentUser" (ngModelChange)="fetchProjects()"
+                  [disabled]="!IsAdmin && !IsManager">
                   <mat-option *ngFor="let element of users" [value]="element.uid">{{element.displayName}}
                   </mat-option>
                 </mat-select>
@@ -173,11 +174,11 @@
           (click)="Savewithemail();Save()">
           {{ 'features.projects.button.Envoye' | transloco }}
         </button>
-        <button *ngIf="IsAdmin && status =='Submitted'" mat-flat-button color="primary"
+        <button *ngIf="(IsAdmin||IsManager) && status =='Submitted'" mat-flat-button color="primary"
           (click)="status ='Improved' ; changeStatus(); sendmail('Approved')">
           {{ 'features.projects.button.approved' | transloco }}
         </button>
-        <button *ngIf="IsAdmin && status =='Submitted'" mat-flat-button color="primary"
+        <button *ngIf="(IsAdmin ||IsManager) && status =='Submitted'" mat-flat-button color="primary"
           (click)="status ='On going' ; changeStatus(); sendmail('Rejected')">
           {{ 'features.projects.button.reject' | transloco }}
         </button>

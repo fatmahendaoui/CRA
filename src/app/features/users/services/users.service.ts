@@ -21,6 +21,7 @@ import { deleteApp, initializeApp } from '@angular/fire/app';
 import { getAuth } from '@angular/fire/auth';
 import { HttpClient } from '@angular/common/http';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { id } from 'date-fns/locale';
 @Injectable()
 export class UsersService {
   private readonly profileService = inject(ProfileService);
@@ -147,9 +148,9 @@ export class UsersService {
 
       await setDoc(doc(this.firestore, 'membership_CRA', userRecord.uid), userData);
 
-      this.projectService.addNewProject("Disponible", "Disponible", userRecord.uid, managerId);
-      this.projectService.addNewProject("Vacances", "Vacances", userRecord.uid, managerId);
-      this.projectService.addNewProject("Maladie", "Maladie", userRecord.uid, managerId);
+      this.projectService.addNewProject("Disponible", "Disponible", userRecord.uid, managerId, []);
+      this.projectService.addNewProject("Vacances", "Vacances", userRecord.uid, managerId, []);
+      this.projectService.addNewProject("Maladie", "Maladie", userRecord.uid, managerId, []);
 
       // Send email verification to the newly registered user
       await this.http.post<void>("https://us-central1-dev-cra-390314.cloudfunctions.net/add_user_cra", {
@@ -198,5 +199,186 @@ export class UsersService {
       throw error;
     }
   }
+  // Function to get the managed users' emails
+  /* async groupUserManager(iduser: string): Promise<void> {
+     console.log('iduser ::::', iduser);
+ 
+     // Get the user by ID
+     const user = await this.projectService.getuserbyid(iduser);
+     console.log('projectRef ::::', user);
+ 
+     // Step 1: Get all users in the "membership_CRA" collection
+     const querySnapshot = await getDocs(query(collection(this.firestore, 'membership_CRA')));
+ 
+     // Step 2: Iterate over each user
+     const projectsSnapshot = await getDocs(
+       collection(this.firestore, 'membership_CRA', iduser, 'Projects')
+     );
+ 
+     // Use a for...of loop to handle async/await
+     for (const projectDoc of projectsSnapshot.docs) {
+       const projectData = projectDoc.data();
+       const managerId = projectData?.['managerId'];
+       console.log('Manager ID:', managerId); // Log the manager ID
+       console.log('Project Data for User:', user.uid, projectData); // Log each project data
+ 
+       const users = projectData['users'];
+       console.log('users', users);
+ 
+       const emails: string[] = [];
+ 
+       // Iterate over the user IDs and fetch their data
+       for (const userId of users) {
+         const user = await this.projectService.getuserbyid(userId);
+         console.log('userbyid', user);
+         const email = user.email;
+         console.log('email 0', email);
+         emails.push(email);
+       }
+ 
+       // You can now use the list of emails or return it
+       console.log('Emails of managed users:', emails);
+       return emails;
+     }
+   }
+ */
+  /*
+    async groupUserManager(iduser: string): Promise<string[]> {
+      console.log('iduser ::::', iduser);
+  
+      // Get the user by ID
+      const user = await this.projectService.getuserbyid(iduser);
+      console.log('projectRef ::::', user);
+  
+      // Step 1: Get all users in the "membership_CRA" collection
+      const querySnapshot = await getDocs(query(collection(this.firestore, 'membership_CRA')));
+  
+      // Step 2: Iterate over each user
+      const projectsSnapshot = await getDocs(
+        collection(this.firestore, 'membership_CRA', iduser, 'Projects')
+      );
+  
+      const emails: string[] = []; // Initialize the array to hold emails
+  
+      // Use a for...of loop to handle async/await
+      for (const projectDoc of projectsSnapshot.docs) {
+        const projectData = projectDoc.data();
+        const managerId = projectData?.['managerId'];
+        console.log('Manager ID:', managerId); // Log the manager ID
+        console.log('Project Data for User:', user.uid, projectData); // Log each project data
+  
+        const users = projectData['users'];
+        console.log('users', users);
+  
+        // Iterate over the user IDs and fetch their data
+        for (const userId of users) {
+          const user = await this.projectService.getuserbyid(userId);
+          console.log('userbyid', user);
+          const email = user.email;
+          console.log('email 0', email);
+          emails.push(email);
+        }
+      }
+  
+      // Return the list of emails
+      console.log('Emails of managed users:', emails);
+      return emails;
+    }
+  */
+  /*
+   async groupUserManager(iduser: string): Promise<string[]> {
+     try {
+       // console.log('iduser ::::', iduser);
+ 
+       // Get the user by ID
+      // const user = await this.projectService.getuserbyid(iduser);
+       // console.log('projectRef ::::', user);
+ 
+       // Step 1: Get all users in the "membership_CRA" collection
+       //const querySnapshot = await getDocs(query(collection(this.firestore, 'membership_CRA')));
+       //console.log('querySnapshot', querySnapshot)
+ 
+       // Step 1: Get all projects for the user
+       const projectsSnapshot = await getDocs(
+         collection(this.firestore, 'membership_CRA', iduser, 'Projects')
+       );
+ 
+       const emails: string[] = []; // Initialize the array to hold emails
+ 
+       // Use a for...of loop to handle async/await
+       for (const projectDoc of projectsSnapshot.docs) {
+         const projectData = projectDoc.data();
+         const users: string[] = projectData['users'] || []; // Ensure users is an array
+ 
+         console.log('Project Data for User:', iduser, projectData);
+         console.log('Users:', users);
+ 
+         // Retrieve user emails for each user ID
+         for (const userId of users) {
+           try {
+             const user = await this.projectService.getuserbyid(userId);
+             if (user && user.email) {
+               console.log('User Email:', user.email);
+               emails.push(user.email);
+             } else {
+               console.warn('No email found for user ID:', userId);
+             }
+           } catch (error) {
+             console.error('Error fetching user by ID:', userId, error);
+           }
+         }
+       }
+ 
+       // Remove duplicate emails if needed
+       const uniqueEmails = Array.from(new Set(emails));
+ 
+       console.log('Unique Emails of managed users:', uniqueEmails);
+       return uniqueEmails;
+     } catch (error) {
+       console.error('Error in groupUserManager:', error);
+       throw error; // Re-throw the error to handle it in the calling method
+     }
+   }
+ */
+  async groupUserManager(iduser: string): Promise<string[]> {
+    try {
+      console.log('iduser ::::', iduser);
 
+      // Get the user's projects
+      const projectsSnapshot = await getDocs(
+        collection(this.firestore, 'membership_CRA', iduser, 'Projects')
+      );
+
+      // Extract user IDs from projects
+      const userIds: string[] = [];
+      projectsSnapshot.forEach(projectDoc => {
+        const projectData = projectDoc.data();
+        const users: string[] = projectData['users'] || [];
+        userIds.push(...users);
+      });
+
+      // Remove duplicate user IDs
+      const uniqueUserIds = Array.from(new Set(userIds));
+
+      // Fetch user profiles in parallel
+      const userPromises = uniqueUserIds.map(userId =>
+        this.projectService.getuserbyid(userId).then(user => user?.email || '')
+      );
+      const emails = await Promise.all(userPromises);
+
+      // Remove duplicate emails and filter out empty strings
+      const uniqueEmails = Array.from(new Set(emails.filter(email => email !== '')));
+
+      console.log('Unique Emails of managed users:', uniqueEmails);
+      return uniqueEmails;
+    } catch (error) {
+      console.error('Error in groupUserManager:', error);
+      throw error;
+    }
+  }
+  public groupUserManagerObserv(iduser: string): Observable<string[]> {
+    return from(this.groupUserManager(iduser));
+  }
 }
+
+
