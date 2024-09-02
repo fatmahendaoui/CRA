@@ -380,6 +380,7 @@ export class UsersService {
   public groupUserManagerObserv(iduser: string): Observable<string[]> {
     return from(this.groupUserManager(iduser));
   }
+
 }
 
 
