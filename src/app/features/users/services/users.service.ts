@@ -168,10 +168,11 @@ export class UsersService {
       // Reject the promise with the error object, including the code
       throw error;
     } finally {
+
       // Clean up resources
-      if (this.authApp) {
-        await deleteApp(this.authApp); // Delete the Firebase app
-      }
+      /* if (this.authApp) {
+         await deleteApp(this.authApp); // Delete the Firebase app
+       }*/
     }
   }
 
@@ -379,6 +380,7 @@ export class UsersService {
   public groupUserManagerObserv(iduser: string): Observable<string[]> {
     return from(this.groupUserManager(iduser));
   }
+
 }
 
 
