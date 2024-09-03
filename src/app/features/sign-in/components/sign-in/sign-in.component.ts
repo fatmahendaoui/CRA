@@ -90,7 +90,8 @@ export class SignInComponent implements OnInit, OnDestroy {
         const user = result.user;
         this.service.CheckUserExist(user?.uid).then((res) => {
           if (res == true) {
-            this.router.navigate(['/dashbord']);
+            this.router.navigate(['/timesheet/' + this.auth.currentUser?.uid + '/' + new Date()]);
+            //this.router.navigate(['/dashbord']);
           } else {
             this.router.navigate(['create-domaine']);
           }
