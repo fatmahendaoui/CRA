@@ -71,22 +71,18 @@ export class AddcongeComponent implements OnInit {
 
 
   async onSubmit(): Promise<void> {
-    // Reset file error
     this.fileError = false;
-  
-    // Check if the leave type is "Congé de maladie (1 jour)" and no file is selected
+
     if (this.natureConge === 'Congé de maladie (1 jour)' && !this.selectedFile) {
       this.fileError = true;
       alert('Veuillez joindre votre certificat médical pour cette demande.');
-      return; // Stop the execution if the file is missing for "Congé de maladie (1 jour)"
+      return; 
     }
     const userId = this.user ? this.user.uid : null;
-    let nombreJours: number = differenceInDays(this.dateFin, this.dateDebut) + 1; // Ajouter 1 pour inclure la date de début
+    let nombreJours: number = differenceInDays(this.dateFin, this.dateDebut) + 1; 
     let nombreHeures: number;
-    // Obtenez la date et l'heure actuelles
+    
     const currentDate = new Date();
-
-    // Vérifier si la période contient un week-end
     let joursWeekend = 0;
     for (let i = 0; i < nombreJours; i++) {
       const currentDate = addDays(this.dateDebut, i);
