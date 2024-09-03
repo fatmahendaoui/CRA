@@ -23,7 +23,7 @@ export class AddcongeComponent implements OnInit {
   dateDebut: Date = new Date(); // Initialisation date lyom
   dateFin: Date = new Date();
   commentaires: string;
-  selectedFile: File;
+  selectedFile: File | null = null; 
   user: any; // variable pour stocker l'utilisateur connecté
   domainId: string; //  variable pour stocker l'ID de domaine
   periode: any[] = [null, null];
@@ -73,11 +73,15 @@ export class AddcongeComponent implements OnInit {
   async onSubmit(): Promise<void> {
     // Reset file error
     this.fileError = false;
-
-    // Check if the leave type is "Congé de maladie" and if a file is selected
-    if (this.natureConge === 'Congé de maladie (1 jour)' && this.selectedFile) {
+  
+    // Check if the leave type requires a file but no file is selected
+    if (
+      (this.natureConge === 'Congé de maladie (1 jour)' || this.natureConge === 'Congé Payé') &&
+      !this.selectedFile
+    ) {
       this.fileError = true;
-      return;
+      alert('Veuillez joindre votre certificat médical pour cette demande.');
+      return; // Stop the execution if the file is missing
     }
 
     const userId = this.user ? this.user.uid : null;
