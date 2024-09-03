@@ -8,7 +8,6 @@
         [style.height]="domaineName === 'Tanitlab' ? 'auto': 'auto'">
     </div>
 
-
     <div class="user-container-metadata" *ngIf="user">
       <div class="user-name">
         <button style="background-color: #fff; border: none;" routerLink="/profile">
@@ -16,10 +15,6 @@
             <strong style="color: #E50060;">{{ user?.displayName }}</strong>
             <span style="font-size: 0.68rem; color: #193F77;">{{ domaineName }}</span>
           </div>
-
-
-
-
         </button>
         <button mat-icon-button class="user-avatar-trigger" routerLink="/profile">
           <ng-container *ngIf="!profileImage; else userImage">
@@ -86,7 +81,7 @@
           <mat-icon>format_list_bulleted</mat-icon>
           {{ 'features.projects.List_Project' | transloco }}
         </button>
-        <button class="custom-icon" routerLink="day_off" *ngIf="isAdmin">
+        <button class="custom-icon" routerLink="day_off" *ngIf="isNotManager">
           <mat-icon>today</mat-icon>
           {{ 'features.day_off.list_day_off' | transloco }}
         </button>
