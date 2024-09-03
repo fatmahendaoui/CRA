@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Profile, UserRole } from 'src/app/models/profile.model';
 import { ProfileService } from 'src/app/services/profile.service';
 import { v4 as uuidv4 } from 'uuid';
-import { createUserWithEmailAndPassword,signInWithPopup, OAuthProvider, signInWithEmailAndPassword, UserCredential } from '@angular/fire/auth';
+import { createUserWithEmailAndPassword, signInWithPopup, OAuthProvider, signInWithEmailAndPassword, UserCredential } from '@angular/fire/auth';
 import { CollectionReference, DocumentData, Firestore, QuerySnapshot, collection, doc, getDoc, getDocs, setDoc, query, where } from '@angular/fire/firestore';
 
 @Injectable({
@@ -21,7 +21,9 @@ export class AuthService {
     const isAdmin = queryResult.docs.length > 0;
 
     if (isAdmin) {
-      this.router.navigate(['/dashbord']);
+      //this.router.navigate(['/dashbord']);
+      this.router.navigate(['/timesheet/' + this.auth.currentUser?.uid + '/' + new Date()]);
+
       return true;
     } else {
       this.router.navigate(['/create-domaine']);
@@ -67,8 +69,9 @@ export class AuthService {
       await this.addNewProject("Disponible", user.uid);
       await this.addNewProject("Vacances", user.uid);
       await this.addNewProject("Maladie", user.uid);
+      this.router.navigate(['/timesheet/' + this.auth.currentUser?.uid + '/' + new Date()]);
 
-      this.router.navigate(['/dashbord']);
+      // this.router.navigate(['/dashbord']);
 
       return { profile, exists: false };
     } catch (error) {
@@ -127,12 +130,14 @@ export class AuthService {
       const userCredential: UserCredential = await createUserWithEmailAndPassword(this.auth, email, password);
       const user = userCredential.user;
       console.log('User signed up:', user);
-  
+
       const domaineName = "Nom par défaut";
       const { profile, exists } = await this.createDomaine(domaineName);
-  
+
       if (exists) {
-        this.router.navigate(['/dashbord']);
+        //this.router.navigate(['/dashbord']);
+        this.router.navigate(['/timesheet/' + this.auth.currentUser?.uid + '/' + new Date()]);
+
       } else {
         this.router.navigate(['create-domaine']);
       }
@@ -141,16 +146,18 @@ export class AuthService {
       throw error;
     }
   }
-  
+
   async loginWithEmail(email: string, password: string): Promise<void> {
     try {
       const userCredential: UserCredential = await signInWithEmailAndPassword(this.auth, email, password);
       const user = userCredential.user;
       console.log('User logged in:', user);
-      
+
       const exists = await this.CheckUserExist(user.uid);
       if (exists) {
-        this.router.navigate(['/dashbord']);
+        this.router.navigate(['/timesheet/' + this.auth.currentUser?.uid + '/' + new Date()]);
+
+        //this.router.navigate(['/dashbord']);
       } else {
         this.router.navigate(['create-domaine']);
       }
@@ -168,7 +175,8 @@ export class AuthService {
 
       const exists = await this.CheckUserExist(user.uid);
       if (exists) {
-        this.router.navigate(['/dashbord']);
+        this.router.navigate(['/timesheet/' + this.auth.currentUser?.uid + '/' + new Date()]);
+        //this.router.navigate(['/dashbord']);
       } else {
         this.router.navigate(['create-domaine']);
       }

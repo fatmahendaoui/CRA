@@ -12,10 +12,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { Profile} from 'src/app/models/profile.model';
+import { Profile } from 'src/app/models/profile.model';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { Auth } from '@angular/fire/auth';
 
 @Component({
   standalone: true,
@@ -41,6 +42,7 @@ export class DomaineComponent implements OnInit {
   public formGroup: FormGroup;
   domainExists: boolean = false; // Flag to track if the domain exists
   private readonly router = inject(Router);
+  private readonly auth = inject(Auth);
 
 
   public ngOnInit(): void {
@@ -49,9 +51,9 @@ export class DomaineComponent implements OnInit {
     });
   }
 
-  async createProfile(){
+  async createProfile() {
 
-    if ( !this.formGroup.value) {
+    if (!this.formGroup.value) {
       return;
     }
     try {
@@ -65,13 +67,16 @@ export class DomaineComponent implements OnInit {
         // Domain name doesn't exist, profile created successfully
         if (profile !== null) {
           this.domainExists = false; // Reset the flag
-          this.router.navigate(['/dashbord']);
+          this.router.navigate(['/timesheet/' + this.auth.currentUser?.uid + '/' + new Date()]);
+
+          //this.router.navigate(['/dashbord']);
           // Proceed with any desired actions or display a success message in the component template
         }
       }
     } catch (error) {
       // Handle the error or display an error message in the component template
-    }  }
+    }
+  }
 
 
 }
