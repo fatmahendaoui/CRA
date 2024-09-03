@@ -292,6 +292,7 @@
     },
     "remote": {
       "titre": "Présence",
+      "remote": "Télétravail",
       "title": "Fichier De Présence",
       "Name": "Nom",
       "Week_starting": "Semaine commençant le",

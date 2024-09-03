@@ -292,6 +292,7 @@
     },
     "remote": {
       "titre": "Presence",
+      "remote": "remote",
       "title": "Presence File",
       "Name": "Name",
       "Week_starting": "Week starting",
