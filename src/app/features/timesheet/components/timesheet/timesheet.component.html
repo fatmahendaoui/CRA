@@ -17,6 +17,12 @@
             </span>
           </div>
         </div>
+     
+        
+        
+
+
+            <!-- Existing Chips and Navigation -->
         <div class="filter-table-end">
           <mat-chip class="chips" *ngIf="status && status != 'Improved'" [ngStyle]="{
             'background-color': status == 'On going' ? '#193F77' : status == 'Submitted' ? '#EA3380' : '',
@@ -28,6 +34,8 @@
           <mat-chip class="chips" *ngIf="status == 'Improved'" style="  background-color: #17ba68;" disabled><span
               style="color: white;">{{ 'features.status.Improved' | transloco}} </span></mat-chip>
         </div>
+
+              <!-- Navigation for Month and Year -->
         <div class="name-month">
           <button mat-mini-fab color="primary" (click)="getMonth(false)">
             <mat-icon>navigate_before</mat-icon>
@@ -51,8 +59,64 @@
             <mat-icon>navigate_next</mat-icon>
           </button>
         </div>
+        <div class="filter-container">
+          <button mat-icon-button 
+                  (click)="toggleFilter()" 
+                  [ngStyle]="{'color': showFilters ? '#193F77' : '#e11d74'}" 
+                  aria-label="Toggle filters">
+            <mat-icon>tune</mat-icon>
+          </button>
+         <!-- <span class="filter-text" [ngStyle]="{'color': showFilters ? '#193F77' : '#e11d74'}">Filter</span>-->
+        </div>
       </mat-toolbar>
-    </div>
+
+          <!-- Toggleable Filter Section -->
+      <div class="filter-table" *ngIf="showFilters" style="background-color: white;">
+        <div class="selects">
+      <div class="form-fields-row">
+      
+      <mat-form-field appearance="outline"  >
+ <mat-label >{{ 'features.projects.add-dialog.origine' | transloco }}</mat-label>
+  <mat-select [(value)]="selectedGroup" (selectionChange)="onGroupSelected()">
+    <mat-option *ngFor="let group of groups" [value]="group.id">{{ group.name }}</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field appearance="outline">
+  <mat-label>{{ 'features.projects.add-dialog.group' | transloco }}</mat-label>
+  <mat-select [(value)]="selectedBrand" (selectionChange)="onBrandSelected()">
+    <mat-option *ngFor="let brand of brands" [value]="brand.id">{{ brand.name }}</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field appearance="outline">
+  <mat-label>{{ 'features.projects.add-dialog.client' | transloco }}</mat-label>
+  <mat-select [(value)]="selectedProduct" (selectionChange)="onProductSelected()">
+    <mat-option *ngFor="let product of products" [value]="product.id">{{ product.name }}</mat-option>
+  </mat-select>
+</mat-form-field>
+<mat-form-field appearance="outline">
+  <mat-label>{{ 'features.projects.add-dialog.marque' | transloco }}</mat-label>
+  <mat-select [(value)]="selectedMarque" (selectionChange)="onMarqueSelected()">
+    <mat-option *ngFor="let marque of marques" [value]="marque.id">{{ marque.name }}</mat-option>
+  </mat-select>
+</mat-form-field>
+<mat-form-field appearance="outline">
+  <mat-label>{{ 'features.projects.add-dialog.media' | transloco }}</mat-label>
+  <mat-select [(value)]="selectedMedia" (selectionChange)="onMediaSelected()">
+    <mat-option *ngFor="let media of medias" [value]="media.id">{{ media.name }}</mat-option>
+  </mat-select>
+</mat-form-field>
+ <!-- Boutons Reset et Apply -->
+ <div class="button-group">
+  <button mat-raised-button style="background-color: #E30070;color: white;" (click)="applyFilters()">Apply</button>
+  <button mat-raised-button style="color: #193F77;"(click)="resetFilters()">Reset</button>
+</div>
+      </div>
+
+    </div> 
+  </div>
+  </div>
 
     <!-- ---------------------Table Timesheet-------------------------  -->
     <div class="timesheet-content">
@@ -95,7 +159,14 @@
           </thead>
           <tbody class="Projects">
             <ng-container *ngFor="let project of tabProject; let projectIndex = index">
-              <tr>
+              <tr *ngIf="(appliedGroup && appliedBrand && appliedProduct && appliedMarque && appliedMedia&&
+                project.groupId === appliedGroup && 
+                project.brandId === appliedBrand && 
+                project.productId === appliedProduct && 
+                project.marqueId === appliedMarque&&
+              project.mediaId===appliedMedia) || 
+               ['Maladie', 'Vacances', 'Disponible'].includes(project.name) || 
+               (!appliedGroup && !appliedBrand && !appliedProduct && !appliedMarque&&!appliedMedia)">
 
                 <td class="col-projects" style="border-bottom: 0.01rem solid white;"
                   [ngStyle]="{'background-color': project.name == 'Disponible' || project.name == 'Maladie' || project.name == 'Vacances' ? '#193F77' : '', 'color': project.name == 'Disponible' || project.name == 'Maladie' || project.name == 'Vacances' ? 'white' : ''}">
@@ -123,7 +194,7 @@
                       (change)="changetotal()" />
                   </div>
                 </td>
-                <td class="totaldays" *ngIf="project.days">
+                <td class="totaldays"  *ngIf="project.days">
                   {{ calculateDaysFromHours(calculateTotalHours(project.days)) }}
 
                 </td>
@@ -142,7 +213,7 @@
                 'color':   day.nbHeure != 8 && day.nbHeure != 0 ? 'white' :  ''}" />
                 </div>
               </td>
-              <td class="totaldays" *ngIf="tabProject">{{calculateDaysFromHours(calculateTotalHoursInmonth())}}
+              <td class="totaldays" >{{calculateDaysFromHours(calculateTotalHoursInmonth())}}
               </td>
             </tr>
           </tbody>

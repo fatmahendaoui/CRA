@@ -113,8 +113,11 @@
       "userByMonthWithProject": "Utilisateur Par Mois avec Projet",
       "projectByMonthOf": "Projet Par Mois de",
       "in_year": "dans l'année",
+      "filter": "Filtrer",
+      "apply": "Appliquer",
+    "reset": "Réinitialiser",
       "table": {
-        "name": "Nom du projet",
+        "name": "Tache",
         "actions": "Actions",
         "role": "Rôle",
         "added_at": "Ajouté le",
@@ -124,11 +127,16 @@
       },
       "add-dialog": {
         "title": "Ajouter un projet",
-        "name": "Nom du projet",
+        "name": "Tache",
         "users": "Utilisateurs",
         "maneger": "Manager",
         "action": "Ajouter",
-        "update": "Modifier"
+        "update": "Modifier",
+        "origine": "Origine",
+        "media": "Média",
+        "group": "Groupe",
+        "client": "Client",
+        "marque": "Marque"
       },
       "success": {
         "title": "Le projet est ajouté avec succès",

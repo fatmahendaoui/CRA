@@ -10,6 +10,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
 import { Day_offService } from 'src/app/features/day_offs/services/day_off.service';
 import { ProfileService } from 'src/app/services/profile.service';
+import { Brand, Group, Marque, Media, Product } from 'src/app/features/projects/models/Project.model';
 
 // Définir une interface pour représenter un jour
 interface Day {
@@ -33,6 +34,16 @@ interface Week {
 })
 
 export class TimesheetComponent implements OnInit {
+groups: Group[] = [];
+brands: Brand[] = [];
+products: Product[] = [];
+marques:Marque[]=[];
+medias:Media[]=[];
+selectedGroup: string = '';
+selectedBrand: string = '';
+selectedProduct: string = '';
+selectedMarque:string='';
+selectedMedia:string='';
 
   projectName: string = '';
   nbHeure: number = 0;
@@ -72,6 +83,12 @@ export class TimesheetComponent implements OnInit {
   IsAdmin: boolean;
   IsManager: boolean;
   displayNamecurent;
+  appliedGroup: string | null = null;
+  appliedBrand: string | null = null;
+  appliedProduct: string | null = null;
+  appliedMarque: string | null = null;
+  appliedMedia: string | null = null;
+
   private monthNames = {
     en: [
       'January', 'February', 'March', 'April', 'May', 'June',
@@ -112,6 +129,7 @@ export class TimesheetComponent implements OnInit {
     });
     this.fetchAll()
   }
+  ///////
   /* public fetchAll(): void {
      this.usersService.fetchAllUsers().subscribe(users => {
        if (this.IsManager) {
@@ -153,6 +171,7 @@ export class TimesheetComponent implements OnInit {
   ngOnInit(): void {
     this.getTimesheet();
     this.splitDaysIntoWeeks(this.resultTimesheet); // Call the function to split days into weeks
+    this.getGroups()
   }
 
   // get by month
@@ -333,7 +352,6 @@ export class TimesheetComponent implements OnInit {
       }
     }
 
-
     return timesheet;
   }
 
@@ -383,8 +401,10 @@ export class TimesheetComponent implements OnInit {
 
 
   }
+
   changetotal() {
     this.init_total()
+console.log("bebebebbe",this.tabProject)
     this.tabProject.forEach((project) => {
       for (let index = 0; index < project.days.length; index++) {
         const element = project.days[index];
@@ -522,28 +542,27 @@ export class TimesheetComponent implements OnInit {
       console.error('Error fetching projects via ProjectService:', error);
     }
   }
-  async fetchProjects(): Promise<void> {
-    try {
-      this.allprojects = await this.projectService.fetchProjects(this.currentUser);
-      this.tabProject = this.allprojects
 
+    async fetchProjects(): Promise<void> {
+      try {
+        this.allprojects = await this.projectService.fetchProjects(this.currentUser);
+        this.tabProject = this.allprojects;
+    
+        // Tri des projets : "Maladie", "Vacances" et "Disponible" en dernier
+        this.tabProject.sort((a, b) => {
+          const specialProjects = ["Maladie", "Vacances", "Disponible"];
+          return specialProjects.includes(a.name) && !specialProjects.includes(b.name) ? 1 
+               : !specialProjects.includes(a.name) && specialProjects.includes(b.name) ? -1 
+               : 0;
+        });
+        this.filterprojects();
 
-      // Triez le tableau en plaçant l'objet avec name: "Maladie" en dernier
-      this.tabProject.sort((a, b) => {
-        if ((a.name === "Maladie" && b.name !== "Maladie") || (a.name === "Vacances" && b.name !== "Vacances") || (a.name === "Disponible" && b.name !== "Disponible")) {
-          return 1; // Mettez "Maladie" en dernier
-        } else if ((a.name !== "Maladie" && b.name === "Maladie") || (a.name !== "Vacances" && b.name === "Vacances") || (a.name !== "Disponible" && b.name === "Disponible")) {
-          return -1; // Mettez "Maladie" en premier
-        } else {
-          return 0; // Les autres éléments restent dans l'ordre actuel
-        }
-      });
-      this.filterprojects();
-
-    } catch (error) {
-      console.error('Error fetching projects via ProjectService:', error);
+        //this.applyFilters(); // Appliquer le filtrage initial
+      } catch (error) {
+        console.error('Error fetching projects via ProjectService:', error);
+      }
     }
-  }
+    
   getmonth(dateString) {
     const parts = dateString.split('_');
 
@@ -597,5 +616,138 @@ export class TimesheetComponent implements OnInit {
     this.weeks = weeks;
   }
 
+async getGroups() {
+ console.log('hello : ',)
+  const domainId = this.profileService.profile.idDomaine; // Récupérer le domaine actuel
+  this.allprojects = await this.projectService.fetchProjects(this.currentUser); // Charger les projets de l'utilisateur
+
+  const allGroups = await this.projectService.getGroupsByDomain(domainId); // Charger tous les groupes du domaine
+  this.groups = allGroups.filter(group =>
+    this.allprojects.some(project => project.groupId === group.id)
+  );
+}
+
+async onGroupSelected() {
+ // this.applyFilters();
+ this.selectedBrand = '';
+  this.selectedProduct = '';
+  this.selectedMarque = '';
+  if (this.selectedGroup) {
+    this.allprojects = await this.projectService.fetchProjects(this.currentUser);
+console.log("shshhshshshh",this.fetchProjects())
+    const allBrands = await this.projectService.getBrandsByGroup(this.selectedGroup);
+    this.brands = allBrands.filter(brand =>
+      this.allprojects.some(project => project.brandId === brand.id)
+    );
+  }
+}
+async onBrandSelected() {
+  this.selectedProduct = '';
+  this.selectedMarque = '';
+  if (this.selectedGroup && this.selectedBrand) {
+    this.allprojects = await this.projectService.fetchProjects(this.currentUser);
+
+    const allProducts = await this.projectService.getProductsByBrand(this.selectedGroup, this.selectedBrand);
+    this.products = allProducts.filter(product =>
+      this.allprojects.some(project => project.productId === product.id)
+    );
+  }
+}
+async onProductSelected() {
+  this.selectedMarque = '';
+
+  if (this.selectedGroup && this.selectedBrand && this.selectedProduct) {
+    this.allprojects = await this.projectService.fetchProjects(this.currentUser);
+
+    const allMarques = await this.projectService.getMarquesByProduct(this.selectedGroup, this.selectedBrand, this.selectedProduct);
+    this.marques = allMarques.filter(marque =>
+      this.allprojects.some(project => project.marqueId === marque.id)
+    );
+  }
+}
+
+async onMarqueSelected() {
+
+  this.selectedMedia= '';
+
+  if (this.selectedGroup && this.selectedBrand && this.selectedProduct && this.selectedMarque) {
+    this.allprojects = await this.projectService.fetchProjects(this.currentUser);
+
+    const allMedias = await this.projectService.getMediaByMarque(this.selectedGroup, this.selectedBrand, this.selectedProduct,this.selectedMarque);
+    this.medias = allMedias.filter(media =>
+      this.allprojects.some(project => project.mediaId === media.id)
+    );
+  }
+}
+/*
+applyFilters(): void {
+/* if (!this.selectedGroup && !this.selectedBrand && !this.selectedProduct && !this.selectedMarque) {
+    // Aucun filtre sélectionné, afficher tous les projets
+    this.tabProject = this.allprojects;
+  } else if (!this.selectedGroup || !this.selectedBrand || !this.selectedProduct || !this.selectedMarque) {
+    // Afficher seulement "Maladie", "Vacances" et "Disponible" si certains filtres sont manquants
+    this.tabProject = this.allprojects.filter(project => 
+      ['Maladie', 'Vacances', 'Disponible'].includes(project.name)
+    );
+  }/* else {
+    // Appliquer les filtres basés sur le groupe, la marque, le produit et la marque
+   /* this.tabProject = this.allprojects.filter(project => 
+      (project.groupId === this.selectedGroup) &&
+      (project.brandId === this.selectedBrand) &&
+      (project.productId === this.selectedProduct) &&
+      (project.marqueId === this.selectedMarque) ||
+      ['Maladie', 'Vacances', 'Disponible'].includes(project.name)
+    );
+  }*/
+
+  // Appliquer le filtrage des projets pour les jours de week-end et fériés
+  /*this.filterprojects();
+}*/
+applyFilters() {
+  this.appliedGroup = this.selectedGroup;
+  this.appliedBrand = this.selectedBrand;
+  this.appliedProduct = this.selectedProduct;
+  this.appliedMarque = this.selectedMarque;
+  this.appliedMedia = this.selectedMedia;
+
+}
+resetFilters() {
+  this.selectedGroup = '';
+  this.selectedBrand = '';
+  this.selectedProduct = '';
+  this.selectedMarque = '';
+  this.selectedMedia = '';
+
+  this.appliedGroup = null;
+  this.appliedBrand = null;
+  this.appliedProduct = null;
+  this.appliedMarque = null;
+  this.appliedMedia= null;
+
+  // Call any additional functions to refresh data if necessary
+  this.fetchProjects();
+}
+//////
+calculateTotalHoursAllProjects(): number {
+  let totalHours = 0;
+
+  this.tabProject.forEach((project) => {
+    project.days.forEach((day) => {
+      const hours = parseFloat(day.nbHeure);
+      if (!isNaN(hours)) {
+        totalHours += hours;
+      }
+    });
+  });
+
+  return totalHours;
+}
+
+showFilters: boolean = false; // Variable to track filter visibility
+  // Other variables...
+
+  toggleFilter() {
+    this.showFilters = !this.showFilters; // Toggle the visibility
+  }
 }
 

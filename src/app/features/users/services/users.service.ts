@@ -148,9 +148,9 @@ export class UsersService {
 
       await setDoc(doc(this.firestore, 'membership_CRA', userRecord.uid), userData);
 
-      this.projectService.addNewProject("Disponible", "Disponible", userRecord.uid, managerId, []);
-      this.projectService.addNewProject("Vacances", "Vacances", userRecord.uid, managerId, []);
-      this.projectService.addNewProject("Maladie", "Maladie", userRecord.uid, managerId, []);
+      this.projectService.addNewProject("Disponible", "Disponible", userRecord.uid, managerId, [],'','','','','');
+      this.projectService.addNewProject("Vacances", "Vacances", userRecord.uid, managerId, [],'','','','','');
+      this.projectService.addNewProject("Maladie", "Maladie", userRecord.uid, managerId, [],'','','','','');
 
       // Send email verification to the newly registered user
       await this.http.post<void>("https://us-central1-dev-cra-390314.cloudfunctions.net/add_user_cra", {

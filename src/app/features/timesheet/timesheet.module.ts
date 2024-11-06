@@ -21,6 +21,7 @@ import { Day_offService } from '../day_offs/services/day_off.service';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TimesheetGuard } from 'src/app/guards/authorize-timesheet.guard';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 const routes: Routes = [
   {
@@ -53,7 +54,9 @@ const routes: Routes = [
     FormsModule,
     MatChipsModule,
     RouterModule.forChild(routes),
-    MatToolbarModule
+    MatToolbarModule,
+    MatTooltipModule
+
 
   ],
   providers: [

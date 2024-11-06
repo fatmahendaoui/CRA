@@ -396,6 +396,58 @@
   }
 }
 
+//////////////////
+
+.filter-tables{
+
+}.form-fields-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    
+    mat-form-field {
+      flex: 1;
+      min-width: 200px; /* Adjust the minimum width as needed */
+    }
+    
+  }
+  .button-group {
+    display: flex;
+    gap: 8px; /* Espace entre les boutons */
+    align-items: center; /* Aligne les boutons verticalement au centre */
+}
+
+  app-project-table {
+    margin-top: 24px;
+  }
+
+  ::ng-deep .mat-mdc-form-field-label-wrapper .mat-mdc-floating-label {
+    top: 12px !important; /* Set label position to 12px from the top */
+    font-size: 12px; /* Adjust font size as needed */
+  }
+  .filter-container {
+    display: flex; /* Use flexbox for alignment */
+    align-items: center; /* Center items vertically */
+    gap: 8px; /* Space between button and text */
+  }
+  
+  .filter-text {
+    font-size: 16px; /* Adjust font size */
+    font-weight: 500; /* Slightly bolder text for emphasis */
+    transition: color 0.3s ease; /* Smooth transition for color changes */
+  }
+  
+  .mat-icon-button {
+    transition: color 0.3s ease; /* Smooth transition for button color changes */
+    padding: 8px; /* Add some padding for a larger clickable area */
+  }
+  
+  .mat-icon-button:hover {
+    background-color: rgba(0, 0, 0, 0.1); /* Subtle hover effect */
+    border-radius: 4px; /* Rounded corners for the hover effect */
+  }
+  
 
 
 

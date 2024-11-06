@@ -113,8 +113,11 @@
       "userByMonthWithProject": "User By Month with Project",
       "projectByMonthOf": "Project By Month of",
       "in_year": "in year",
+      "filter": "Filter",
+      "apply": "Apply",
+    "reset": "Reset",
       "table": {
-        "name": "Project name",
+        "name": "Tasks",
         "actions": "Actions",
         "role": "Role",
         "added_at": "Created on",
@@ -124,11 +127,16 @@
       },
       "add-dialog": {
         "title": "Add project",
-        "name": "Project name",
+        "name": "Task",
         "users": "Users",
         "maneger": "Maneger",
         "action": "Create",
-        "update": "Update"
+        "update": "Update",
+        "origine": "Origin",
+        "media": "Media",
+        "group": "Group",
+        "client": "Client",
+        "marque": "Brand"
       },
       "success": {
         "title": "The project is successfully added",
