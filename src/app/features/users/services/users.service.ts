@@ -286,6 +286,7 @@ export class UsersService {
       return emails;
     }
   */
+ 
   /*
    async groupUserManager(iduser: string): Promise<string[]> {
      try {
