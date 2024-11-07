@@ -168,7 +168,7 @@ export class AuthService {
   }
   async loginWithMicrosoft(): Promise<void> {
     try {
-      const provider = new OAuthProvider('microsoft.com');
+      const provider = new OAuthProvider('google.com');
       const userCredential = await signInWithPopup(this.auth, provider);
       const user = userCredential.user;
       console.log('User logged in with Microsoft:', user);
