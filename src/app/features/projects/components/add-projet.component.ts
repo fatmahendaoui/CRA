@@ -91,33 +91,23 @@ import { v4 as uuidv4 } from 'uuid';
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
-
-    <!-- Name, Manager, Users -->
-      <mat-form-field appearance="outline">
-  <mat-label>
-        {{ 'features.projects.add-dialog.name' | transloco }}
-        </mat-label>
-        <input matInput formControlName="name" />
-        <mat-error *ngIf="formGroup.get('name')?.hasError('required')">
-          {{ 'common.form.required' | transloco }}
-        </mat-error>
-        <mat-error *ngIf="formGroup.get('name')?.hasError('name')">
-          {{ 'common.form.name' | transloco }}
-        </mat-error>
-      </mat-form-field>
-       <!-- Project Name Multi-Select 
-       <mat-form-field appearance="outline">
-        <mat-label>{{ 'features.projects.add-dialog.name' | transloco }}</mat-label>
-        <mat-select formControlName="name" multiple>
-          <mat-option *ngFor="let projectName of projectNames" [value]="projectName">
-            {{ projectName }}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="formGroup.get('name')?.hasError('required')">
-          {{ 'common.form.required' | transloco }}
-        </mat-error>
-      </mat-form-field>
--->
+<!-- Name Field with Autocomplete like Media -->
+<mat-form-field appearance="outline">
+  <mat-label>{{ 'features.projects.add-dialog.name' | transloco }}</mat-label>
+  <input type="text" matInput formControlName="name" [matAutocomplete]="autoName" />
+  <mat-autocomplete #autoName="matAutocomplete">
+    <mat-option *ngFor="let name of filteredNames | async" [value]="name">
+      {{ name }}
+    </mat-option>
+  </mat-autocomplete>
+  <mat-error *ngIf="formGroup.get('name')?.hasError('required')">
+    {{ 'common.form.required' | transloco }}
+  </mat-error>
+  <mat-error *ngIf="formGroup.get('name')?.hasError('name')">
+    {{ 'common.form.name' | transloco }}
+  </mat-error>
+</mat-form-field>
+    <!-- Manager, Users -->
       <mat-form-field appearance="outline">
         <mat-label>
           {{ 'features.projects.add-dialog.maneger' | transloco }}
@@ -203,16 +193,38 @@ export class addNewProjectComponent implements OnInit {
   mediaTypes = ['Conseil', 'Digital', 'Kepler', 'Offline', 'Produit'];
   filteredMedia: Observable<string[]>;
   projectNames: string[] = [
-    'Planning Offline Media',
-    'Reporting Offline',
-    'Performance',
-    'Social media Management',
-    'Etude & Recherche',
-    'Other paid work',
-    'Other unpaid work',
-    'Training'
+    'Strategie',
+    'Account Mgt',
+    'Training',
+    'Etude et recherche "SURVEY"',
+    'Audit Technique',
+    'UX UI',
+    'Audit SEO',
+    'Brand Book',
+    'Audit DATA',
+    'Social Media Mgt',
+    'Performance - Paid Social',
+    'Performance - Google Ads',
+    'Content',
+    'Influenceur',
+   'Display',
+    'Programmatic',
+    'LISTENING & E-REPUTATION',
+    'MMM (Mix Media Modeling)',
+    'Segmentation',
+    'Scoring',
+    'TV',
+    'Content- TV',
+'Content- Radio',
+    'Radio',
+    'OOH',
+    'Presse',
+    'DASHBOARDING'
+    ,'Chatbot - IA',
+    'Data Management & Reporting'
   ];
-/////////
+  filteredNames: Observable<string[]>;
+
   public ngOnInit(): void {
     this.usersService.fetchAllUsers().subscribe(list => {
       this.users = list
@@ -256,16 +268,17 @@ this.filteredMedia = this.formGroup.get('media')!.valueChanges.pipe(
   startWith(''),
   map(value => this._filterItems(value || '', this.mediaTypes))
 );
+this.filteredNames = this.formGroup.get('name')!.valueChanges.pipe(
+  startWith(''),
+  map(value => this._filterItems(value || '', this.projectNames))
+);
     }
 // Generalized filtering method
 private _filterItems(value: string, list: string[]): string[] {
   const filterValue = value.toLowerCase();
   return list.filter(item => item.toLowerCase().includes(filterValue));
 }
-  /*
-  public getuserName() {
-    return this.formGroup.get('users')?.value;
-  }*/
+
 
     inviteUser(): void {
         this.bottomSheetRef.dismiss(this.formGroup.value);
@@ -288,23 +301,6 @@ private _filterItems(value: string, list: string[]): string[] {
 
     }
     
-  /*public inviteUser(): void {
-    // this.bottomSheetRef.dismiss(this.formGroup.value);
-    const projectData = this.formGroup.value;
-    const idproject = ''; // Replace this with actual ID logic
-    const iduser = '';
-    this.projectService.addNewProject(
-      idproject,
-      projectData.name,
-      iduser,
-      projectData.manager,
-      projectData.users
-    );
-    console.log('manager', projectData.users);
-    console.log('projectData', projectData.users);
-    this.bottomSheetRef.dismiss(this.formGroup.value);
-  }
-*/
 
   public close(): void {
     this.bottomSheetRef.dismiss();
