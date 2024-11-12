@@ -8,7 +8,7 @@
           <div class="select">
             <span class="mat-form-field">
               <mat-form-field subscriptSizing="dynamic" appearance="outline">
-                <mat-select [(ngModel)]="currentUser" (ngModelChange)="fetchProjects()"
+                <mat-select [(ngModel)]="currentUser" (ngModelChange)="fetchProjects()"   (selectionChange)="onUserSelect(currentUser)"
                   [disabled]="!IsAdmin && !IsManager">
                   <mat-option *ngFor="let element of users" [value]="element.uid">{{element.displayName}}
                   </mat-option>
@@ -171,7 +171,8 @@
                 <td class="col-projects" style="border-bottom: 0.01rem solid white;"
                   [ngStyle]="{'background-color': project.name == 'Disponible' || project.name == 'Maladie' || project.name == 'Vacances' ? '#193F77' : '', 'color': project.name == 'Disponible' || project.name == 'Maladie' || project.name == 'Vacances' ? 'white' : ''}">
                   <div class="name-project"
-                    *ngIf="project.name != 'Disponible' && project.name != 'Maladie' && project.name != 'Vacances'">{{
+                    *ngIf="project.name != 'Disponible' && project.name != 'Maladie' && project.name != 'Vacances'"  matTooltip="{{ 'Group: ' + project.groupName + '\nBrand: ' + project.brandName + '\nProduct: ' + project.productName + '\nMarque: ' + project.marqueName + '\nMedia: ' + project.mediaName }}"
+                     #tooltip="matTooltip" matTooltipClass="project-Toolitip" matTooltipPosition="right">{{
                     project.name }}</div>
                   <div class="name-project" *ngIf="project.name == 'Disponible'">{{ 'features.day_off.Disponible' |
                     transloco }}</div>

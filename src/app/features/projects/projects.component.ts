@@ -1,3 +1,4 @@
+import { id } from 'date-fns/locale';
 import { Component, OnInit, inject } from '@angular/core';
 import { AsyncPipe, DatePipe, JsonPipe, NgFor, NgIf, NgStyle } from '@angular/common';
 import { Observable, Subscription, filter, forkJoin } from 'rxjs';
@@ -185,8 +186,6 @@ showFilters: boolean = false;
   async fetchAll() {
     this.allprojects = null;
     this.projectService.fetchAllProjects(this.selectedMarque).then(li => {
-      console.log(li);
-
       this.allprojects = li
     })
 
@@ -195,11 +194,10 @@ showFilters: boolean = false;
     const uniqueObjects: { [key: string]: any } = {};
 
     for (const obj of arr) {
-      if (!uniqueObjects[obj['name']]) {
-        uniqueObjects[obj['name']] = obj;
+      if (!uniqueObjects[obj['id']]) {
+        uniqueObjects[obj['id']] = obj;
       }
     }
-
     return Object.values(uniqueObjects);
   }
   public deleteproject(project: Project): void {
@@ -210,7 +208,7 @@ showFilters: boolean = false;
       this.transloco.translate('common.cancel'),
     ).then((result) => {
       if (result.isConfirmed) {
-        
+        console.log("projectidtestttt",project.id)
         this.projectService.deleteProject(project.id).then(li => {
           this.fetchAll()
         })
@@ -247,7 +245,8 @@ showFilters: boolean = false;
       const productName=users.existuser.product;
       const marqueName=users.existuser.marque;
       const mediaName=users.existuser.media;
-     
+      console.log("nameproject.... ",nomproject )
+
   console.log('marq',marqueId);
     users.allusers.map(li => {
     
@@ -261,10 +260,12 @@ showFilters: boolean = false;
         if (bool) {
           if (!foundUser) {
             this.projectService.deleteUserProject(nomproject, li.uid);
+
           }
         } else {
           if (foundUser) {
-            this.projectService.addNewProject(nomproject, users.existuser.name, li.uid, managerId, [],groupId,brandId,productId,marqueId,mediaId);
+            this.projectService.addNewProject(nomproject, users.existuser.name, li.uid, managerId, [],groupId,brandId,productId,marqueId,mediaId,groupName,brandName,productName,marqueName,mediaName);
+            console.log("idproject ",nomproject )
           }
         }
       });
@@ -304,7 +305,7 @@ showFilters: boolean = false;
   if (project) {
     const managerId = project.manager; // Assurez-vous que `manager` existe et est bien défini
     const users = [...project.users, managerId];
-   
+   console.log("ffff iddddddddddd",project.id)
 
     // Replace generating a new ID with checking if a group already exists
     this.projectService.findGroupByNameAndDomain(project.group, this.profileService.profile.idDomaine)
@@ -370,9 +371,10 @@ showFilters: boolean = false;
                 return mediaId; // Return existing media ID
               })
               .then(mediaId => {
+                project.id = uuidv4();
             return Promise.all(
               project.users.map(li =>
-                this.projectService.addNewProject(project.name,project.name,li,managerId,users,groupId,brandId,productId,marqueId,mediaId
+                this.projectService.addNewProject(project.id,project.name,li,managerId,users,groupId,brandId,productId,marqueId,mediaId,project.group,project.brand,project.product,project.marque,project.media
                 )
               )
             );
