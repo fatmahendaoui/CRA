@@ -1,4 +1,3 @@
-import { id } from 'date-fns/locale';
 import { NgFor, NgIf } from "@angular/common";
 import { Component, OnInit, inject } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
@@ -15,7 +14,6 @@ import { Profile } from "src/app/models/profile.model";
 import { ProjectService } from "../services/projects.service";
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { ProfileService } from 'src/app/services/profile.service';
-import { Brand, Group, Marque, Product } from "../models/Project.model";
 import { Observable } from "rxjs";
 import { AsyncPipe } from '@angular/common';
 import { startWith, map } from 'rxjs/operators';
@@ -91,33 +89,23 @@ import { v4 as uuidv4 } from 'uuid';
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
-
-    <!-- Name, Manager, Users -->
-      <mat-form-field appearance="outline">
-  <mat-label>
-        {{ 'features.projects.add-dialog.name' | transloco }}
-        </mat-label>
-        <input matInput formControlName="name" />
-        <mat-error *ngIf="formGroup.get('name')?.hasError('required')">
-          {{ 'common.form.required' | transloco }}
-        </mat-error>
-        <mat-error *ngIf="formGroup.get('name')?.hasError('name')">
-          {{ 'common.form.name' | transloco }}
-        </mat-error>
-      </mat-form-field>
-       <!-- Project Name Multi-Select 
-       <mat-form-field appearance="outline">
-        <mat-label>{{ 'features.projects.add-dialog.name' | transloco }}</mat-label>
-        <mat-select formControlName="name" multiple>
-          <mat-option *ngFor="let projectName of projectNames" [value]="projectName">
-            {{ projectName }}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="formGroup.get('name')?.hasError('required')">
-          {{ 'common.form.required' | transloco }}
-        </mat-error>
-      </mat-form-field>
--->
+<!-- Name Field with Autocomplete like Media -->
+<mat-form-field appearance="outline">
+  <mat-label>{{ 'features.projects.add-dialog.name' | transloco }}</mat-label>
+  <input type="text" matInput formControlName="name" [matAutocomplete]="autoName" />
+  <mat-autocomplete #autoName="matAutocomplete">
+    <mat-option *ngFor="let name of filteredNames | async" [value]="name">
+      {{ name }}
+    </mat-option>
+  </mat-autocomplete>
+  <mat-error *ngIf="formGroup.get('name')?.hasError('required')">
+    {{ 'common.form.required' | transloco }}
+  </mat-error>
+  <mat-error *ngIf="formGroup.get('name')?.hasError('name')">
+    {{ 'common.form.name' | transloco }}
+  </mat-error>
+</mat-form-field>
+    <!-- Manager, Users -->
       <mat-form-field appearance="outline">
         <mat-label>
           {{ 'features.projects.add-dialog.maneger' | transloco }}
@@ -182,37 +170,38 @@ import { v4 as uuidv4 } from 'uuid';
 export class addNewProjectComponent implements OnInit {
   private readonly bottomSheetRef = inject(MatBottomSheetRef<addNewProjectComponent>);
   private readonly formBuilder = inject(FormBuilder);
-  public formGroup: FormGroup;
   private readonly usersService = inject(UsersService);
   private readonly profileService=inject(ProfileService)
   private readonly projectService = inject(ProjectService);
+  
+  public formGroup: FormGroup;
   users: Profile[]
   usersMan: Profile[];
-  //////////////
-  groups: string[] = ['Locaux','Etranger'];
-  filteredGroups: Observable<string[]>;
-
-  brands: string[] = ['DU DIGITAL','PGH','ROAD HERO','Second chance','STE La paix -','Textil retail'];
-  filteredBrands: Observable<string[]>;
-
-  products: string[] = ['DU DIGITAL',' Med oil compagny','CHAHRAZED','CITY MARKET','GIPA','Mazraa Market','KIABI'];
-  filteredProducts: Observable<string[]>;
-  marques: string[] = ['DU DIGITAL','Jadida','Golden ships','ICE VEGAS','OLA','ROAD HERO'];
-  filteredMarques: Observable<string[]>;
-  // New MEDIA field
-  mediaTypes = ['Conseil', 'Digital', 'Kepler', 'Offline', 'Produit'];
-  filteredMedia: Observable<string[]>;
-  projectNames: string[] = [
-    'Planning Offline Media',
-    'Reporting Offline',
-    'Performance',
-    'Social media Management',
-    'Etude & Recherche',
-    'Other paid work',
-    'Other unpaid work',
-    'Training'
-  ];
-/////////
+// Data for autocomplete options
+public groups = ['Locaux', 'Etranger'];
+public brands = ['DU DIGITAL', 'PGH', 'ROAD HERO', 'Second chance', 'STE La paix -', 'Textil retail'];
+public products = ['DU DIGITAL', 'Med oil compagny', 'CHAHRAZED', 'CITY MARKET', 'GIPA', 'Mazraa Market', 'KIABI'];
+public marques = ['DU DIGITAL', 'Jadida', 'Golden ships', 'ICE VEGAS', 'OLA', 'ROAD HERO'];
+public mediaTypes = ['Conseil', 'Digital', 'Kepler', 'Offline', 'Produit'];
+public projectNames = [
+  'Strategie', 'Account Mgt', 'Training', 'Etude et recherche "SURVEY"',
+  'Audit Technique', 'UX UI', 'Audit SEO', 'Brand Book', 'Audit DATA',
+  'Social Media Mgt', 'Performance - Paid Social', 'Performance - Google Ads',
+  'Content', 'Influenceur', 'Display', 'Programmatic', 'LISTENING & E-REPUTATION',
+  'MMM (Mix Media Modeling)', 'Segmentation', 'Scoring', 'TV', 'Content- TV', 
+  'Content- Radio', 'Radio', 'OOH', 'Presse', 'DASHBOARDING', 'Chatbot - IA',
+  'Data Management & Reporting'
+];
+  // Filtered autocomplete options
+  public filteredGroups: Observable<string[]>;
+  public filteredBrands: Observable<string[]>;
+  public filteredProducts: Observable<string[]>;
+  public filteredMarques: Observable<string[]>;
+  public filteredMedia: Observable<string[]>;
+  public filteredNames: Observable<string[]>;
+   /**
+   * Initialization logic
+   */
   public ngOnInit(): void {
     this.usersService.fetchAllUsers().subscribe(list => {
       this.users = list
@@ -230,82 +219,57 @@ export class addNewProjectComponent implements OnInit {
       media: ['', Validators.required]  // New MEDIA field
 
      });
-     // Setup filtering for each field
-  // Setup filtering for each field using the generalized _filterItems method
-this.filteredGroups = this.formGroup.get('group')!.valueChanges.pipe(
-  startWith(''),
-  map(value => this._filterItems(value || '', this.groups))
-);
-
-this.filteredBrands = this.formGroup.get('brand')!.valueChanges.pipe(
-  startWith(''),
-  map(value => this._filterItems(value || '', this.brands))
-);
-
-this.filteredProducts = this.formGroup.get('product')!.valueChanges.pipe(
-  startWith(''),
-  map(value => this._filterItems(value || '', this.products))
-);
-
-this.filteredMarques = this.formGroup.get('marque')!.valueChanges.pipe(
-  startWith(''),
-  map(value => this._filterItems(value || '', this.marques))
-);
-
-this.filteredMedia = this.formGroup.get('media')!.valueChanges.pipe(
-  startWith(''),
-  map(value => this._filterItems(value || '', this.mediaTypes))
-);
+      // Setup filtering for each field using a generalized method
+    this.filteredGroups = this._setupFilter('group', this.groups);
+    this.filteredBrands = this._setupFilter('brand', this.brands);
+    this.filteredProducts = this._setupFilter('product', this.products);
+    this.filteredMarques = this._setupFilter('marque', this.marques);
+    this.filteredMedia = this._setupFilter('media', this.mediaTypes);
+    this.filteredNames = this._setupFilter('name', this.projectNames);
     }
-// Generalized filtering method
-private _filterItems(value: string, list: string[]): string[] {
+
+     /**
+   * Helper to set up a filter for an autocomplete field
+   * @param controlName - Form control name
+   * @param options - List of options for autocomplete
+   */
+  private _setupFilter(controlName: string, options: string[]): Observable<string[]> {
+    return this.formGroup.get(controlName)!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterItems(value || '', options))
+    );
+  }
+
+ /**
+   * Generalized filtering function
+   */
+ private _filterItems(value: string, list: string[]): string[] {
   const filterValue = value.toLowerCase();
   return list.filter(item => item.toLowerCase().includes(filterValue));
 }
-  /*
-  public getuserName() {
-    return this.formGroup.get('users')?.value;
-  }*/
 
-    inviteUser(): void {
-        this.bottomSheetRef.dismiss(this.formGroup.value);
-        const projectData = this.formGroup.value;
-    const idproject = ''; // Replace this with actual ID logic
-    const iduser = '';
-   const groupId ='';
-    const brandId='';
-    const productId='';
-    const marqueId ='';
-    const mediaId='';
-    this.projectService.addNewProject(
-      idproject,
-      projectData.name,
-      iduser,
-      projectData.manager,
-      projectData.users,groupId,brandId,productId,marqueId,mediaId
-    );
-    this.bottomSheetRef.dismiss(this.formGroup.value);
-
-    }
-    
-  /*public inviteUser(): void {
-    // this.bottomSheetRef.dismiss(this.formGroup.value);
+    /**
+   * Handle form submission and project creation
+   */
+  public inviteUser(): void {
     const projectData = this.formGroup.value;
-    const idproject = ''; // Replace this with actual ID logic
-    const iduser = '';
+    const idproject = uuidv4()||""; // Replace with actual ID logic if needed
+
     this.projectService.addNewProject(
       idproject,
       projectData.name,
-      iduser,
+      '', // Replace with user ID if applicable
       projectData.manager,
-      projectData.users
+      projectData.users,
+      '', '', '', '', '','', '', '', '', '' // Replace groupId, brandId, etc., with actual IDs if needed
     );
-    console.log('manager', projectData.users);
-    console.log('projectData', projectData.users);
+
     this.bottomSheetRef.dismiss(this.formGroup.value);
   }
-*/
-
+    
+ /**
+   * Close the bottom sheet
+   */
   public close(): void {
     this.bottomSheetRef.dismiss();
   }

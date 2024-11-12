@@ -21,7 +21,6 @@ import { MatDialogModule } from '@angular/material/dialog';
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss'],
-
   imports: [
     MatButtonModule,
     MatCardModule,
