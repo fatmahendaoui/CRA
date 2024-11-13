@@ -365,21 +365,23 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
     // Appel de la fonction getProjects
     this.profilService.getProjects(userId).then(projectIds => {
       this.projects = projectIds; // Assigner les IDs des projets à la variable de composant
+      const projectNames: string[] = []; // Temporary array to store project names
 
-      // Mettre à jour les catégories de l'axe x
-      this.chartOptions.xaxis.categories = projectIds;
-
-      // Mettre à jour le graphique
-      this.renderChart();
-
-      projectIds.forEach(projectId => {
+      const projectDetailsPromises = projectIds.map(projectId => {
         this.profilService.getProjectDetails(userId, projectId).then(projectData => {
-          if (projectData) {
+          if (projectData && projectData.name) {
+            projectNames.push(projectData.name); // Add project name to the array
             this.calculateTotalHours(projectData, projectId);
           }
         }).catch(error => {
           console.error(`Error fetching details for project ID`, error);
         });
+
+      
+      });
+      Promise.all(projectDetailsPromises).then(() => {
+        this.chartOptions.xaxis.categories = projectNames; // Update chart categories with project names
+        this.renderChart(); // Render the chart with updated categories
       });
     }).catch(error => {
       console.error('Error fetching projects:', error);
