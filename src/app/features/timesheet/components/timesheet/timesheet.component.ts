@@ -172,7 +172,7 @@ selectedMedia:string='';
   ngOnInit(): void {
     this.getTimesheet();
     this.splitDaysIntoWeeks(this.resultTimesheet); // Call the function to split days into weeks
-    this.getGroups()
+    this.getGroups(this.currentUser)
   }
 
   // get by month
@@ -306,6 +306,7 @@ selectedMedia:string='';
     console.log("User selected: ", currentUser);
     if (currentUser) {
       try {
+        this.getGroups(currentUser)
         const description = await this.projectService.getDescription(currentUser, this.nameMonth, this.year);
         this.description = description; // Store the description in a variable
         console.log("Description fetched: ", this.description);
@@ -637,10 +638,10 @@ console.log("bebebebbe",this.tabProject)
     this.weeks = weeks;
   }
 
-async getGroups() {
+async getGroups(usersId) {
  console.log('hello : ',)
   const domainId = this.profileService.profile.idDomaine; // Récupérer le domaine actuel
-  this.allprojects = await this.projectService.fetchProjects(this.currentUser); // Charger les projets de l'utilisateur
+  this.allprojects = await this.projectService.fetchProjects(usersId); // Charger les projets de l'utilisateur
 
   const allGroups = await this.projectService.getGroupsByDomain(domainId); // Charger tous les groupes du domaine
   this.groups = allGroups.filter(group =>
