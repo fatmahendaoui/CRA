@@ -85,7 +85,7 @@ import { MatIconModule } from '@angular/material/icon';
 </mat-form-field>
 <mat-form-field appearance="outline">
   <mat-label>{{ 'features.projects.add-dialog.media' | transloco }}</mat-label>
-  <mat-select [(value)]="selectedMedia" (selectionChange)="onMediaSelected() ">
+  <mat-select [(value)]="selectedMedia" (selectionChange)="onMarqueSelected() ">
     <mat-option *ngFor="let media of medias" [value]="media.id">{{ media.name }}</mat-option>
   </mat-select>
 </mat-form-field>
@@ -432,15 +432,11 @@ showFilters: boolean = false;
   }
 
   async onMarqueSelected() {
-    if (this.selectedGroup && this.selectedBrand && this.selectedProduct) {
-      this.marques = await this.projectService.getMarquesByProduct(this.selectedGroup, this.selectedBrand,this.selectedProduct);
-    }
-  }
-  async onMediaSelected() {
     if (this.selectedGroup && this.selectedBrand && this.selectedProduct && this.selectedMarque) {
       this.medias = await this.projectService.getMediaByMarque(this.selectedGroup, this.selectedBrand,this.selectedProduct,this.selectedMarque);
     }
   }
+ 
   applyFilters() {
     this.fetchAll();
   }
