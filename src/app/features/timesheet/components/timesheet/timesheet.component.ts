@@ -306,6 +306,7 @@ selectedMedia:string='';
     console.log("User selected: ", currentUser);
     if (currentUser) {
       try {
+        this.resetFilters()
         this.getGroups(currentUser)
         const description = await this.projectService.getDescription(currentUser, this.nameMonth, this.year);
         this.description = description; // Store the description in a variable
