@@ -746,6 +746,10 @@ resetFilters() {
   this.appliedProduct = null;
   this.appliedMarque = null;
   this.appliedMedia= null;
+  this.brands = [];
+  this.products = [];
+  this.marques = [];
+  this.medias = [];
 
   // Call any additional functions to refresh data if necessary
   this.fetchProjects();
