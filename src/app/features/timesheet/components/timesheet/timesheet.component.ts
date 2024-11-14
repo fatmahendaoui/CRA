@@ -128,6 +128,7 @@ selectedMedia:string='';
       });
     });
     this.fetchAll()
+
   }
   ///////
   /* public fetchAll(): void {
@@ -171,7 +172,7 @@ selectedMedia:string='';
   ngOnInit(): void {
     this.getTimesheet();
     this.splitDaysIntoWeeks(this.resultTimesheet); // Call the function to split days into weeks
-    this.getGroups()
+    this.getGroups(this.currentUser)
   }
 
   // get by month
@@ -194,10 +195,16 @@ selectedMedia:string='';
 
   async Save() {
     try {
+      console.log("test 0000 : ",this.tabProject);
       this.tabProject.forEach((project) => {
 
         this.projectService.updateProjectsMonth(project.id, this.currentUser, project.days);
-      });
+        this.changeStatus()
+       if (this.description) {
+        console.log("test 0000 : ",this.description);
+          this.projectService.updateDescription(this.currentUser, this.nameMonth, this.year, this.description); // Mettre à jour la description
+        }   
+         });
       if (!this.IsAdmin) {
         handleResponseSuccessWithAlerts(
           this.transloco.translate('features.projects.dialog.success.title'),
@@ -295,6 +302,21 @@ selectedMedia:string='';
       );
     }
   }
+  async onUserSelect(currentUser: any): Promise<void> {
+    console.log("User selected: ", currentUser);
+    if (currentUser) {
+      try {
+        this.getGroups(currentUser)
+        const description = await this.projectService.getDescription(currentUser, this.nameMonth, this.year);
+        this.description = description; // Store the description in a variable
+        console.log("Description fetched: ", this.description);
+      } catch (error) {
+        console.error("Error fetching description: ", error);
+      }
+    }
+  }
+  
+  
   private updateMonthYear(newMonth: number, newYear: number): void {
 
     if (newMonth > 11) {
@@ -474,7 +496,7 @@ console.log("bebebebbe",this.tabProject)
           this.description = li.description;
         } else {
           this.status = null;
-          this.description = null;
+          this.description = li.description;
         }
 
       })
@@ -537,7 +559,7 @@ console.log("bebebebbe",this.tabProject)
         'idDomaine': idDomaine,
       }
       this.projectService.updatestatusbyUidandMonth(this.currentUser, this.nameMonth, this.year, data);
-      this.description = ''
+      //this.description = ''
     } catch (error) {
       console.error('Error fetching projects via ProjectService:', error);
     }
@@ -616,10 +638,10 @@ console.log("bebebebbe",this.tabProject)
     this.weeks = weeks;
   }
 
-async getGroups() {
+async getGroups(usersId) {
  console.log('hello : ',)
   const domainId = this.profileService.profile.idDomaine; // Récupérer le domaine actuel
-  this.allprojects = await this.projectService.fetchProjects(this.currentUser); // Charger les projets de l'utilisateur
+  this.allprojects = await this.projectService.fetchProjects(usersId); // Charger les projets de l'utilisateur
 
   const allGroups = await this.projectService.getGroupsByDomain(domainId); // Charger tous les groupes du domaine
   this.groups = allGroups.filter(group =>

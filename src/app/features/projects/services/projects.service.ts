@@ -1,3 +1,4 @@
+import { Project } from './../models/Project.model';
 import { Injectable, inject } from '@angular/core';
 import { ProfileService } from '../../../services/profile.service';
 import {
@@ -17,6 +18,7 @@ import { Profile, UserRole } from 'src/app/models/profile.model';
 import { HttpClient } from '@angular/common/http';
 import { from, Observable } from 'rxjs';
 import { Brand, Group, Marque, Media, Product } from '../models/Project.model';
+import { id } from 'date-fns/locale';
 
 
 @Injectable()
@@ -258,10 +260,10 @@ async createMedia(idMedia: string, mediaName: string, groupId: string, brandId: 
     groupId: string,
     brandId: string,
     productId: string,
-    marqueId:string,mediaId:string
+    marqueId:string,mediaId:string,groupName:string,brandName:string,productName:string,marqueName:string,mediaName:string
   ): Promise<void> {
     const usersList: Profile[] = [];
-    
+    console.log('newProject:', newprojects);
     if (idproject.trim() === "") {
       console.log('Champ vide');
       return;
@@ -271,33 +273,26 @@ async createMedia(idMedia: string, mediaName: string, groupId: string, brandId: 
     const usersWithManager = [...users, managerId];
   
     const projectData = {
+      id: idproject,
       name: newprojects,
       projectTotal: 0,
       managerId: managerId,
       users: usersWithManager,
       groupId: groupId,
-    brandId: brandId,
-    productId: productId,
-    marqueId:marqueId,
-    mediaId:mediaId
+      groupName:groupName,
+      brandId: brandId,
+      brandName:brandName,
+      productId: productId,
+      productName:productName,
+      marqueId:marqueId,
+      marqueName:marqueName,
+      mediaId:mediaId,
+      mediaName:mediaName
     };
     
-    console.log('Project data:', projectData);
-  
-    // Créez la référence du document du projet dans le chemin approprié
-   /* const projectDocRef = doc(
-      this.firestore,
-      'Groups', // Remplacez par 'Groups' ou le nom de votre collection de groupes
-      groupId,
-      'Brands', // Remplacez par 'Brands' ou le nom de votre collection de marques
-      brandId,
-      'Products', // Remplacez par 'Products' ou le nom de votre collection de produits
-      productId,
-      'Projects', // Collection des projets
-      idproject
-    );
-  */
-    const projectDocRef = doc(this.firestore, 'membership_CRA', iduser, 'Projects', newprojects);
+    console.log('Project data:', projectData.id);
+
+    const projectDocRef = doc(this.firestore, 'membership_CRA', iduser, 'Projects', idproject);
     // Récupérer les utilisateurs avec le rôle de manager
     const querySnapshot = await getDocs(
       query(
@@ -379,14 +374,14 @@ async createMedia(idMedia: string, mediaName: string, groupId: string, brandId: 
     }
   }
 
-  async updateProjectsMonth(newproject: string, iduser: string, days): Promise<void> {
+  async updateProjectsMonth(idproject: string, iduser: string, days): Promise<void> {
 
-    if (newproject.trim() === "") {
+    if (idproject.trim() === "") {
       console.log('champ vide');
       return;
     }
 
-    console.log('Tentative d\'accès au projet:', newproject);
+    console.log('Tentative d\'accès au projet:', idproject);
 
     const projectData = {
       [days[0].month + '_' + days[0].year]: days, // Array of timesheet items for each day
@@ -404,8 +399,8 @@ async createMedia(idMedia: string, mediaName: string, groupId: string, brandId: 
 
     try {
       // Add the new project to the Firestore collection "membership_CRA"
-      await updateDoc(doc(domaineRef, newproject), projectData);
-      console.log('Project added to Firestore:', newproject);
+      await updateDoc(doc(domaineRef, idproject), projectData);
+      console.log('Project added to Firestore:', idproject);
     } catch (error) {
       console.error('Error adding project to Firestore:', error);
     }
@@ -902,6 +897,41 @@ async getMediaByMarque(groupId,brandId,productId,marqueId): Promise<Media[]> {
 
   return mediaList;
 }
+// Assuming these are defined in your TimesheetComponent
+
+async getBrandName(project): Promise<string> {
+  const brands = await this.getBrandsByGroup(project.groupId);
+  console.log("groupId",project.groupId)
+  const brand = brands.find(b => b.id === project.brandId);
+  return brand ? brand.name : 'Unknown Brand';
+}
+
+async getProductName(project): Promise<string> {
+  const products = await this.getProductsByBrand(project.groupId, project.brandId);
+  const product = products.find(p => p.id === project.productId);
+  return product ? product.name : 'Unknown Product';
+}
+
+async getMarqueName(project): Promise<string> {
+  const marques = await this.getMarquesByProduct(
+    project.groupId, 
+    project.brandId, 
+    project.productId
+  );
+  const marque = marques.find(m => m.id === project.marqueId);
+  return marque ? marque.name : 'Unknown Marque';
+}
+
+async getMediaName(project): Promise<string> {
+  const medias = await this.getMediaByMarque(
+    project.groupId, 
+    project.brandId, 
+    project.productId, 
+    project.marqueId
+  );
+  const media = medias.find(m => m.id === project.mediaId);
+  return media ? media.name : 'Unknown Media';
+}
 
 // Update the name of a group
 async updateGroupName(groupId: string, newName: string): Promise<void> {
@@ -990,5 +1020,69 @@ async updateMediaName(groupId: string, brandId: string, productId: string, marqu
     console.error("Error updating media name:", error);
   }
 }
+////////////
+async updateDescription(uid, month, year, description) {
+  try {
+    // Reference to the document in Firestore
+    const docRef = doc(this.firestore, 'dateship_CRA', uid);
 
+    // Fetch the document snapshot
+    const docSnap = await getDoc(docRef);
+
+    // Check if the document exists
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      const monthYearField = data[`${month}_${year}`];
+
+      // If the month-year field exists, update the description
+      if (monthYearField) {
+        // Update the description in the document field
+        monthYearField.description = description;
+
+        // Save the updated document back to Firestore
+        await setDoc(docRef, data);
+        console.log("Description updated:", monthYearField.description);
+      } else {
+        console.error("Month-Year field does not exist in the document.");
+      }
+    } else {
+      console.error("Document not found.");
+    }
+
+    return description; // Return the updated description
+
+  } catch (error) {
+    console.error('Error updating description:', error);
+  }
+}
+
+async getDescription(uid, month, year): Promise<string | null> {
+  try {
+    // Reference to the document in Firestore
+    const docRef = doc(this.firestore, 'dateship_CRA', uid);
+
+    // Fetch the document snapshot
+    const docSnap = await getDoc(docRef);
+
+    // Check if the document exists
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      const monthYearField = data[`${month}_${year}`];
+
+      // If the month-year field exists, return the description
+      if (monthYearField && monthYearField.description) {
+        return monthYearField.description;
+      } else {
+        console.error("Description not found for the specified month and year.");
+        return null; // Return null if the description is not found
+      }
+    } else {
+      console.error("Document not found.");
+      return null; // Return null if the document doesn't exist
+    }
+  } catch (error) {
+    console.error('Error getting description:', error);
+    return null; // Return null in case of an error
+  }
+}
 }
