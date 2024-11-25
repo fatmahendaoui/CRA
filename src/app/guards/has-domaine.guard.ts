@@ -32,7 +32,7 @@ export const HasDomaineGuard = async (): Promise<boolean> => {
       // Check if the document exists and has an 'idDomaine' property
       if (firstDocument && firstDocument['idDomaine']) {
         // Redirect the user to the '/dashbord' route
-        router.navigate(['/timesheet/' + auth.currentUser?.uid + '/' + new Date()]);
+       // router.navigate(['/timesheet/' + auth.currentUser?.uid + '/' + new Date()]);
         return true;
       } else {
         return false;
