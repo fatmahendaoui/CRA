@@ -139,7 +139,8 @@ export class UsersService {
         displayName: userRecord.displayName || nameFromEmail,
         email: user.email || '',
         dateEmbauche: user.dateEmbauche,
-        contractType: user.contractType
+        contractType: user.contractType,
+        managerDirect: user.managerDirect|| '',
       };
 
       if (this.profileService.profile.role === UserRole.Admin) {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, inject } from '@angular/core';
+import { Component, OnInit, Input, inject, ChangeDetectorRef } from '@angular/core';
 import { DaysOfWeek, Months } from '../../models/dates.constants';
 import { DateService } from '../../services/date.service';
 import { TimesheetItem } from '../../models/TimesheetItem.model';
@@ -88,6 +88,7 @@ selectedMedia:string='';
   appliedProduct: string | null = null;
   appliedMarque: string | null = null;
   appliedMedia: string | null = null;
+  public cdr: ChangeDetectorRef;
 
   private monthNames = {
     en: [
@@ -197,9 +198,9 @@ selectedMedia:string='';
     try {
       console.log("test 0000 : ",this.tabProject);
       this.tabProject.forEach((project) => {
-
+        this.status="";
         this.projectService.updateProjectsMonth(project.id, this.currentUser, project.days);
-        this.changeStatus()
+      this.changeStatus(this.status)
        if (this.description) {
         console.log("test 0000 : ",this.description);
           this.projectService.updateDescription(this.currentUser, this.nameMonth, this.year, this.description); // Mettre à jour la description
@@ -246,34 +247,52 @@ selectedMedia:string='';
     ];
     return months.indexOf(monthName);
   }
-  async Savewithemail() {
-    try {
-      this.tabProject.forEach((project) => {
-        this.projectService.updateProjectsMonth(project.id, this.currentUser, project.days);
-      });
-
-      let data = {
-        "nameRequest": this.displayNamecurent,
-        "uid": this.currentUser,
-        "date": new Date(this.transfertdate(this.nameMonth + '_' + this.year)),
-        "month": this.nameMonth,
-        "year": this.year
+    async Savewithemail() {
+      try {
+        // Parcourir les projets et mettre à jour les informations
+        this.tabProject.forEach((project) => {
+          this.projectService.updateProjectsMonth(project.id, this.currentUser, project.days);
+        });
+    
+        // Définir les données pour la notification
+        let data = {
+          "nameRequest": this.displayNamecurent,
+          "uid": this.currentUser,
+          "date": new Date(this.transfertdate(this.nameMonth + '_' + this.year)),
+          "month": this.nameMonth,
+          "year": this.year
+        };
+    
+        // Envoyer la notification à l'administrateur
+        await this.projectService.sendNotificationToAdmin(data);
+    
+        // Modifier le statut à "Submitted"
+        this.status = 'Submitted';
+        await this.changeStatus(this.status);
+    
+        // Mettre à jour l'interface utilisateur
+        this.fetchProjects();
+        this.filterprojects();
+    
+        // Afficher un message de succès
+        handleResponseSuccessWithAlerts(
+          this.transloco.translate('features.projects.dialog.success.title'),
+          this.transloco.translate('features.projects.dialog.success.message'),
+          this.transloco.translate('common.close'),
+          () => { }
+        );
+      } catch (error) {
+        console.error('Error adding project via ProjectService:', error);
       }
-      this.projectService.sendNotificationToAdmin(data);
-      handleResponseSuccessWithAlerts(
-        this.transloco.translate('features.projects.dialog.success.title'),
-        this.transloco.translate('features.projects.dialog.success.message'),
-        this.transloco.translate('common.close'),
-        () => { }
-
-      );
-      this.status = 'Submitted';
-      this.changeStatus();
-      this.fetchProjects()
-    } catch (error) {
-      console.error('Error adding project via ProjectService:', error);
     }
+    
+  changestatus(): void {
+    setTimeout(() => {
+      this.cdr.detectChanges()
+      this.cdr.markForCheck()
+    }, 500)
   }
+
   async sendmail(Type) {
     let user;
     user = await this.projectService.getuserbyid(this.currentUser);
@@ -493,6 +512,7 @@ console.log("bebebebbe",this.tabProject)
       // })
       this.projectService.getstatus(this.currentUser, this.nameMonth, this.year).then(li => {
         if (li) {
+          console.log("status....", li.status);
           this.status = li.status;
           this.description = li.description;
         } else {
@@ -551,14 +571,15 @@ console.log("bebebebbe",this.tabProject)
 
     return final;
   }
-  async changeStatus(): Promise<void> {
+  async changeStatus(status): Promise<void> {
     const idDomaine = await this.profileService.getIdDomaine();
     try {
       let data = {
         'description': this.description,
-        'status': this.status,
+        'status': status,
         'idDomaine': idDomaine,
       }
+
       this.projectService.updatestatusbyUidandMonth(this.currentUser, this.nameMonth, this.year, data);
       //this.description = ''
     } catch (error) {
