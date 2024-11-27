@@ -174,13 +174,14 @@ export class AuthService {
         const userCredential = await signInWithPopup(this.auth, provider);
         const user = userCredential.user;
         console.log('User logged in with Microsoft:', user);
-    
         const exists = await this.CheckUserExist(user.uid);
-        if (user.email?.endsWith('@ealan-agency.com')) { 
-          if (exists) {
+            console.log('User logged ', exists);
+
+  
+          if (exists||user.email?.endsWith('@ealan-agency.com')) {
             await this.createUser(user);
             this.router.navigate(['/timesheet/' + this.auth.currentUser?.uid + '/' + new Date()]);
-          }}
+          }
        else {
             this.router.navigate(['create-domaine']);
           }
