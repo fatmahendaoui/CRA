@@ -61,7 +61,8 @@ export class AuthService {
         photoURL: user.photoURL ?? '',
         displayName: user.displayName ?? '',
         email: user.email ?? '',
-        notify: false
+        notify: false,
+        managerDirect: '',
       };
 
       await setDoc(doc(this.firestore, 'membership_CRA', user.uid), profile);
@@ -167,26 +168,29 @@ export class AuthService {
       throw error;
     }
   }
-  async loginWithMicrosoft(): Promise<void> {
-    try {
-      const provider = new OAuthProvider('google.com');
-      const userCredential = await signInWithPopup(this.auth, provider);
-      const user = userCredential.user;
-      console.log('User logged in with Microsoft:', user);
-
-      const exists = await this.CheckUserExist(user.uid);
-      if (exists) {
-        this.router.navigate(['/timesheet/' + this.auth.currentUser?.uid + '/' + new Date()]);
-        //this.router.navigate(['/dashbord']);
-      } else {
-        this.router.navigate(['create-domaine']);
+    async loginWithMicrosoft(): Promise<void> {
+      try {
+        const provider = new OAuthProvider('microsoft.com');
+        const userCredential = await signInWithPopup(this.auth, provider);
+        const user = userCredential.user;
+        console.log('User logged in with Microsoft:', user);
+    
+        const exists = await this.CheckUserExist(user.uid);
+        if (user.email?.endsWith('@ealan-agency.com')) { 
+          if (exists) {
+            await this.createUser(user);
+            this.router.navigate(['/timesheet/' + this.auth.currentUser?.uid + '/' + new Date()]);
+          }}
+       else {
+            this.router.navigate(['create-domaine']);
+          }
+        
+      } catch (error) {
+        console.error('Error logging in with Microsoft:', error);
+        throw error;
       }
-    } catch (error) {
-      console.log('befff');
-      console.error('Error logging in with Microsoft:', error);
-      throw error;
     }
-  }
+
   //creation user automatique 
 async createUser(user){
   const emailParts = user.email.split('@');

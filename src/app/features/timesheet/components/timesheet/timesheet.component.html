@@ -29,7 +29,7 @@
             'color': 'white'
         }" disabled><span style="color: white;">{{ 'features.status.' + status | transloco
               }}</span></mat-chip>
-          <mat-chip class="chips" *ngIf="!status" style="  background-color: #193F77;" disabled><span
+          <mat-chip class="chips" *ngIf="!status && status!== 'Submitted'" style="  background-color: #193F77;" disabled><span
               style="color: white;">{{ 'features.status.On going' | transloco}}</span></mat-chip>
           <mat-chip class="chips" *ngIf="status == 'Improved'" style="  background-color: #17ba68;" disabled><span
               style="color: white;">{{ 'features.status.Improved' | transloco}} </span></mat-chip>
@@ -243,15 +243,15 @@
 
 
         <button mat-flat-button color="primary" *ngIf=" (status =='On going' || !status)"
-          (click)="Savewithemail();Save()">
+        (click)="Savewithemail(); changestatus();">
           {{ 'features.projects.button.Envoye' | transloco }}
         </button>
         <button *ngIf="(IsAdmin||IsManager) && status =='Submitted'" mat-flat-button color="primary"
-          (click)="status ='Improved' ; changeStatus(); sendmail('Approved')">
+          (click)="status ='Improved' ; changeStatus('Improved'); sendmail('Approved')">
           {{ 'features.projects.button.approved' | transloco }}
         </button>
         <button *ngIf="(IsAdmin ||IsManager) && status =='Submitted'" mat-flat-button color="primary"
-          (click)="status ='On going' ; changeStatus(); sendmail('Rejected')">
+          (click)="status ='On going' ; changeStatus('On going'); sendmail('Rejected')">
           {{ 'features.projects.button.reject' | transloco }}
         </button>
       </div>

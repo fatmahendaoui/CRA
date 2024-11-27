@@ -187,11 +187,13 @@ export class CongeService {
 
     querySnapshot.forEach((doc) => {
       const userData = doc.data() as Profile;
-      if ((userData.role === 'admin' || userData.role === 'manager') && userData.notify) {
+      if ((userData.role === 'admin'&& userData.notify)|| userData.uid===this.profileService.profile.managerDirect) {
+        console.log('userDataemail',userData.email);
+        console.log('manager direct user ',this.profileService.profile.managerDirect);
         adminUsers.push(userData);
       }
     });
-
+    console.log('userData',adminUsers);
     return adminUsers;
   }
 
