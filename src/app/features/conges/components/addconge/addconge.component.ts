@@ -69,63 +69,58 @@ export class AddcongeComponent implements OnInit {
 
   }
 
-
   async onSubmit(): Promise<void> {
     this.fileError = false;
-
+  
     if (this.natureConge === 'Congé de maladie (1 jour)' && !this.selectedFile) {
       this.fileError = true;
       alert('Veuillez joindre votre certificat médical pour cette demande.');
       return; 
     }
+  
     const userId = this.user ? this.user.uid : null;
-    let nombreJours: number = differenceInDays(this.dateFin, this.dateDebut) + 1; 
+    let nombreJours: number = differenceInDays(this.dateFin, this.dateDebut) + 1;
     let nombreHeures: number;
-    
+  
     const currentDate = new Date();
     let joursWeekend = 0;
+  
     for (let i = 0; i < nombreJours; i++) {
       const currentDate = addDays(this.dateDebut, i);
       if (isSaturday(currentDate) || isSunday(currentDate)) {
         joursWeekend++;
       }
     }
-
-
+  
     if (joursWeekend > 0) {
-      nombreJours -= 2;
+      nombreJours -= joursWeekend;
     }
-
-
+  
     switch (this.dureeConge) {
-
       case "Demi journée - le matin":
       case "Demi journée - l'après midi":
         this.dateFin = this.dateDebut;
-        nombreHeures = 4; // demi journe=4heures 
+        nombreHeures = 4;
         break;
       case "Journée entière":
         this.dateFin = this.dateDebut;
-        nombreHeures = 8; // nahr wehed = 8heures tool 
+        nombreHeures = 8;
         break;
       case "Plus d'1 jour":
-
         nombreHeures = 8 * nombreJours;
         break;
       case "Début de journée":
       case "Fin de journée":
         this.dateFin = this.dateDebut;
-        nombreHeures = 2; // demi journe=4heures 
+        nombreHeures = 2;
         break;
-
       default:
-
         console.error("Durée de congé invalide:", this.dureeConge);
         return;
     }
-    // Définir la valeur de this.natureConge avant la condition
+  
     let photourl = await this.profileService.getUserPhotoURL(userId);
-
+  
     const conge: any = {
       nature: this.natureConge,
       duree: this.dureeConge,
@@ -142,57 +137,74 @@ export class AddcongeComponent implements OnInit {
       dateEnvoi: currentDate.toISOString().split('T')[0],
       heureEnvoi: currentDate.toLocaleTimeString(),
     };
+  
     try {
+      // Étape 1 : Enregistrer rapidement le congé dans Firestore
       const congeId = await this.congeService.addConge(conge);
       if (congeId) {
         this.congeId = congeId;
-
-        // Vérifier si la nature du congé est 'Congé de maladie (1 jour)'
         if (this.natureConge === 'Congé de maladie (1 jour)' && this.selectedFile) {
-          const path = `sertif_conge/${congeId}/${this.selectedFile.name}`;
-          const uploadTask = this.fireStorage.upload(path, this.selectedFile);
-
-          uploadTask.then(async (snapshot) => {
+          try {
+            const path = `sertif_conge/${congeId}/${this.selectedFile.name}`;
+            const uploadTask = this.fireStorage.upload(path, this.selectedFile);
+      
+            const snapshot = await uploadTask;
             const downloadURL = await snapshot.ref.getDownloadURL();
+      
             await this.congeService.updateCongeWithFileURLAndCongeId(downloadURL, congeId);
             conge.url_certif = downloadURL;
-
-          }).catch((error) => {
+          } catch (error) {
             console.error('Erreur lors du téléchargement du fichier:', error);
-          });
+          }
         }
-        let data = {
-          nameRequest: this.user.displayName,
-          uid: this.user.uid,
-          nature: this.natureConge,
-          duree: this.dureeConge,
-          dateDebut: this.dateDebut,
-          dateFin: this.dateFin,
-          commentaires: this.commentaires || '',
-          congeId: this.congeId
-        };
-        await this.congeService.submitCongeWithEmail(data);
+      // Traiter les tâches secondaires de manière asynchrone
+      this.processAdditionalTasks(conge, congeId);
+        // Afficher immédiatement la confirmation
+        handleResponseSuccessWithAlerts(
+          this.translocoService.translate('features.projects.dialog.success.title'),
+          '',
+          this.translocoService.translate('common.close'),
+          () => {}
+        );
+  
+
         // Réinitialiser les champs du formulaire après l'ajout du congé
         this.natureConge = '';
         this.dureeConge = '';
         this.dateDebut = new Date();
         this.dateFin = new Date();
         this.commentaires = '';
-
-        // Afficher une alerte ou un message de succès
-        handleResponseSuccessWithAlerts(
-          this.translocoService.translate('features.projects.dialog.success.title'),
-          '',
-          this.translocoService.translate('common.close'),
-          () => { }
-        );
+  
+    
       } else {
         console.error('Erreur lors de l\'ajout du congé.');
       }
     } catch (error) {
-      console.error('Error adding congé:', error);
+      console.error('Erreur lors de l\'ajout du congé:', error);
     }
   }
+  
+  private async processAdditionalTasks(conge: any, congeId: string): Promise<void> {
+    
+    // Envoi d'email
+    try {
+      let data = {
+        nameRequest: this.user.displayName,
+        uid: this.user.uid,
+        nature: this.natureConge,
+        duree: this.dureeConge,
+        dateDebut: this.dateDebut,
+        dateFin: this.dateFin,
+        commentaires: this.commentaires || '',
+        congeId: congeId
+      };
+  
+      await this.congeService.submitCongeWithEmail(data);
+    } catch (error) {
+      console.error('Erreur lors de l\'envoi de l\'email:', error);
+    }
+  }
+  
 
   async onFileChange(event: any) {
     this.selectedFile = event.target.files[0];
