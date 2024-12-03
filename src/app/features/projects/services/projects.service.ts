@@ -708,7 +708,7 @@ allProjects.push(...filteredProjects);
 
     querySnapshot.forEach((doc) => {
       const userData = doc.data() as Profile;
-      if ((userData.role === 'admin' || userData.role === 'manager') && userData.notify) {
+      if ( userData.role === 'manager' && userData.notify) {
         this.groupUserManagerObserv(userData.uid).subscribe(managerEmails => {
           // Filter users to exclude those managed by the current user
           if (managerEmails.includes(this.auth.currentUser!.uid)) {
@@ -717,17 +717,7 @@ allProjects.push(...filteredProjects);
           }
         });
         adminUsers.push(userData);
-      } /*else if (userData.role === 'manager' && userData.notify) {
-        this.groupUserManagerObserv(userData.uid).subscribe(managerEmails => {
-          // Filter users to exclude those managed by the current user
-          if (managerEmails.includes(this.auth.currentUser!.uid)) {
-            adminUsers.push(userData);
-            console.log('Manager email:', adminUsers);
-          }
-        }, error => {
-          console.error('Error fetching manager emails:', error);
-        });
-      }*/
+      }
     });
 
     for await (const adminUser of adminUsers) {
