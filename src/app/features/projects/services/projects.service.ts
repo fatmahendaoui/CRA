@@ -656,48 +656,57 @@ allProjects.push(...filteredProjects);
     return isManager;
   }
 
+async groupUserManager(iduser: string): Promise<Profile[]> {
+  try {
+    console.log('ID utilisateur soumis ::::', iduser);
 
-  ////////////////////
-  async groupUserManager(iduser: string): Promise<string[]> {
-    try {
-      console.log('iduser ::::', iduser);
+    // Obtenir les projets associés à l'utilisateur
+    const projectsSnapshot = await getDocs(
+      collection(this.firestore, 'membership_CRA', iduser, 'Projects')
+    );
 
-      // Get the user's projects
-      const projectsSnapshot = await getDocs(
-        collection(this.firestore, 'membership_CRA', iduser, 'Projects')
-      );
+    // Extraire les `managerId` de chaque projet
+    const managerIds: string[] = [];
+    projectsSnapshot.forEach((projectDoc) => {
+      const projectData = projectDoc.data();
+      const managerId = projectData['managerId'];
+      if (managerId) {
+        managerIds.push(managerId);
+        console.log('Manager ID trouvé:', managerId);
+      }
+    });
 
-      // Extract user IDs from projects
-      const userIds: string[] = [];
-      projectsSnapshot.forEach(projectDoc => {
-        const projectData = projectDoc.data();
-        const users: string[] = projectData['users'] || [];
-        userIds.push(...users);
-      });
+    // Supprimer les doublons
+    const uniqueManagerIds = Array.from(new Set(managerIds));
+    console.log('Unique Manager IDs:', uniqueManagerIds);
 
-      // Remove duplicate user IDs
-      const uniqueUserIds = Array.from(new Set(userIds));
-
-      // Fetch user profiles in parallel
-      const userPromises = uniqueUserIds.map(userId =>
-        this.getuserbyid(userId).then(user => user?.email || '')
-      );
-      const emails = await Promise.all(userPromises);
-
-      // Remove duplicate emails and filter out empty strings
-      const uniqueEmails = Array.from(new Set(emails.filter(email => email !== '')));
-
-      console.log('Unique Emails of managed users:', uniqueEmails);
-      return uniqueEmails;
-    } catch (error) {
-      console.error('Error in groupUserManager:', error);
-      throw error;
+    if (uniqueManagerIds.length === 0) {
+      console.log('Aucun manager trouvé pour cet utilisateur.');
+      return [];
     }
+
+    // Rechercher les données des managers dans Firebase
+    const managerProfiles: Profile[] = [];
+    const querySnapshot = await getDocs(
+      collection(this.firestore, 'membership_CRA')
+    );
+
+    querySnapshot.forEach((doc) => {
+      const userData = doc.data() as Profile;
+      if (uniqueManagerIds.includes(userData.uid)) {
+        managerProfiles.push(userData);
+        console.log('Profil du manager ajouté:', userData);
+      }
+    });
+
+    return managerProfiles;
+  } catch (error) {
+    console.error('Erreur dans groupUserManager:', error);
+    throw error;
   }
-  public groupUserManagerObserv(iduser: string): Observable<string[]> {
-    return from(this.groupUserManager(iduser));
-  }////////////////
-  public async sendNotificationToAdmin(data) {
+}
+public async sendNotificationToAdmin(data) {
+  try {
     const adminUsers: Profile[] = [];
     const querySnapshot = await getDocs(
       query(
@@ -706,41 +715,46 @@ allProjects.push(...filteredProjects);
       )
     );
 
+    const managerProfiles = await this.groupUserManager(data.uid);
+
     querySnapshot.forEach((doc) => {
       const userData = doc.data() as Profile;
-      if ( userData.role === 'manager' && userData.notify) {
-        this.groupUserManagerObserv(userData.uid).subscribe(managerEmails => {
-          // Filter users to exclude those managed by the current user
-          if (managerEmails.includes(this.auth.currentUser!.uid)) {
-            adminUsers.push(userData);
-            console.log('Manager email:', adminUsers);
-          }
-        });
-        adminUsers.push(userData);
+      console.log('Utilisateur trouvé:', userData);
+
+      // Vérifier si l'utilisateur est un manager notifié
+      if (userData.role === 'manager' && userData.notify) {
+        const isManaged = managerProfiles.some((manager) => manager.uid === userData.uid);
+
+        if (isManaged) {
+          console.log('Manager trouvé parmi les utilisateurs :', userData);
+          adminUsers.push(userData);
+        }
       }
     });
 
+    console.log('Admins à notifier:', adminUsers);
+
     for await (const adminUser of adminUsers) {
-      const emailData = { ...data }; // Clone data for each admin user
+      const emailData = { ...data };
       emailData.email = adminUser.email;
       emailData.AdminName = adminUser.displayName;
 
-      console.log(emailData); // Optionally log email data before sending
+      console.log('Données de l\'email :', emailData);
 
       this.http.post<void>(
         `https://us-central1-dev-cra-390314.cloudfunctions.net/add_mail_cra`,
         emailData
       ).subscribe(
-        (response) => {
-          console.log('Email sent successfully:', response);
-        },
-        (error) => {
-          console.error('Error sending email:', error);
-        }
+        (response) => console.log('Email envoyé avec succès:', response),
+        (error) => console.error('Erreur lors de l\'envoi de l\'email:', error)
       );
     }
+  } catch (error) {
+    console.error('Erreur dans sendNotificationToAdmin:', error);
   }
+}
 
+///////
   public async sendNotificationToUser(data) {
     this.http.post<void>(`https://us-central1-dev-cra-390314.cloudfunctions.net/regectedAccpeted_mail_cra`, data).subscribe(li => {
       console.log('done');

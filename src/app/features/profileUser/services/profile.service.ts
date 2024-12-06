@@ -95,7 +95,6 @@ export class ProfilService {
           role: data['role'], // Ensure photoURL is included
         };
       } else {
-        console.log("No such document!");
         return null;
       }
     } catch (error) {
@@ -108,7 +107,6 @@ export class ProfilService {
     try {
       const docRef = doc(this.firestore, 'membership_CRA', id);
       await setDoc(docRef, data, { merge: true });
-      console.log('Document successfully written!');
     } catch (error) {
       console.error('Error writing document:', error);
       throw error;
@@ -122,7 +120,6 @@ export class ProfilService {
       const querySnapshot = await getDocs(projectsCollectionRef);
 
       if (querySnapshot.empty) {
-        console.log('No projects found.');
         return [];
       }
 
@@ -163,7 +160,6 @@ export class ProfilService {
         const role = data['role']; // Récupérer la valeur du champ "role"
         return role;
       } else {
-        console.log("No such document!");
         return null;
       }
     } catch (error) {

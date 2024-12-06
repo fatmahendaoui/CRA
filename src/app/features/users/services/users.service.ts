@@ -345,7 +345,6 @@ export class UsersService {
  */
   async groupUserManager(iduser: string): Promise<string[]> {
     try {
-      console.log('iduser ::::', iduser);
 
       // Get the user's projects
       const projectsSnapshot = await getDocs(
@@ -371,8 +370,6 @@ export class UsersService {
 
       // Remove duplicate emails and filter out empty strings
       const uniqueEmails = Array.from(new Set(emails.filter(email => email !== '')));
-
-      console.log('Unique Emails of managed users:', uniqueEmails);
       return uniqueEmails;
     } catch (error) {
       console.error('Error in groupUserManager:', error);

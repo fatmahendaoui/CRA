@@ -208,7 +208,6 @@ showFilters: boolean = false;
       this.transloco.translate('common.cancel'),
     ).then((result) => {
       if (result.isConfirmed) {
-        console.log("projectidtestttt",project.id)
         this.projectService.deleteProject(project.id).then(li => {
           this.fetchAll()
         })
@@ -221,7 +220,6 @@ showFilters: boolean = false;
   }
 
   public updateRole(project: Project) {
-    console.log("fffffffff22222",project)
     this.bottomSheet
       .open(editProjectComponent, {
         panelClass: 'bottom-sheet-without-padding',
@@ -239,15 +237,12 @@ showFilters: boolean = false;
 
   updateproject(nomproject, users,groupId,brandId,productId,marqueId,mediaId) {
     const managerId = users.existuser.manager; // Assurez-vous que `manager` existe et est bien défini
-  console.log("ffff",users)
     const groupName=users.existuser.group;
       const brandName=users.existuser.brand;
       const productName=users.existuser.product;
       const marqueName=users.existuser.marque;
       const mediaName=users.existuser.media;
-      console.log("nameproject.... ",nomproject )
 
-  console.log('marq',marqueId);
     users.allusers.map(li => {
     
 
@@ -265,7 +260,6 @@ showFilters: boolean = false;
         } else {
           if (foundUser) {
             this.projectService.addNewProject(nomproject, users.existuser.name, li.uid, managerId, [],groupId,brandId,productId,marqueId,mediaId,groupName,brandName,productName,marqueName,mediaName);
-            console.log("idproject ",nomproject )
           }
         }
       });
@@ -301,11 +295,9 @@ showFilters: boolean = false;
 
   }
  private inviteproject(project): void {
-  // TODO: add a loading spinner
   if (project) {
     const managerId = project.manager; // Assurez-vous que `manager` existe et est bien défini
     const users = [...project.users, managerId];
-   console.log("ffff iddddddddddd",project.id)
 
     // Replace generating a new ID with checking if a group already exists
     this.projectService.findGroupByNameAndDomain(project.group, this.profileService.profile.idDomaine)

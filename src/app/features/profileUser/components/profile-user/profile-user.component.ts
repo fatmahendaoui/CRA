@@ -447,7 +447,6 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
             // Calculer le total des heures du congé de maladie pour ce projet
             const totalHours = this.calculateTotalHours(projectData, vacancesProjectId);
             if (totalHours < 4) {
-              console.log('Le nombre d\'heures est inférieur à 4, aucune soustraction ne sera effectuée.');
               return;
             }
           
@@ -483,9 +482,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
           dateDebut: conge.dateDebut.toDate(), // Conversion du timestamp en Date
           dateFin: conge.dateFin.toDate() // Conversion du timestamp en Date
         }));
-  
-      console.log('Congés récupérés pour l\'utilisateur', this.userId, ':', this.congesUtilisateurConnecte);
-      
+        
     } catch (error) {
       console.error('Error fetching congés:', error);
     }
