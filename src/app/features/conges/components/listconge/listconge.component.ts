@@ -51,8 +51,6 @@ export class ListcongeComponent<T> implements OnInit {
   async loadConges(): Promise<void> {
     const firestore = getFirestore();
     const congesCollectionRef = collection(firestore, 'conge');
-    console.log('Congés chargés:', this.conges); 
-
     try {
       const querySnapshot = await getDocs(congesCollectionRef);
       querySnapshot.forEach(async (doc) => {

@@ -130,7 +130,6 @@ export class AuthService {
     try {
       const userCredential: UserCredential = await createUserWithEmailAndPassword(this.auth, email, password);
       const user = userCredential.user;
-      console.log('User signed up:', user);
 
       const domaineName = "Nom par défaut";
       const { profile, exists } = await this.createDomaine(domaineName);
@@ -152,7 +151,6 @@ export class AuthService {
     try {
       const userCredential: UserCredential = await signInWithEmailAndPassword(this.auth, email, password);
       const user = userCredential.user;
-      console.log('User logged in:', user);
 
       const exists = await this.CheckUserExist(user.uid);
       if (exists) {
@@ -173,9 +171,7 @@ export class AuthService {
         const provider = new OAuthProvider('microsoft.com');
         const userCredential = await signInWithPopup(this.auth, provider);
         const user = userCredential.user;
-        console.log('User logged in with Microsoft:', user);
         const exists = await this.CheckUserExist(user.uid);
-            console.log('User logged ', exists);
 
   
           if (exists||user.email?.endsWith('@ealan-agency.com')) {
