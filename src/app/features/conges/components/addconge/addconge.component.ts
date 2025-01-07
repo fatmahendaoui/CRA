@@ -228,15 +228,15 @@ export class AddcongeComponent implements OnInit {
     try {
       const q = query(congesCollectionRef,
         where('status', '==', 1),
-        where('year', '==', currentYear), // Ajout de la condition pour l'année actuelle
-        where('nature', '==', 'Congé de maladie (1 jour)') // Ajout de la condition pour la nature du congé
+        where('year', '==', currentYear), 
+        where('nature', '==', 'Congé de maladie (1 jour)')
       );
 
       const querySnapshot = await getDocs(q);
 
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        congesFiltres.push(data); // Ajouter le congé filtré au tableau des congés filtrés
+        congesFiltres.push(data); 
       });
 
 
@@ -258,13 +258,23 @@ export class AddcongeComponent implements OnInit {
 
       });
 
-
       for (const userId in congesParUtilisateur) {
         if (Object.prototype.hasOwnProperty.call(congesParUtilisateur, userId)) {
-          const congesLength = congesParUtilisateur[userId].length;
-          this.congesLengths[userId] = congesLength;
+          // Calculate the total number of hours from the user's leave records
+          const totalHours = congesParUtilisateur[userId].reduce((acc, conge) => acc + conge['nombreHeures'], 0);
+          
+          // Calculate the number of days (assuming each day is 8 hours)
+          const congesLengths = totalHours / 8;
+          
+          // Store the number of days in the congesLengths object
+          this.congesLengths[userId] = congesLengths;
+      
+          // Print detailed information about the leave records and the number of days
+          console.log('Nombre de congés pour l\'utilisateur', userId, ':', congesLengths, "tttttt", congesParUtilisateur[userId]);
         }
       }
+      
+      
 
     } catch (error) {
       console.error('Erreur lors du chargement et du stockage des congés filtrés depuis Firestore:', error);

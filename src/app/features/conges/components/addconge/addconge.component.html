@@ -26,7 +26,7 @@
           <mat-select [(ngModel)]="natureConge" name="natureConge">
             <!-- Options pour le type de congé -->
             <mat-option value="Congé Payé">{{ 'features.conge.paid_leave' | transloco }}</mat-option>
-            <mat-option *ngIf="userId && congesLengths[userId] !== 4" value="Congé de maladie (1 jour)">
+            <mat-option *ngIf="userId && congesLengths[userId] !== 8" value="Congé de maladie (1 jour)">
               {{ 'features.conge.sick_leave' | transloco }}
             </mat-option>
 
