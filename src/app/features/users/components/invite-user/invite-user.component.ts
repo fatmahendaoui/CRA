@@ -48,7 +48,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     <mat-select formControlName="role">
       <mat-option value="user">{{ 'common.role.user' | transloco }}</mat-option>
       <mat-option value="admin">{{ 'common.role.admin' | transloco }}</mat-option>
-      <mat-option value="manager">{{ 'common.role.manager' | transloco }}</mat-option>
     </mat-select>
   </mat-form-field>
 

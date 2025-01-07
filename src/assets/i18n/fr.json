@@ -15,8 +15,7 @@
     },
     "role": {
       "user": "Utilisateur",
-      "admin": "Administrateur",
-      "manager": "Maneger"
+      "admin": "Administrateur"
     },
     "close": "Fermer",
     "activate": "Compte activé",
@@ -113,11 +112,8 @@
       "userByMonthWithProject": "Utilisateur Par Mois avec Projet",
       "projectByMonthOf": "Projet Par Mois de",
       "in_year": "dans l'année",
-      "filter": "Filtrer",
-      "apply": "Appliquer",
-    "reset": "Réinitialiser",
       "table": {
-        "name": "Tache",
+        "name": "Nom du projet",
         "actions": "Actions",
         "role": "Rôle",
         "added_at": "Ajouté le",
@@ -127,16 +123,10 @@
       },
       "add-dialog": {
         "title": "Ajouter un projet",
-        "name": "Tache",
+        "name": "Nom du projet",
         "users": "Utilisateurs",
-        "maneger": "Manager",
         "action": "Ajouter",
-        "update": "Modifier",
-        "origine": "Origine",
-        "media": "Média",
-        "group": "Groupe",
-        "client": "Client",
-        "marque": "Marque"
+        "update": "Modifier"
       },
       "success": {
         "title": "Le projet est ajouté avec succès",
@@ -307,7 +297,9 @@
       "Month": "Mois",
       "Week": "Semaine",
       "Today": "Aujourd'hui"
-    },
+    }, "hr-policies": { 
+      "titre ":"Politiques RH"
+  },
     "status": {
       "On going": "En cours",
       "Improved": "Approuvé",

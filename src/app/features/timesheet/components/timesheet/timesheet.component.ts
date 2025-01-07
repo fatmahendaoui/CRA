@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, inject } from '@angular/core';
 import { DaysOfWeek, Months } from '../../models/dates.constants';
 import { DateService } from '../../services/date.service';
 import { TimesheetItem } from '../../models/TimesheetItem.model';
@@ -10,7 +10,6 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { TranslocoService } from '@ngneat/transloco';
 import { Day_offService } from 'src/app/features/day_offs/services/day_off.service';
 import { ProfileService } from 'src/app/services/profile.service';
-import { Brand, Group, Marque, Media, Product } from 'src/app/features/projects/models/Project.model';
 
 // Définir une interface pour représenter un jour
 interface Day {
@@ -34,16 +33,6 @@ interface Week {
 })
 
 export class TimesheetComponent implements OnInit {
-groups: Group[] = [];
-brands: Brand[] = [];
-products: Product[] = [];
-marques:Marque[]=[];
-medias:Media[]=[];
-selectedGroup: string = '';
-selectedBrand: string = '';
-selectedProduct: string = '';
-selectedMarque:string='';
-selectedMedia:string='';
 
   projectName: string = '';
   nbHeure: number = 0;
@@ -83,13 +72,6 @@ selectedMedia:string='';
   IsAdmin: boolean;
   IsManager: boolean;
   displayNamecurent;
-  appliedGroup: string | null = null;
-  appliedBrand: string | null = null;
-  appliedProduct: string | null = null;
-  appliedMarque: string | null = null;
-  appliedMedia: string | null = null;
-  public cdr: ChangeDetectorRef;
-
   private monthNames = {
     en: [
       'January', 'February', 'March', 'April', 'May', 'June',
@@ -129,9 +111,7 @@ selectedMedia:string='';
       });
     });
     this.fetchAll()
-
   }
-  ///////
   /* public fetchAll(): void {
      this.usersService.fetchAllUsers().subscribe(users => {
        if (this.IsManager) {
@@ -173,7 +153,6 @@ selectedMedia:string='';
   ngOnInit(): void {
     this.getTimesheet();
     this.splitDaysIntoWeeks(this.resultTimesheet); // Call the function to split days into weeks
-    this.getGroups(this.currentUser)
   }
 
   // get by month
@@ -196,16 +175,10 @@ selectedMedia:string='';
 
   async Save() {
     try {
-      console.log("test 0000 : ",this.tabProject);
       this.tabProject.forEach((project) => {
-        this.status="";
+
         this.projectService.updateProjectsMonth(project.id, this.currentUser, project.days);
-      this.changeStatus(this.status)
-       if (this.description) {
-        console.log("test 0000 : ",this.description);
-          this.projectService.updateDescription(this.currentUser, this.nameMonth, this.year, this.description); // Mettre à jour la description
-        }   
-         });
+      });
       if (!this.IsAdmin) {
         handleResponseSuccessWithAlerts(
           this.transloco.translate('features.projects.dialog.success.title'),
@@ -247,52 +220,34 @@ selectedMedia:string='';
     ];
     return months.indexOf(monthName);
   }
-    async Savewithemail() {
-      try {
-        // Parcourir les projets et mettre à jour les informations
-        this.tabProject.forEach((project) => {
-          this.projectService.updateProjectsMonth(project.id, this.currentUser, project.days);
-        });
-    
-        // Définir les données pour la notification
-        let data = {
-          "nameRequest": this.displayNamecurent,
-          "uid": this.currentUser,
-          "date": new Date(this.transfertdate(this.nameMonth + '_' + this.year)),
-          "month": this.nameMonth,
-          "year": this.year
-        };
-    
-        // Envoyer la notification à l'administrateur
-        await this.projectService.sendNotificationToAdmin(data);
-    
-        // Modifier le statut à "Submitted"
-        this.status = 'Submitted';
-        await this.changeStatus(this.status);
-    
-        // Mettre à jour l'interface utilisateur
-        this.fetchProjects();
-        this.filterprojects();
-    
-        // Afficher un message de succès
-        handleResponseSuccessWithAlerts(
-          this.transloco.translate('features.projects.dialog.success.title'),
-          this.transloco.translate('features.projects.dialog.success.message'),
-          this.transloco.translate('common.close'),
-          () => { }
-        );
-      } catch (error) {
-        console.error('Error adding project via ProjectService:', error);
-      }
-    }
-    
-  changestatus(): void {
-    setTimeout(() => {
-      this.cdr.detectChanges()
-      this.cdr.markForCheck()
-    }, 500)
-  }
+  async Savewithemail() {
+    try {
+      this.tabProject.forEach((project) => {
+        this.projectService.updateProjectsMonth(project.id, this.currentUser, project.days);
+      });
 
+      let data = {
+        "nameRequest": this.displayNamecurent,
+        "uid": this.currentUser,
+        "date": new Date(this.transfertdate(this.nameMonth + '_' + this.year)),
+        "month": this.nameMonth,
+        "year": this.year
+      }
+      this.projectService.sendNotificationToAdmin(data);
+      handleResponseSuccessWithAlerts(
+        this.transloco.translate('features.projects.dialog.success.title'),
+        this.transloco.translate('features.projects.dialog.success.message'),
+        this.transloco.translate('common.close'),
+        () => { }
+
+      );
+      this.status = 'Submitted';
+      this.changeStatus();
+      this.fetchProjects()
+    } catch (error) {
+      console.error('Error adding project via ProjectService:', error);
+    }
+  }
   async sendmail(Type) {
     let user;
     user = await this.projectService.getuserbyid(this.currentUser);
@@ -321,22 +276,6 @@ selectedMedia:string='';
       );
     }
   }
-  async onUserSelect(currentUser: any): Promise<void> {
-    console.log("User selected: ", currentUser);
-    if (currentUser) {
-      try {
-        this.resetFilters()
-        this.getGroups(currentUser)
-        const description = await this.projectService.getDescription(currentUser, this.nameMonth, this.year);
-        this.description = description; // Store the description in a variable
-        console.log("Description fetched: ", this.description);
-      } catch (error) {
-        console.error("Error fetching description: ", error);
-      }
-    }
-  }
-  
-  
   private updateMonthYear(newMonth: number, newYear: number): void {
 
     if (newMonth > 11) {
@@ -394,6 +333,7 @@ selectedMedia:string='';
       }
     }
 
+
     return timesheet;
   }
 
@@ -443,10 +383,8 @@ selectedMedia:string='';
 
 
   }
-
   changetotal() {
     this.init_total()
-console.log("bebebebbe",this.tabProject)
     this.tabProject.forEach((project) => {
       for (let index = 0; index < project.days.length; index++) {
         const element = project.days[index];
@@ -512,12 +450,11 @@ console.log("bebebebbe",this.tabProject)
       // })
       this.projectService.getstatus(this.currentUser, this.nameMonth, this.year).then(li => {
         if (li) {
-          console.log("status....", li.status);
           this.status = li.status;
           this.description = li.description;
         } else {
           this.status = null;
-          this.description = li.description;
+          this.description = null;
         }
 
       })
@@ -571,42 +508,42 @@ console.log("bebebebbe",this.tabProject)
 
     return final;
   }
-  async changeStatus(status): Promise<void> {
+  async changeStatus(): Promise<void> {
     const idDomaine = await this.profileService.getIdDomaine();
     try {
       let data = {
         'description': this.description,
-        'status': status,
+        'status': this.status,
         'idDomaine': idDomaine,
       }
-
       this.projectService.updatestatusbyUidandMonth(this.currentUser, this.nameMonth, this.year, data);
-      //this.description = ''
+      this.description = ''
     } catch (error) {
       console.error('Error fetching projects via ProjectService:', error);
     }
   }
+  async fetchProjects(): Promise<void> {
+    try {
+      this.allprojects = await this.projectService.fetchProjects(this.currentUser);
+      this.tabProject = this.allprojects
 
-    async fetchProjects(): Promise<void> {
-      try {
-        this.allprojects = await this.projectService.fetchProjects(this.currentUser);
-        this.tabProject = this.allprojects;
-    
-        // Tri des projets : "Maladie", "Vacances" et "Disponible" en dernier
-        this.tabProject.sort((a, b) => {
-          const specialProjects = ["Maladie", "Vacances", "Disponible"];
-          return specialProjects.includes(a.name) && !specialProjects.includes(b.name) ? 1 
-               : !specialProjects.includes(a.name) && specialProjects.includes(b.name) ? -1 
-               : 0;
-        });
-        this.filterprojects();
 
-        //this.applyFilters(); // Appliquer le filtrage initial
-      } catch (error) {
-        console.error('Error fetching projects via ProjectService:', error);
-      }
+      // Triez le tableau en plaçant l'objet avec name: "Maladie" en dernier
+      this.tabProject.sort((a, b) => {
+        if ((a.name === "Maladie" && b.name !== "Maladie") || (a.name === "Vacances" && b.name !== "Vacances") || (a.name === "Disponible" && b.name !== "Disponible")) {
+          return 1; // Mettez "Maladie" en dernier
+        } else if ((a.name !== "Maladie" && b.name === "Maladie") || (a.name !== "Vacances" && b.name === "Vacances") || (a.name !== "Disponible" && b.name === "Disponible")) {
+          return -1; // Mettez "Maladie" en premier
+        } else {
+          return 0; // Les autres éléments restent dans l'ordre actuel
+        }
+      });
+      this.filterprojects();
+
+    } catch (error) {
+      console.error('Error fetching projects via ProjectService:', error);
     }
-    
+  }
   getmonth(dateString) {
     const parts = dateString.split('_');
 
@@ -660,142 +597,5 @@ console.log("bebebebbe",this.tabProject)
     this.weeks = weeks;
   }
 
-async getGroups(usersId) {
- console.log('hello : ',)
-  const domainId = this.profileService.profile.idDomaine; // Récupérer le domaine actuel
-  this.allprojects = await this.projectService.fetchProjects(usersId); // Charger les projets de l'utilisateur
-
-  const allGroups = await this.projectService.getGroupsByDomain(domainId); // Charger tous les groupes du domaine
-  this.groups = allGroups.filter(group =>
-    this.allprojects.some(project => project.groupId === group.id)
-  );
-}
-
-async onGroupSelected() {
- // this.applyFilters();
- this.selectedBrand = '';
-  this.selectedProduct = '';
-  this.selectedMarque = '';
-  if (this.selectedGroup) {
-    this.allprojects = await this.projectService.fetchProjects(this.currentUser);
-console.log("shshhshshshh",this.fetchProjects())
-    const allBrands = await this.projectService.getBrandsByGroup(this.selectedGroup);
-    this.brands = allBrands.filter(brand =>
-      this.allprojects.some(project => project.brandId === brand.id)
-    );
-  }
-}
-async onBrandSelected() {
-  this.selectedProduct = '';
-  this.selectedMarque = '';
-  if (this.selectedGroup && this.selectedBrand) {
-    this.allprojects = await this.projectService.fetchProjects(this.currentUser);
-
-    const allProducts = await this.projectService.getProductsByBrand(this.selectedGroup, this.selectedBrand);
-    this.products = allProducts.filter(product =>
-      this.allprojects.some(project => project.productId === product.id)
-    );
-  }
-}
-async onProductSelected() {
-  this.selectedMarque = '';
-
-  if (this.selectedGroup && this.selectedBrand && this.selectedProduct) {
-    this.allprojects = await this.projectService.fetchProjects(this.currentUser);
-
-    const allMarques = await this.projectService.getMarquesByProduct(this.selectedGroup, this.selectedBrand, this.selectedProduct);
-    this.marques = allMarques.filter(marque =>
-      this.allprojects.some(project => project.marqueId === marque.id)
-    );
-  }
-}
-
-async onMarqueSelected() {
-
-  this.selectedMedia= '';
-
-  if (this.selectedGroup && this.selectedBrand && this.selectedProduct && this.selectedMarque) {
-    this.allprojects = await this.projectService.fetchProjects(this.currentUser);
-
-    const allMedias = await this.projectService.getMediaByMarque(this.selectedGroup, this.selectedBrand, this.selectedProduct,this.selectedMarque);
-    this.medias = allMedias.filter(media =>
-      this.allprojects.some(project => project.mediaId === media.id)
-    );
-  }
-}
-/*
-applyFilters(): void {
-/* if (!this.selectedGroup && !this.selectedBrand && !this.selectedProduct && !this.selectedMarque) {
-    // Aucun filtre sélectionné, afficher tous les projets
-    this.tabProject = this.allprojects;
-  } else if (!this.selectedGroup || !this.selectedBrand || !this.selectedProduct || !this.selectedMarque) {
-    // Afficher seulement "Maladie", "Vacances" et "Disponible" si certains filtres sont manquants
-    this.tabProject = this.allprojects.filter(project => 
-      ['Maladie', 'Vacances', 'Disponible'].includes(project.name)
-    );
-  }/* else {
-    // Appliquer les filtres basés sur le groupe, la marque, le produit et la marque
-   /* this.tabProject = this.allprojects.filter(project => 
-      (project.groupId === this.selectedGroup) &&
-      (project.brandId === this.selectedBrand) &&
-      (project.productId === this.selectedProduct) &&
-      (project.marqueId === this.selectedMarque) ||
-      ['Maladie', 'Vacances', 'Disponible'].includes(project.name)
-    );
-  }*/
-
-  // Appliquer le filtrage des projets pour les jours de week-end et fériés
-  /*this.filterprojects();
-}*/
-applyFilters() {
-  this.appliedGroup = this.selectedGroup;
-  this.appliedBrand = this.selectedBrand;
-  this.appliedProduct = this.selectedProduct;
-  this.appliedMarque = this.selectedMarque;
-  this.appliedMedia = this.selectedMedia;
-
-}
-resetFilters() {
-  this.selectedGroup = '';
-  this.selectedBrand = '';
-  this.selectedProduct = '';
-  this.selectedMarque = '';
-  this.selectedMedia = '';
-
-  this.appliedGroup = null;
-  this.appliedBrand = null;
-  this.appliedProduct = null;
-  this.appliedMarque = null;
-  this.appliedMedia= null;
-  this.brands = [];
-  this.products = [];
-  this.marques = [];
-  this.medias = [];
-
-  // Call any additional functions to refresh data if necessary
-  this.fetchProjects();
-}
-//////
-calculateTotalHoursAllProjects(): number {
-  let totalHours = 0;
-
-  this.tabProject.forEach((project) => {
-    project.days.forEach((day) => {
-      const hours = parseFloat(day.nbHeure);
-      if (!isNaN(hours)) {
-        totalHours += hours;
-      }
-    });
-  });
-
-  return totalHours;
-}
-
-showFilters: boolean = false; // Variable to track filter visibility
-  // Other variables...
-
-  toggleFilter() {
-    this.showFilters = !this.showFilters; // Toggle the visibility
-  }
 }
 

@@ -181,7 +181,6 @@ export class RemoteComponent implements OnInit {
   async loadUserRole(): Promise<void> {
     try {
       this.userRole = await this.profileService.getUserRole();
-      console.log('User role:', this.userRole);
     } catch (error) {
       console.error('Error loading user role:', error);
     }
@@ -205,7 +204,6 @@ export class RemoteComponent implements OnInit {
       this.displayNames = await this.remoteService.getAllDisplayNames();
       // Récupérer l'utilisateur actuel
       const currentUserId = await this.auth.getCurrentUserId(); // Méthode fictive, ajustez selon votre AuthService
-      console.log("test 11111", currentUserId);
       // Trier les noms par ordre alphabétique
       this.displayNames.sort((a, b) => {
         /* if (a.id === currentUserId) return -1; // Mettre l'utilisateur actuel en premier
@@ -241,7 +239,6 @@ export class RemoteComponent implements OnInit {
         this.currentWeekDays.push({ date: formattedDay, isDayOff });
       }
     }
-    console.log('Current week days:', this.currentWeekDays);
   }
 
   previousWeek() {

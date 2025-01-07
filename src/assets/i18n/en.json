@@ -15,8 +15,7 @@
     },
     "role": {
       "user": "User",
-      "admin": "Administrator",
-      "manager": "Manager"
+      "admin": "Administrator"
     },
     "close": "Close",
     "activate": "Account activated",
@@ -113,11 +112,8 @@
       "userByMonthWithProject": "User By Month with Project",
       "projectByMonthOf": "Project By Month of",
       "in_year": "in year",
-      "filter": "Filter",
-      "apply": "Apply",
-    "reset": "Reset",
       "table": {
-        "name": "Tasks",
+        "name": "Project name",
         "actions": "Actions",
         "role": "Role",
         "added_at": "Created on",
@@ -127,16 +123,11 @@
       },
       "add-dialog": {
         "title": "Add project",
-        "name": "Task",
+        "name": "Project name",
         "users": "Users",
         "maneger": "Maneger",
         "action": "Create",
-        "update": "Update",
-        "origine": "Origin",
-        "media": "Media",
-        "group": "Group",
-        "client": "Client",
-        "marque": "Brand"
+        "update": "Update"
       },
       "success": {
         "title": "The project is successfully added",
@@ -307,7 +298,9 @@
       "Month": "Month",
       "Week": "Week",
       "Today": "Today"
-    },
+    },  "hr-policies": { 
+      "titre ":"HR Policies"
+  },
     "status": {
       "On going": "On going",
       "Improved": "Approved",

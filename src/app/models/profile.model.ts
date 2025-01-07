@@ -8,7 +8,6 @@ export interface Profile {
   idDomaine: string;
   last_connected: string;
   photoURL: string;
-  managerDirect: string;
 }
 
 export const enum UserRole {

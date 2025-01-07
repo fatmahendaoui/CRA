@@ -12,8 +12,6 @@ import { TranslocoModule } from "@ngneat/transloco";
 import { UsersService } from "../../users/services/users.service";
 import { Profile } from "src/app/models/profile.model";
 import { ProjectService } from "../services/projects.service";
-import { Brand, Group, Marque, Product } from "../models/Project.model";
-import { ProfileService } from "src/app/services/profile.service";
 
 @Component({
   standalone: true,
@@ -33,44 +31,6 @@ import { ProfileService } from "src/app/services/profile.service";
 
     <form class="invite-user-form" [formGroup]="formGroup" (ngSubmit)="inviteUser()">
     <mat-form-field appearance="outline">
-  <mat-label>{{ 'features.projects.add-dialog.origine' | transloco }}</mat-label>
-  <input matInput formControlName="group" />
-  <mat-error *ngIf="formGroup.get('group')?.hasError('required')">
-    {{ 'common.form.required' | transloco }}
-  </mat-error>
-</mat-form-field>
-
-<mat-form-field appearance="outline">
-  <mat-label>{{ 'features.projects.add-dialog.group' | transloco }}</mat-label>
-  <input matInput formControlName="brand" />
-  <mat-error *ngIf="formGroup.get('brand')?.hasError('required')">
-    {{ 'common.form.required' | transloco }}
-  </mat-error>
-</mat-form-field>
-
-<mat-form-field appearance="outline">
-  <mat-label>{{ 'features.projects.add-dialog.client' | transloco }}</mat-label>
-  <input matInput formControlName="product" />
-  <mat-error *ngIf="formGroup.get('product')?.hasError('required')">
-    {{ 'common.form.required' | transloco }}
-  </mat-error>
-</mat-form-field>
-
-<mat-form-field appearance="outline">
-  <mat-label>{{ 'features.projects.add-dialog.marque' | transloco }}</mat-label>
-  <input matInput formControlName="marque" />
-  <mat-error *ngIf="formGroup.get('marque')?.hasError('required')">
-    {{ 'common.form.required' | transloco }}
-  </mat-error>
-</mat-form-field>
-<mat-form-field appearance="outline">
-  <mat-label>{{ 'features.projects.add-dialog.media' | transloco }}</mat-label>
-  <input matInput formControlName="media" />
-  <mat-error *ngIf="formGroup.get('media')?.hasError('required')">
-    {{ 'common.form.required' | transloco }}
-  </mat-error>
-</mat-form-field>
-   <mat-form-field appearance="outline">
         <mat-label>
         {{ 'features.projects.add-dialog.name' | transloco }}
         </mat-label>
@@ -83,14 +43,6 @@ import { ProfileService } from "src/app/services/profile.service";
         </mat-error>
       </mat-form-field>
       
-      <mat-form-field appearance="outline">
-        <mat-label>
-          {{ 'features.projects.add-dialog.maneger' | transloco }}
-        </mat-label>
-        <mat-select formControlName="manager">
-          <mat-option *ngFor="let element of usersMan" [value]="element.uid">{{element.email}}</mat-option>
-        </mat-select>
-      </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>
@@ -148,30 +100,17 @@ export class editProjectComponent implements OnInit {
   private readonly projectService = inject(ProjectService);
   public formGroup: FormGroup;
   private readonly usersService = inject(UsersService);
-  private readonly profileService = inject(ProfileService);
   users: Profile[] = [];
   usersMan: Profile[] = [];
   initialManager: Profile | undefined;
-  ///////
-  groups: Group[] = []; // Define groups, brands, products, marques based on your data model
-  brands: Brand[] = [];
-  products: Product[] = [];
-  marques: Marque[] = [];
-
   constructor(@Inject(MAT_BOTTOM_SHEET_DATA) public data: any) {
   }
   public ngOnInit(): void {
-    console.log("fffffffff", this.data)
-
     this.formGroup = this.formBuilder.group({
       users: [[], Validators.required],
       manager: ['', Validators.required],
-      name: ['', Validators.required],
-      group: ['', Validators.required],
-      brand: ['', Validators.required],
-      product: ['', Validators.required],
-      marque: ['', Validators.required],
-      media: ['', Validators.required],});
+      name: ['', Validators.required]
+    });
     this.usersService.fetchAllUsers().subscribe((list) => {
       this.users = list;
       // Filtrer les utilisateurs ayant le rôle "manager"
@@ -187,48 +126,15 @@ export class editProjectComponent implements OnInit {
 
         });
       });
-      /////
-       // New methods to fetch names based on IDs
-    const groupNamePromise = this.projectService.getGroupsByDomain( this.profileService.profile.idDomaine).then(groups => {
-      const group = groups.find(g => g.id === this.data.groupId);
-      this.formGroup.get('group')?.setValue(group ? group.name : '');
-      console.log('gggg',group?.name)
-
-    });
-console.log()
-    const brandNamePromise = this.projectService.getBrandsByGroup(this.data.groupId).then(brands => {
-      const brand = brands.find(b => b.id === this.data.brandId);
-      this.formGroup.get('brand')?.setValue(brand ? brand.name : '');
-      console.log('bbbb',brand?.name)
-
-    });
-
-    const productNamePromise = this.projectService.getProductsByBrand(this.data.groupId, this.data.brandId).then(products => {
-      const product = products.find(p => p.id === this.data.productId);
-      this.formGroup.get('product')?.setValue( product?.name );
-      console.log('ppppp',product?.name)
-    });
-
-    const marqueNamePromise = this.projectService.getMarquesByProduct(this.data.groupId, this.data.brandId, this.data.productId).then(marques => {
-      const marque = marques.find(m => m.id === this.data.marqueId);
-      this.formGroup.get('marque')?.setValue(marque ? marque.name : '');
-      console.log('bbbb',marque?.name)
-
-    });
-    const mediaNamePromise = this.projectService.getMediaByMarque(this.data.groupId, this.data.brandId, this.data.productId,this.data.marqueId
-    ).then(medias => {
-      const media = medias.find(m => m.id === this.data.mediaId);
-      this.formGroup.get('media')?.setValue(media ? media.name : '');
-      console.log('bbbb',media?.name)
-
-    });
-////
-      Promise.all([...promises, groupNamePromise, brandNamePromise, productNamePromise, marqueNamePromise]).then(() => {
+      Promise.all(promises).then(() => {
         this.formGroup.get('users')?.setValue(this.formGroup.get('users')?.value);
         this.formGroup.get('manager')?.setValue(this.initialManager?.uid);
         this.formGroup.get('name')?.setValue(this.data.nameproject);
+
       });
     });
+
+    // 
 
   }
 

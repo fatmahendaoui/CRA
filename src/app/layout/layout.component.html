@@ -3,9 +3,9 @@
 
     <div class="logo-chips">
       <img routerLink="/dashbord" class="brand"
-        [src]="domaineName !== 'Tanitlab' ? '/assets/images/ealan.png' : '/assets/images/logo.png'" alt="Logo"
-        role="presentation" [style.max-width]="domaineName === 'Tanitlab' ? '150px' : '110px'"
-        [style.height]="domaineName === 'Tanitlab' ? 'auto': 'auto'">
+     src="/assets/images/logo.png" alt="Logo"
+     role="presentation" style="max-width: 188px; height: auto;">
+
     </div>
 
     <div class="user-container-metadata" *ngIf="user">
@@ -113,7 +113,12 @@
           <mat-icon>home_work</mat-icon>
           {{ 'features.remote.titre' | transloco }}
         </button>
-
+        <button class="custom-icon" [routerLink]="['/hr-policies']">
+          <mat-icon>
+            contact_page
+            </mat-icon>
+          {{ 'features.hr-policies.titre '| transloco }}
+        </button>
       </div>
     </mat-nav-list></mat-sidenav-container>
   <!-- Language Selection Dropdown -->

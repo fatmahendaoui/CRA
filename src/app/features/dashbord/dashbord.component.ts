@@ -264,7 +264,9 @@ export class DashbordComponent implements OnInit {
   getYear(op: boolean): void {
     const newYear = this.year + (op ? 1 : -1);
     this.updateMonthYear(this.month2, newYear);
-    this.getallProjectwithsommeNumber()
+    this.getallProjectwithsommeNumber();
+    this.fetchUser()
+    this.fetchProjects();
   }
   private updateMonthYear(newMonth: number, newYear: number): void {
 

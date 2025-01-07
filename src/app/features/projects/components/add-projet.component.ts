@@ -12,12 +12,6 @@ import { TranslocoModule } from "@ngneat/transloco";
 import { UsersService } from "../../users/services/users.service";
 import { Profile } from "src/app/models/profile.model";
 import { ProjectService } from "../services/projects.service";
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
-import { ProfileService } from 'src/app/services/profile.service';
-import { Observable } from "rxjs";
-import { AsyncPipe } from '@angular/common';
-import { startWith, map } from 'rxjs/operators';
-import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   standalone: true,
@@ -36,84 +30,20 @@ import { v4 as uuidv4 } from 'uuid';
     </mat-toolbar>
 
     <form class="invite-user-form" [formGroup]="formGroup" (ngSubmit)="inviteUser()">
-      <!-- Origine Autocomplete -->
-  <mat-form-field appearance="outline">
-    <mat-label>{{ 'features.projects.add-dialog.origine' | transloco }}</mat-label>
-    <input type="text" matInput formControlName="group" [matAutocomplete]="autoGroup" />
-    <mat-autocomplete #autoGroup="matAutocomplete">
-      <mat-option *ngFor="let group of filteredGroups | async" [value]="group">
-        {{ group }}
-      </mat-option>
-    </mat-autocomplete>
-  </mat-form-field>
-
-  <!-- Groupe Autocomplete -->
-  <mat-form-field appearance="outline">
-    <mat-label>{{ 'features.projects.add-dialog.group' | transloco }}</mat-label>
-    <input type="text" matInput formControlName="brand" [matAutocomplete]="autoBrand" />
-    <mat-autocomplete #autoBrand="matAutocomplete">
-      <mat-option *ngFor="let brand of filteredBrands | async" [value]="brand">
-        {{ brand }}
-      </mat-option>
-    </mat-autocomplete>
-  </mat-form-field>
-
-  <!-- Client Autocomplete -->
-  <mat-form-field appearance="outline">
-    <mat-label>{{ 'features.projects.add-dialog.client' | transloco }}</mat-label>
-    <input type="text" matInput formControlName="product" [matAutocomplete]="autoProduct" />
-    <mat-autocomplete #autoProduct="matAutocomplete">
-      <mat-option *ngFor="let product of filteredProducts | async" [value]="product">
-        {{ product}}
-      </mat-option>
-    </mat-autocomplete>
-  </mat-form-field>
-
-   <!-- Marque Autocomplete -->
-   <mat-form-field appearance="outline">
-    <mat-label>{{ 'features.projects.add-dialog.marque' | transloco }}</mat-label>
-    <input type="text" matInput formControlName="marque" [matAutocomplete]="autoMarque" />
-    <mat-autocomplete #autoMarque="matAutocomplete">
-      <mat-option *ngFor="let marque of filteredMarques | async" [value]="marque">
-        {{ marque }}
-      </mat-option>
-    </mat-autocomplete>
-  </mat-form-field>
- <!-- New MEDIA Autocomplete -->
- <mat-form-field appearance="outline">
-        <mat-label>{{ 'features.projects.add-dialog.media' | transloco }}</mat-label>
-        <input type="text" matInput formControlName="media" [matAutocomplete]="autoMedia" />
-        <mat-autocomplete #autoMedia="matAutocomplete">
-          <mat-option *ngFor="let media of filteredMedia | async" [value]="media">
-            {{ media }}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-<!-- Name Field with Autocomplete like Media -->
-<mat-form-field appearance="outline">
-  <mat-label>{{ 'features.projects.add-dialog.name' | transloco }}</mat-label>
-  <input type="text" matInput formControlName="name" [matAutocomplete]="autoName" />
-  <mat-autocomplete #autoName="matAutocomplete">
-    <mat-option *ngFor="let name of filteredNames | async" [value]="name">
-      {{ name }}
-    </mat-option>
-  </mat-autocomplete>
-  <mat-error *ngIf="formGroup.get('name')?.hasError('required')">
-    {{ 'common.form.required' | transloco }}
-  </mat-error>
-  <mat-error *ngIf="formGroup.get('name')?.hasError('name')">
-    {{ 'common.form.name' | transloco }}
-  </mat-error>
-</mat-form-field>
-    <!-- Manager, Users -->
       <mat-form-field appearance="outline">
         <mat-label>
-          {{ 'features.projects.add-dialog.maneger' | transloco }}
+        {{ 'features.projects.add-dialog.name' | transloco }}
         </mat-label>
-        <mat-select formControlName="manager">
-          <mat-option *ngFor="let element of usersMan" [value]="element.uid">{{element.email}}</mat-option>
-        </mat-select>
+        <input matInput formControlName="name" />
+        <mat-error *ngIf="formGroup.get('name')?.hasError('required')">
+          {{ 'common.form.required' | transloco }}
+        </mat-error>
+        <mat-error *ngIf="formGroup.get('name')?.hasError('name')">
+          {{ 'common.form.name' | transloco }}
+        </mat-error>
       </mat-form-field>
+
+      
       
       <mat-form-field appearance="outline">
         <mat-label>
@@ -163,45 +93,16 @@ import { v4 as uuidv4 } from 'uuid';
     ReactiveFormsModule,
     TranslocoModule,
     MatIconModule,
-    MatAutocompleteModule,
-    AsyncPipe
-    ],
+  ],
 })
 export class addNewProjectComponent implements OnInit {
   private readonly bottomSheetRef = inject(MatBottomSheetRef<addNewProjectComponent>);
   private readonly formBuilder = inject(FormBuilder);
-  private readonly usersService = inject(UsersService);
-  private readonly profileService=inject(ProfileService)
-  private readonly projectService = inject(ProjectService);
-  
   public formGroup: FormGroup;
+  private readonly usersService = inject(UsersService);
+  private readonly projectService = inject(ProjectService);
   users: Profile[]
   usersMan: Profile[];
-// Data for autocomplete options
-public groups = ['Locaux', 'Etranger'];
-public brands = ['DU DIGITAL', 'PGH', 'ROAD HERO', 'Second chance', 'STE La paix -', 'Textil retail'];
-public products = ['DU DIGITAL', 'Med oil compagny', 'CHAHRAZED', 'CITY MARKET', 'GIPA', 'Mazraa Market', 'KIABI'];
-public marques = ['DU DIGITAL', 'Jadida', 'Golden ships', 'ICE VEGAS', 'OLA', 'ROAD HERO'];
-public mediaTypes = ['Conseil', 'Digital', 'Kepler', 'Offline', 'Produit'];
-public projectNames = [
-  'Strategie', 'Account Mgt', 'Training', 'Etude et recherche "SURVEY"',
-  'Audit Technique', 'UX UI', 'Audit SEO', 'Brand Book', 'Audit DATA',
-  'Social Media Mgt', 'Performance - Paid Social', 'Performance - Google Ads',
-  'Content', 'Influenceur', 'Display', 'Programmatic', 'LISTENING & E-REPUTATION',
-  'MMM (Mix Media Modeling)', 'Segmentation', 'Scoring', 'TV', 'Content- TV', 
-  'Content- Radio', 'Radio', 'OOH', 'Presse', 'DASHBOARDING', 'Chatbot - IA',
-  'Data Management & Reporting'
-];
-  // Filtered autocomplete options
-  public filteredGroups: Observable<string[]>;
-  public filteredBrands: Observable<string[]>;
-  public filteredProducts: Observable<string[]>;
-  public filteredMarques: Observable<string[]>;
-  public filteredMedia: Observable<string[]>;
-  public filteredNames: Observable<string[]>;
-   /**
-   * Initialization logic
-   */
   public ngOnInit(): void {
     this.usersService.fetchAllUsers().subscribe(list => {
       this.users = list
@@ -211,65 +112,29 @@ public projectNames = [
     this.formGroup = this.formBuilder.group({
       name: ['', Validators.required],
       users: [[], Validators.required],
-      manager: ['', Validators.required] ,
-      group: ['', Validators.required],
-      brand: ['', Validators.required],
-      product: ['', Validators.required],
-      marque: ['', Validators.required],
-      media: ['', Validators.required]  // New MEDIA field
+      manager: ['', Validators.required]  // Ajoutez ce champ pour le manager
+    });
 
-     });
-      // Setup filtering for each field using a generalized method
-    this.filteredGroups = this._setupFilter('group', this.groups);
-    this.filteredBrands = this._setupFilter('brand', this.brands);
-    this.filteredProducts = this._setupFilter('product', this.products);
-    this.filteredMarques = this._setupFilter('marque', this.marques);
-    this.filteredMedia = this._setupFilter('media', this.mediaTypes);
-    this.filteredNames = this._setupFilter('name', this.projectNames);
-    }
-
-     /**
-   * Helper to set up a filter for an autocomplete field
-   * @param controlName - Form control name
-   * @param options - List of options for autocomplete
-   */
-  private _setupFilter(controlName: string, options: string[]): Observable<string[]> {
-    return this.formGroup.get(controlName)!.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterItems(value || '', options))
-    );
-  }
-
- /**
-   * Generalized filtering function
-   */
- private _filterItems(value: string, list: string[]): string[] {
-  const filterValue = value.toLowerCase();
-  return list.filter(item => item.toLowerCase().includes(filterValue));
-}
-
-    /**
-   * Handle form submission and project creation
-   */
+  }/*
+  public getuserName() {
+    return this.formGroup.get('users')?.value;
+  }*/
   public inviteUser(): void {
+    // this.bottomSheetRef.dismiss(this.formGroup.value);
     const projectData = this.formGroup.value;
-    const idproject = uuidv4()||""; // Replace with actual ID logic if needed
-
+    const idproject = ''; // Replace this with actual ID logic
+    const iduser = '';
     this.projectService.addNewProject(
       idproject,
       projectData.name,
-      '', // Replace with user ID if applicable
+      iduser,
       projectData.manager,
-      projectData.users,
-      '', '', '', '', '','', '', '', '', '' // Replace groupId, brandId, etc., with actual IDs if needed
+      projectData.users
     );
-
+   
     this.bottomSheetRef.dismiss(this.formGroup.value);
   }
-    
- /**
-   * Close the bottom sheet
-   */
+
   public close(): void {
     this.bottomSheetRef.dismiss();
   }

@@ -139,8 +139,7 @@ export class UsersService {
         displayName: userRecord.displayName || nameFromEmail,
         email: user.email || '',
         dateEmbauche: user.dateEmbauche,
-        contractType: user.contractType,
-        managerDirect: user.managerDirect|| '',
+        contractType: user.contractType
       };
 
       if (this.profileService.profile.role === UserRole.Admin) {
@@ -149,9 +148,9 @@ export class UsersService {
 
       await setDoc(doc(this.firestore, 'membership_CRA', userRecord.uid), userData);
 
-      this.projectService.addNewProject("Disponible", "Disponible", userRecord.uid, managerId, [],'','','','','','', '', '', '', '');
-      this.projectService.addNewProject("Vacances", "Vacances", userRecord.uid, managerId, [],'','','','','','', '', '', '', '');
-      this.projectService.addNewProject("Maladie", "Maladie", userRecord.uid, managerId, [],'','','','','','', '', '', '', '');
+      this.projectService.addNewProject("Disponible", "Disponible", userRecord.uid, managerId, []);
+      this.projectService.addNewProject("Vacances", "Vacances", userRecord.uid, managerId, []);
+      this.projectService.addNewProject("Maladie", "Maladie", userRecord.uid, managerId, []);
 
       // Send email verification to the newly registered user
       await this.http.post<void>("https://us-central1-dev-cra-390314.cloudfunctions.net/add_user_cra", {
@@ -287,7 +286,6 @@ export class UsersService {
       return emails;
     }
   */
- 
   /*
    async groupUserManager(iduser: string): Promise<string[]> {
      try {
@@ -345,6 +343,7 @@ export class UsersService {
  */
   async groupUserManager(iduser: string): Promise<string[]> {
     try {
+      console.log('iduser ::::', iduser);
 
       // Get the user's projects
       const projectsSnapshot = await getDocs(
@@ -370,6 +369,8 @@ export class UsersService {
 
       // Remove duplicate emails and filter out empty strings
       const uniqueEmails = Array.from(new Set(emails.filter(email => email !== '')));
+
+      console.log('Unique Emails of managed users:', uniqueEmails);
       return uniqueEmails;
     } catch (error) {
       console.error('Error in groupUserManager:', error);
