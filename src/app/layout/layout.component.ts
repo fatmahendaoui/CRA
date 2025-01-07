@@ -45,7 +45,6 @@ import { CommonModule } from '@angular/common';
 })
 export class LayoutComponent implements OnInit, OnDestroy {
 
-  public showHorizontalNavbar: boolean = false;
   public selectedLanguage: string = 'fr'; // Langue par défaut
 
   // Subject pour la gestion de la destruction du composant
@@ -75,10 +74,15 @@ export class LayoutComponent implements OnInit, OnDestroy {
       this.profileImage = res;
     });
     //defualt language
-    const defaultLanguage = localStorage.getItem('current_language');
-    if (defaultLanguage) {
-      this.selectedLanguage = defaultLanguage;
+    const savedLanguage = localStorage.getItem('current_language');
+    if (savedLanguage) {
+      this.selectedLanguage = savedLanguage;
+    } else {
+      this.selectedLanguage = 'fr'; // Langue par défaut
+      localStorage.setItem('current_language', 'fr'); // Sauvegarder dans localStorage
     }
+    this.transloco.setActiveLang(this.selectedLanguage);
+  
 
     const domaineId = this.profileService.profile.idDomaine;
     this.authService.getDomainName(domaineId).then((domaineName) => {
@@ -134,16 +138,13 @@ export class LayoutComponent implements OnInit, OnDestroy {
     // Retourner la valeur de isAdmin
     return this.isAdmin;
   }
-
+// Méthode pour changer la langue
   public onSelectionChange(language: string): void {
-    this.selectedLanguage = language; // Mettre à jour la langue sélectionnée
-    this.transloco.setActiveLang(language); // Définir la langue active
-    localStorage.setItem('current_language', language); // Sauvegarder la langue sélectionnée dans le stockage local
+    this.selectedLanguage = language; 
+    this.transloco.setActiveLang(language); 
+    localStorage.setItem('current_language', language); 
   }
-  public toggleHorizontalNavbar() {
-    this.showHorizontalNavbar = !this.showHorizontalNavbar;
 
-  }
 
 
 

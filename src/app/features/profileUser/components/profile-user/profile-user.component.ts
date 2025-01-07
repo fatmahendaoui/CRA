@@ -412,7 +412,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
           if (projectData) {
             // Calculer le total des heures du congé de maladie pour ce projet
             const totalHours = this.calculateTotalHours(projectData, maladieProjectId);
-            remainingHours = 32 - totalHours; // Calcul du nombre d'heures restantes
+            remainingHours = 64 - totalHours; // Calcul du nombre d'heures restantes
 
             // Convertir les heures restantes en jours et heures
             const remainingHoursText = this.profilService.convertToDaysAndHours(remainingHours);
@@ -449,7 +449,6 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
             if (totalHours < 4) {
               return;
             }
-          
           
             remainingHours = 176 - totalHours; // Calcul du nombre d'heures restantes
             // Convertir les heures restantes en jours et heures

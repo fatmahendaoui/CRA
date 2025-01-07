@@ -26,9 +26,6 @@
         </button>
 
       </div>
-      <button mat-icon-button class="user-avatar-trigger" (click)="toggleHorizontalNavbar()">
-        <mat-icon class="user-menu">widgets</mat-icon>
-      </button>
       <button mat-icon-button class="user-avatar-trigger" (click)="signOut()">
         <mat-icon class="user-menu">logout</mat-icon>
       </button>
@@ -39,7 +36,7 @@
   </mat-toolbar-row>
 </mat-toolbar>
 
-<div class="horizontal-navbar" *ngIf="showHorizontalNavbar">
+<div class="horizontal-navbar" >
 
   <mat-sidenav-container class="sidenav-container">
     <mat-nav-list>
@@ -113,7 +110,12 @@
           <mat-icon>home_work</mat-icon>
           {{ 'features.remote.titre' | transloco }}
         </button>
-
+        <button class="custom-icon" [routerLink]="['/hr-policies']">
+          <mat-icon>
+            contact_page
+            </mat-icon>
+          {{ 'features.hr-policies.titre '| transloco }}
+        </button>
       </div>
     </mat-nav-list></mat-sidenav-container>
   <!-- Language Selection Dropdown -->
@@ -133,14 +135,12 @@
   <div class="select">
     <button mat-icon-button [matMenuTriggerFor]="translateLang" class="custom-icon">
       <img [src]="selectedLanguage === 'en' ? '../../assets/images/En.png' : '../../assets/images/Fr.png'"
-        alt="{{ selectedLanguage }}">{{ selectedLanguage === 'en' ? 'En' : 'Fr' }}
+        alt="{{ selectedLanguage }}">{{ selectedLanguage === 'fr' ? 'Fr' : 'En' }}
 
     </button>
   </div>
 </div>
 
-<div class="layout-container max-width-container" [ngStyle]="{
-  'margin-top.px': showHorizontalNavbar ? 118 : 62
-}">
+<div class="layout-container max-width-container" [ngStyle]="{ 'margin-top': '101px' }">
   <router-outlet></router-outlet>
 </div>

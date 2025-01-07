@@ -186,7 +186,7 @@ export class ListcongeComponent<T> implements OnInit {
   async validerConge(conge: any, numberOfDays: number): Promise<void> {
     const firestore = getFirestore();
     const congDocRef = doc(firestore, 'conge', conge.id);
-
+console.log("congee ::: ",conge);
     try {
       const { isConfirmed } = await Swal.fire({
         title: this.translocoService.translate('features.conge.validate_confirm'),
@@ -223,6 +223,7 @@ export class ListcongeComponent<T> implements OnInit {
         //documentName : Le mois (April_2024 par example )
 
         for (const doc of projectsSnapshot.docs) {
+          console.log("doc.id ::: ",doc.id,"documentName ::: ",documentName);
           if (doc.id === documentName) {
 
             // champ date f conge yekhou mois_year
@@ -371,7 +372,6 @@ export class ListcongeComponent<T> implements OnInit {
       console.error('Erreur lors de la validation du congé:', error);
     }
   }
-
 
 
   async refuserConge(conge: any): Promise<void> {

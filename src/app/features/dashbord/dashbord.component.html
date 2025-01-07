@@ -2,6 +2,28 @@
 <div class="cra">
     <div class="col-12 header-timesheet">
         <div class="filter-table">
+            <!-- Bloc moins -->
+            <div class="moins-small">
+                <mat-form-field class="date" appearance="outline">
+                  <mat-date-range-input 
+                    [rangePicker]="rangePicker" 
+                    (dateInput)="onDateRangeChange($event)">
+                    <input matStartDate placeholder="Start date" [(ngModel)]="startDate"/>
+                    <input matEndDate placeholder="End date" [(ngModel)]="endDate" />
+                  </mat-date-range-input>
+                  
+                  <mat-datepicker-toggle matIconSuffix [for]="rangePicker"></mat-datepicker-toggle>
+                  <mat-date-range-picker #rangePicker>
+                    <mat-date-range-picker-actions>
+                      <button mat-button matDateRangePickerCancel  (click)="onCancelDateRange()">Cancel</button>
+                      <button 
+                        mat-raised-button 
+                        matDateRangePickerApply 
+                        (click)="onApplyDateRange()">Apply</button>
+                    </mat-date-range-picker-actions>
+                  </mat-date-range-picker>
+                </mat-form-field>
+              </div>
             <div class="year">
                 <button mat-mini-fab color="primary" (click)="getYear(false)">
                     <mat-icon>navigate_before</mat-icon>
@@ -18,7 +40,54 @@
 <div class="mat-mdc-card">
     <mat-tab-group>
         <mat-tab class="mat-tab" label="{{ 'features.dashbord.Project-by-month' | transloco }}">
-            <div id="chart" *ngIf="data">
+          <div class="filter" *ngIf="data">
+        <mat-form-field class="field" appearance="outline">
+            <mat-label>{{ 'features.projects.add-dialog.origine' | transloco }}</mat-label>
+            <mat-select [(value)]="selectedGroup" (selectionChange)="onGroupSelected()">
+                <mat-option *ngFor="let group of groups" [value]="group.id">{{ group.name }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>{{ 'features.projects.add-dialog.group' | transloco }}</mat-label>
+            <mat-select [(value)]="selectedBrand" (selectionChange)="onBrandSelected()">
+                <mat-option *ngFor="let brand of brands" [value]="brand.id">{{ brand.name }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>{{ 'features.projects.add-dialog.client' | transloco }}</mat-label>
+            <mat-select [(value)]="selectedProduct" (selectionChange)="onProductSelected()">
+                <mat-option *ngFor="let product of products" [value]="product.id">{{ product.name }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>{{ 'features.projects.add-dialog.marque' | transloco }}</mat-label>
+            <mat-select [(value)]="selectedMarque" (selectionChange)="onMarqueSelected()">
+                <mat-option *ngFor="let marque of marques" [value]="marque.id">{{ marque.name }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>{{ 'features.projects.add-dialog.media' | transloco }}</mat-label>
+            <mat-select [(value)]="selectedMedia" (selectionChange)="onMarqueSelected()">
+                <mat-option value="All">{{ 'features.projects.add-dialog.all' | transloco }}</mat-option>
+                <mat-option *ngFor="let media of medias" [value]="media.id">{{ media.name }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Buttons for Apply and Reset -->
+        <div class="button-row">
+            <button mat-raised-button style="background-color: #E50060; color:white" (click)="applyFilters()">
+                {{ 'features.projects.apply' | transloco }}
+            </button>
+            <button mat-raised-button style="color: #193F66;" (click)="resetFilters()">
+                {{ 'features.projects.reset' | transloco }}
+            </button>
+        </div>
+    </div>
+          <div id="chart" *ngIf="data">
                 <apx-chart [tooltip]="chartOptions.tooltip" [series]="chartOptions.series" [chart]="chartOptions.chart"
                     [dataLabels]="chartOptions.dataLabels" [colors]="chartOptions.colors" [stroke]="chartOptions.stroke"
                     [plotOptions]="chartOptions.plotOptions" [xaxis]="chartOptions.xaxis"
@@ -31,7 +100,93 @@
                 <app-loader>Chargement ...</app-loader>
             </ng-container>
         </mat-tab>
-        <mat-tab class="mat-tab" label="{{ 'features.dashbord.Project-by-user' | transloco }}">
+      
+        <mat-tab class="mat-tab" label="{{ 'features.dashbord.User-by-project' | transloco }}">
+            <div class="cra" *ngIf="data">
+                <div class="col-12 header-timesheet">
+                    <div class="filter-table">
+                        <mat-form-field appearance="outline" class="filter-field">
+                            <input matInput 
+                                   type="text" 
+                                   placeholder="{{ 'features.dashbord.Search_User' | transloco }}" 
+                                   [matAutocomplete]="auto" 
+                                   [(ngModel)]="searchUser" 
+                                   (input)="filterUsers()">
+                            
+                            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onUserSelected($event)">
+                                <mat-option *ngFor="let user of filteredUsers" [value]="user">
+                                    {{ user }}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                    <div class="filter" *ngIf="data">
+                        <mat-form-field class="field"appearance="outline">
+                  <mat-label>{{ 'features.projects.add-dialog.origine' | transloco }}</mat-label>
+                  <mat-select [(value)]="selectedGroup" (selectionChange)="onGroupSelected()">
+                    <mat-option *ngFor="let group of groups" [value]="group.id">{{ group.name }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'features.projects.add-dialog.group' | transloco }}</mat-label>
+                  <mat-select [(value)]="selectedBrand" (selectionChange)="onBrandSelected()">
+                    <mat-option *ngFor="let brand of brands" [value]="brand.id">{{ brand.name }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'features.projects.add-dialog.client' | transloco }}</mat-label>
+                  <mat-select [(value)]="selectedProduct" (selectionChange)="onProductSelected()">
+                    <mat-option *ngFor="let product of products" [value]="product.id">{{ product.name }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>{{ 'features.projects.add-dialog.marque' | transloco }}</mat-label>
+                  <mat-select [(value)]="selectedMarque" (selectionChange)="onMarqueSelected()">
+                    <mat-option *ngFor="let marque of marques" [value]="marque.id">{{ marque.name }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>{{ 'features.projects.add-dialog.media' | transloco }}</mat-label>
+                    <mat-select [(value)]="selectedMedia" (selectionChange)="onMarqueSelected()">
+                      <!-- Add "All" option to the dropdown -->
+                      <mat-option value="All">{{ 'features.projects.add-dialog.all' | transloco }}</mat-option>
+                      <!-- Existing media options -->
+                      <mat-option *ngFor="let media of medias" [value]="media.id">{{ media.name }}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                 <!-- Buttons for Apply and Reset -->
+                 <div class="button-row">
+                    <button mat-raised-button style="background-color: #E50060; color:white" (click)="applyFilterss()">
+                        {{ 'features.projects.apply' | transloco }}
+                      </button>
+                      <button mat-raised-button style="color: #193F66;" (click)="resetFilterss()">
+                        {{ 'features.projects.reset' | transloco }}
+                      </button>
+                      
+                  </div>
+                </div>    
+                </div>
+            </div>
+
+            <div *ngIf="!dataProject && data">
+                <div class="error-page">
+                    <p> {{ 'features.dashbord.dashbordvideuser' | transloco }} .</p>
+                </div>
+            </div>
+
+            <div id="chart" *ngIf="dataProject">
+                <apx-chart [tooltip]="chartOptions.tooltip" [series]="chartOptionsproject.series"
+                    [chart]="chartOptionsproject.chart" [dataLabels]="chartOptionsproject.dataLabels"
+                    [colors]="chartOptionsproject.colors" [stroke]="chartOptionsproject.stroke"
+                    [plotOptions]="chartOptionsproject.plotOptions" [xaxis]="chartOptionsproject.xaxis"
+                    [title]="chartOptionsproject.title"></apx-chart>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</div>
+ <!-- <mat-tab class="mat-tab" label="{{ 'features.dashbord.Project-by-user' | transloco }}">
             <div class="cra" *ngIf="data">
                 <div class="col-12 header-timesheet">
                     <div class="filter-table">
@@ -67,42 +222,4 @@
                     [title]="chartOptionsuser.title"></apx-chart>
             </div>
         </mat-tab>
-
-
-        <mat-tab class="mat-tab" label="{{ 'features.dashbord.User-by-project' | transloco }}">
-            <div class="cra" *ngIf="data">
-                <div class="col-12 header-timesheet">
-                    <div class="filter-table">
-                        <mat-form-field appearance="outline" class="filter-field">
-                            <div class="form-field-content">
-                                <input matInput type="text"
-                                    placeholder="{{ 'features.dashbord.Search_User' | transloco }}"
-                                    [(ngModel)]="searchUser" (keyup)="filterUsers()">
-
-                                <mat-select [(ngModel)]="currentuser" (ngModelChange)="fetchUser()"
-                                    class="custom-select">
-                                    <mat-option *ngFor="let element of filteredUsers"
-                                        [value]="element">{{element}}</mat-option>
-                                </mat-select>
-                            </div>
-                        </mat-form-field>
-                    </div>
-                </div>
-            </div>
-
-            <div *ngIf="!dataProject && data">
-                <div class="error-page">
-                    <p> {{ 'features.dashbord.dashbordvideuser' | transloco }} .</p>
-                </div>
-            </div>
-
-            <div id="chart" *ngIf="dataProject">
-                <apx-chart [tooltip]="chartOptions.tooltip" [series]="chartOptionsproject.series"
-                    [chart]="chartOptionsproject.chart" [dataLabels]="chartOptionsproject.dataLabels"
-                    [colors]="chartOptionsproject.colors" [stroke]="chartOptionsproject.stroke"
-                    [plotOptions]="chartOptionsproject.plotOptions" [xaxis]="chartOptionsproject.xaxis"
-                    [title]="chartOptionsproject.title"></apx-chart>
-            </div>
-        </mat-tab>
-    </mat-tab-group>
-</div>
+    -->

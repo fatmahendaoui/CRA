@@ -40,7 +40,7 @@ export class AddcongeComponent implements OnInit {
   leavesByUser: any;
   congesLengths: { [userId: string]: number } = {};
   leavesLengths: { [userId: string]: number } = {};
-
+  isSubmitting: boolean = false;
   constructor(
     private congeService: CongeService,
     private translocoService: TranslocoService,
@@ -70,6 +70,11 @@ export class AddcongeComponent implements OnInit {
   }
 
   async onSubmit(): Promise<void> {
+    if (this.isSubmitting) {
+      return; // Empêcher toute nouvelle soumission
+    }
+  
+    this.isSubmitting = true; // Désactiver le bouton
     this.fileError = false;
   
     if (this.natureConge === 'Congé de maladie (1 jour)' && !this.selectedFile) {
@@ -156,6 +161,7 @@ export class AddcongeComponent implements OnInit {
           } catch (error) {
             console.error('Erreur lors du téléchargement du fichier:', error);
           }
+      
         }
       // Traiter les tâches secondaires de manière asynchrone
       this.processAdditionalTasks(conge, congeId);
@@ -181,6 +187,9 @@ export class AddcongeComponent implements OnInit {
       }
     } catch (error) {
       console.error('Erreur lors de l\'ajout du congé:', error);
+    }
+    finally {
+      this.isSubmitting = false; // Réactiver le bouton après la fin du traitement
     }
   }
   
