@@ -47,7 +47,7 @@ import { MatIconModule } from '@angular/material/icon';
           <mat-label>
           {{ 'features.projects.search' | transloco }}
           </mat-label>
-          <input type="text" #searchInput matInput />
+          <input type="text" #searchInput matInput /> 
         </mat-form-field>
         <span class="button filter">
     <button mat-flat-button color="accent" (click)="showFilters = !showFilters" [ngStyle]="{ 'background-color': showFilters ?  '#193F70':'#E50060' }"

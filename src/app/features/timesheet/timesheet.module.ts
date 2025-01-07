@@ -55,7 +55,7 @@ const routes: Routes = [
     MatChipsModule,
     RouterModule.forChild(routes),
     MatToolbarModule,
-    MatTooltipModule
+    MatTooltipModule,
 
 
   ],

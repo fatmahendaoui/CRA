@@ -124,3 +124,37 @@
     }
   }
 }
+
+.moins-small{
+.date {
+  width: 220px;
+  display: flex;
+  margin-top: 10px;
+  input {
+  color: #E50060;
+  font-weight: 599; 
+  font-size: 12px; 
+  }
+}
+}
+.year {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espace entre les boutons et l'année */
+}
+//filter
+.filter {
+  display: flex;
+  margin-top: 10px;
+  margin-left: 25px;
+  align-items: center; 
+  gap: 10px; 
+  flex-wrap: wrap;
+
+  .button-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom:20px ;
+  }
+}

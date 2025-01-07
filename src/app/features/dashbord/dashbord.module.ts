@@ -1,3 +1,4 @@
+import { MatTreeModule } from '@angular/material/tree';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashbordComponent } from './dashbord.component';
@@ -17,7 +18,12 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
-import {MatTabsModule} from '@angular/material/tabs';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 const routes: Routes = [
   {
@@ -50,8 +56,14 @@ const routes: Routes = [
     HttpClientModule,
     NgApexchartsModule,
     MatIconModule,
-        MatSelectModule,
-        FormsModule
+    MatSelectModule,
+    FormsModule,
+    MatTableModule,
+    MatTreeModule,
+    MatSortModule,
+    MatDatepickerModule,
+    MatNativeDateModule,    
+    MatAutocompleteModule,
   ],
   providers: [ProjectService]
 })

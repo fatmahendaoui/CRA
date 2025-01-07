@@ -1,0 +1,56 @@
+.presentation-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pdf-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.slide {
+  width: 100%;
+  text-align: center;
+  padding: 20px;
+  margin: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Ombre douce pour les cartes */
+  background-color: #fff;
+  border-radius: 8px; /* Coins arrondis */
+}
+
+
+button:disabled {
+  width: 50px;
+  height: 50px;
+  background-color: #e0e0e0; /* Couleur de fond quand le bouton est désactivé */
+  color: #b0b0b0;
+}
+
+button:hover:not(:disabled) {
+  width: 50px;
+  height: 50px;
+  background-color: #193F77; /* Changement de couleur au survol */
+}
+
+mat-icon {
+  margin: 0 8px;
+}
+
+/* Flèche gauche positionnée à gauche */
+button.prev-button {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  left: -50px; /* Ajustez pour l'espace nécessaire */
+}
+
+/* Flèche droite positionnée à droite */
+button.next-button {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  right: -50px; /* Ajustez pour l'espace nécessaire */
+}

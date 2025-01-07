@@ -1,0 +1,19 @@
+<div class="presentation-container">
+    <div class="pdf-container">
+      <button mat-mini-fab class="prev-button" (click)="previousSlide()" [disabled]="currentSlideIndex === 0">
+        <mat-icon>navigate_before</mat-icon> <!-- Flèche gauche -->
+      </button>
+      <mat-card class="slide">
+        <canvas id="pdf-canvas"></canvas>
+      </mat-card>
+      <button mat-mini-fab class="next-button" (click)="nextSlide()" [disabled]="currentSlideIndex === pdf.numPages - 1">
+        <mat-icon>navigate_next</mat-icon> <!-- Flèche droite -->
+      </button>
+    </div>
+  
+    <!-- Affiche les boutons seulement si le PDF est chargé -->
+    <div class="navigation-buttons" *ngIf="isPdfLoaded">
+      <!-- Les flèches sont déjà dans le container, cette section peut être laissée vide ou retirée -->
+    </div>
+  </div>
+  

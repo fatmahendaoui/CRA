@@ -26,7 +26,6 @@ interface Week {
   days: Day[];
 }
 
-
 @Component({
   selector: 'app-timesheet',
   templateUrl: './timesheet.component.html',
@@ -34,17 +33,16 @@ interface Week {
 })
 
 export class TimesheetComponent implements OnInit {
-groups: Group[] = [];
-brands: Brand[] = [];
-products: Product[] = [];
-marques:Marque[]=[];
-medias:Media[]=[];
-selectedGroup: string = '';
-selectedBrand: string = '';
-selectedProduct: string = '';
-selectedMarque:string='';
-selectedMedia:string='';
-
+  groups: Group[] = [];
+  brands: Brand[] = [];
+  products: Product[] = [];
+  marques: Marque[] = [];
+  medias: Media[] = [];
+  selectedGroup: string = '';
+  selectedBrand: string = '';
+  selectedProduct: string = '';
+  selectedMarque: string = '';
+  selectedMedia: string = '';
   projectName: string = '';
   nbHeure: number = 0;
   nextMonth: number;
@@ -56,13 +54,9 @@ selectedMedia:string='';
   tabProject: any[] = [];
   projects: any = [];
   allprojects: any[] = [];
-
-  days: string[] = DaysOfWeek; // Use DaysOfWeek from constants
-  month: string[] = Months; // Use Months from constants
-
-  // Dans votre composant, initialisez une variable pour stocker les semaines
+  days: string[] = DaysOfWeek;
+  month: string[] = Months;
   weeks: Week[] = [];
-
   theDate: Date;
   nameMonth: string;
   nameDay: string;
@@ -71,7 +65,7 @@ selectedMedia:string='';
   myMonth: number;
   numberOfDay: number;
   isWeekend: boolean = false;
-  totalHours: number[] = []; // Initialize an array to store total hours for each day
+  totalHours: number[] = [];
   private readonly usersService = inject(UsersService);
   private readonly day_offService = inject(Day_offService);
   private readonly transloco = inject(TranslocoService);
@@ -131,27 +125,8 @@ selectedMedia:string='';
     this.fetchAll()
 
   }
-  ///////
-  /* public fetchAll(): void {
-     this.usersService.fetchAllUsers().subscribe(users => {
-       if (this.IsManager) {
-         const managerEmails = this.usersService.groupUserManager(this.auth.currentUser!.uid);
-         this.users = users.filter(user => {
-           for (const email of managerEmails) {
-             console.log(email);
-             if (email == user.email) {
- 
-             }
-           }
-         });
-       } else {
-         this.users = users;
-       }
- 
-     })
- 
-   }
- */
+
+  // method to fetch all users and filter based on manager access
   public fetchAll(): void {
     this.usersService.fetchAllUsers().subscribe(users => {
       if (this.IsManager) {
@@ -169,10 +144,9 @@ selectedMedia:string='';
     });
   }
 
-
   ngOnInit(): void {
     this.getTimesheet();
-    this.splitDaysIntoWeeks(this.resultTimesheet); // Call the function to split days into weeks
+    this.splitDaysIntoWeeks(this.resultTimesheet);
     this.getGroups(this.currentUser)
   }
 
@@ -193,19 +167,19 @@ selectedMedia:string='';
     this.updateMonthYear(this.month2, newYear);
     this.filterprojects();
   }
-
+  // method to save the timesheet
   async Save() {
     try {
-      console.log("test 0000 : ",this.tabProject);
+      console.log("test 0000 : ", this.tabProject);
       this.tabProject.forEach((project) => {
-        this.status="";
+        this.status = "";
         this.projectService.updateProjectsMonth(project.id, this.currentUser, project.days);
-      this.changeStatus(this.status)
-       if (this.description) {
-        console.log("test 0000 : ",this.description);
+        this.changeStatus(this.status)
+        if (this.description) {
+          console.log("test 0000 : ", this.description);
           this.projectService.updateDescription(this.currentUser, this.nameMonth, this.year, this.description); // Mettre à jour la description
-        }   
-         });
+        }
+      });
       if (!this.IsAdmin) {
         handleResponseSuccessWithAlerts(
           this.transloco.translate('features.projects.dialog.success.title'),
@@ -226,6 +200,7 @@ selectedMedia:string='';
       console.error('Error adding project via ProjectService:', error);
     }
   }
+  // method to transfer the date from string to date object
   transfertdate(x) {
     let result
     const parts = x.split('_');
@@ -240,6 +215,7 @@ selectedMedia:string='';
     }
     return result;
   }
+  // method to get the index of the month from the name
   getMonthIndex(monthName: string): number {
     const months = [
       'January', 'February', 'March', 'April', 'May', 'June',
@@ -247,52 +223,53 @@ selectedMedia:string='';
     ];
     return months.indexOf(monthName);
   }
-    async Savewithemail() {
-      try {
-        // Parcourir les projets et mettre à jour les informations
-        this.tabProject.forEach((project) => {
-          this.projectService.updateProjectsMonth(project.id, this.currentUser, project.days);
-        });
-    
-        // Définir les données pour la notification
-        let data = {
-          "nameRequest": this.displayNamecurent,
-          "uid": this.currentUser,
-          "date": new Date(this.transfertdate(this.nameMonth + '_' + this.year)),
-          "month": this.nameMonth,
-          "year": this.year
-        };
-    
-        // Envoyer la notification à l'administrateur
-        await this.projectService.sendNotificationToAdmin(data);
-    
-        // Modifier le statut à "Submitted"
-        this.status = 'Submitted';
-        await this.changeStatus(this.status);
-    
-        // Mettre à jour l'interface utilisateur
-        this.fetchProjects();
-        this.filterprojects();
-    
-        // Afficher un message de succès
-        handleResponseSuccessWithAlerts(
-          this.transloco.translate('features.projects.dialog.success.title'),
-          this.transloco.translate('features.projects.dialog.success.message'),
-          this.transloco.translate('common.close'),
-          () => { }
-        );
-      } catch (error) {
-        console.error('Error adding project via ProjectService:', error);
-      }
+  // method to save the timesheet and send email notifications
+  async Savewithemail() {
+    try {
+      // Parcourir les projets et mettre à jour les informations
+      this.tabProject.forEach((project) => {
+        this.projectService.updateProjectsMonth(project.id, this.currentUser, project.days);
+      });
+
+      // Définir les données pour la notification
+      let data = {
+        "nameRequest": this.displayNamecurent,
+        "uid": this.currentUser,
+        "date": new Date(this.transfertdate(this.nameMonth + '_' + this.year)),
+        "month": this.nameMonth,
+        "year": this.year
+      };
+
+      // Envoyer la notification à l'administrateur
+      await this.projectService.sendNotificationToAdmin(data);
+
+      // Modifier le statut à "Submitted"
+      this.status = 'Submitted';
+      await this.changeStatus(this.status);
+
+      // Mettre à jour l'interface utilisateur
+      this.fetchProjects();
+      this.filterprojects();
+
+      // Afficher un message de succès
+      handleResponseSuccessWithAlerts(
+        this.transloco.translate('features.projects.dialog.success.title'),
+        this.transloco.translate('features.projects.dialog.success.message'),
+        this.transloco.translate('common.close'),
+        () => { }
+      );
+    } catch (error) {
+      console.error('Error adding project via ProjectService:', error);
     }
-    
+  }
+  // method to change the status of the timesheet
   changestatus(): void {
     setTimeout(() => {
       this.cdr.detectChanges()
       this.cdr.markForCheck()
     }, 500)
   }
-
+  // method to send email notifications
   async sendmail(Type) {
     let user;
     user = await this.projectService.getuserbyid(this.currentUser);
@@ -321,6 +298,7 @@ selectedMedia:string='';
       );
     }
   }
+  // method to handle user selection
   async onUserSelect(currentUser: any): Promise<void> {
     console.log("User selected: ", currentUser);
     if (currentUser) {
@@ -335,8 +313,8 @@ selectedMedia:string='';
       }
     }
   }
-  
-  
+
+  // method to update the month and year based on user input
   private updateMonthYear(newMonth: number, newYear: number): void {
 
     if (newMonth > 11) {
@@ -362,11 +340,11 @@ selectedMedia:string='';
       }));
   }
 
-
+  // method to get the name of the date
   getNameDate(year: number, month: number, day: number): string {
     return this.dateService.getNameDate(year, month, day);
   }
-
+  // method to generate the timesheet for a given month and year
   private generateTimesheet(year: number, month: string, numberOfDays: number): TimesheetItem[] {
     const timesheet: TimesheetItem[] = [];
     let currentWeek: TimesheetItem[] = [];
@@ -396,12 +374,12 @@ selectedMedia:string='';
 
     return timesheet;
   }
-
+  // method to check if a day is a weekend
   private isWeekendDay(year: number, month: number, day: number): boolean {
     const dayOfWeek = new Date(year, month, day).getDay();
     return dayOfWeek === 0 /* Sunday */ || dayOfWeek === 6 /* Saturday */;
   }
-
+  // method to get the input value and update the total hours for each day
   getInputValeur(value: number, day: TimesheetItem): void {
     const oldValue = day.nbHeure || '';
     if (!this.isWeekendDay(day.year, this.month2, day.day)) {
@@ -413,6 +391,7 @@ selectedMedia:string='';
     }
 
   }
+  // method to convert month name to number
   monthToNumber(month: string): number {
     const monthMap: { [key: string]: number } = {
       January: 0,
@@ -431,6 +410,7 @@ selectedMedia:string='';
 
     return monthMap[month];
   }
+  // method to get the timesheet for a given month and year
   getTimesheet(): void {
     this.numberOfDay = this.dateService.getDaysInMonth(this.year, this.month2);
     this.resultTimesheet = this.generateTimesheet(this.year, this.nameMonth, this.numberOfDay)
@@ -443,10 +423,10 @@ selectedMedia:string='';
 
 
   }
-
+  // method to change the total hours in the timesheet 
   changetotal() {
     this.init_total()
-console.log("bebebebbe",this.tabProject)
+    console.log("bebebebbe", this.tabProject)
     this.tabProject.forEach((project) => {
       for (let index = 0; index < project.days.length; index++) {
         const element = project.days[index];
@@ -464,6 +444,7 @@ console.log("bebebebbe",this.tabProject)
     });
   }
   day_offs: number[] = []
+  // method to initialize the total hours for each day
   init_total() {
 
     this.resultTimesheet = this.generateTimesheet(this.year, this.nameMonth, this.numberDayNextMonth)
@@ -474,11 +455,12 @@ console.log("bebebebbe",this.tabProject)
       }));
 
   }
+  // method to check if a day is a day off
   isDayOff(day: number): boolean {
     const isDayOff = this.day_offs.includes(day);
     return isDayOff;
   }
-
+  // method to filter projects based on selected group, brand, product, and marque
   filterprojects() {
     this.day_offs = []
     this.day_offService.fetchAllKeyDay_off(this.nameMonth, this.year, this.profileService.profile.idDomaine).then(day_offs => {
@@ -525,6 +507,7 @@ console.log("bebebebbe",this.tabProject)
 
 
   }
+  // method to calculate the total hours in a project
   calculateTotalHours(days: any[]): number {
     let totalHours = 0;
 
@@ -539,11 +522,9 @@ console.log("bebebebbe",this.tabProject)
 
     return totalHours;
   }
+  // function to calculate the total hours in the month
   calculateTotalHoursInmonth(): number {
     let totalHours = 0;
-
-    // Boucle à travers chaque élément dans days et additionne les nbHeure
-
     this.resultTimesheet.map((day) => {
       totalHours += (+day.nbHeure);
     });
@@ -552,6 +533,7 @@ console.log("bebebebbe",this.tabProject)
 
     return totalHours;
   }
+  // method to calculate the days from hours
   calculateDaysFromHours(totalHours) {
     const hoursInADay = 8;
     let final: string = '';
@@ -571,6 +553,7 @@ console.log("bebebebbe",this.tabProject)
 
     return final;
   }
+  // method to change the status of the timesheet
   async changeStatus(status): Promise<void> {
     const idDomaine = await this.profileService.getIdDomaine();
     try {
@@ -587,26 +570,29 @@ console.log("bebebebbe",this.tabProject)
     }
   }
 
-    async fetchProjects(): Promise<void> {
-      try {
-        this.allprojects = await this.projectService.fetchProjects(this.currentUser);
-        this.tabProject = this.allprojects;
-    
-        // Tri des projets : "Maladie", "Vacances" et "Disponible" en dernier
-        this.tabProject.sort((a, b) => {
-          const specialProjects = ["Maladie", "Vacances", "Disponible"];
-          return specialProjects.includes(a.name) && !specialProjects.includes(b.name) ? 1 
-               : !specialProjects.includes(a.name) && specialProjects.includes(b.name) ? -1 
-               : 0;
-        });
-        this.filterprojects();
+  //method to fetch projects
+  async fetchProjects(): Promise<void> {
+    try {
+      this.allprojects = await this.projectService.fetchProjects(this.currentUser);
+      this.tabProject = this.allprojects;
+      console.log("allprojects", this.allprojects)
 
-        //this.applyFilters(); // Appliquer le filtrage initial
-      } catch (error) {
-        console.error('Error fetching projects via ProjectService:', error);
-      }
+      // Tri des projets : "Maladie", "Vacances" et "Disponible" en dernier
+      this.tabProject.sort((a, b) => {
+        const specialProjects = ["Maladie", "Vacances", "Disponible"];
+        console.log("AAA", a, "BBBBB", b)
+        return specialProjects.includes(a.name) && !specialProjects.includes(b.name) ? 1
+          : !specialProjects.includes(a.name) && specialProjects.includes(b.name) ? -1
+            : 0;
+      });
+      this.filterprojects();
+
+      //this.applyFilters(); // Appliquer le filtrage initial
+    } catch (error) {
+      console.error('Error fetching projects via ProjectService:', error);
     }
-    
+  }
+  //method to get the month from the date string
   getmonth(dateString) {
     const parts = dateString.split('_');
 
@@ -616,6 +602,7 @@ console.log("bebebebbe",this.tabProject)
     } else {
     }
   }
+  //method to get the year from the date string
   getyear(dateString) {
     const parts = dateString.split('_');
     if (parts.length >= 2) {
@@ -625,16 +612,16 @@ console.log("bebebebbe",this.tabProject)
       return null
     }
   }
+  //method to get the index of the month from the name
   getMonthIndexFromName(monthName: string): number {
     return Months.indexOf(monthName); // Assuming Months array contains month names
   }
-
+  //fuction to get the ISO week number of a date
   getISOWeek(date: Date): number {
     const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
     const pastDaysOfYear = (date.getTime() - firstDayOfYear.getTime()) / 86400000;
     return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
   }
-
   // Fonction pour diviser les jours en semaines
   splitDaysIntoWeeks(days: TimesheetItem[]): void {
     const weeks: Week[] = [];
@@ -659,141 +646,119 @@ console.log("bebebebbe",this.tabProject)
 
     this.weeks = weeks;
   }
+// method to get the groups by domain
+  async getGroups(usersId) {
+    console.log('hello : ',)
+    const domainId = this.profileService.profile.idDomaine; // Récupérer le domaine actuel
+    this.allprojects = await this.projectService.fetchProjects(usersId); // Charger les projets de l'utilisateur
 
-async getGroups(usersId) {
- console.log('hello : ',)
-  const domainId = this.profileService.profile.idDomaine; // Récupérer le domaine actuel
-  this.allprojects = await this.projectService.fetchProjects(usersId); // Charger les projets de l'utilisateur
-
-  const allGroups = await this.projectService.getGroupsByDomain(domainId); // Charger tous les groupes du domaine
-  this.groups = allGroups.filter(group =>
-    this.allprojects.some(project => project.groupId === group.id)
-  );
-}
-
-async onGroupSelected() {
- // this.applyFilters();
- this.selectedBrand = '';
-  this.selectedProduct = '';
-  this.selectedMarque = '';
-  if (this.selectedGroup) {
-    this.allprojects = await this.projectService.fetchProjects(this.currentUser);
-console.log("shshhshshshh",this.fetchProjects())
-    const allBrands = await this.projectService.getBrandsByGroup(this.selectedGroup);
-    this.brands = allBrands.filter(brand =>
-      this.allprojects.some(project => project.brandId === brand.id)
+    const allGroups = await this.projectService.getGroupsByDomain(domainId); // Charger tous les groupes du domaine
+    this.groups = allGroups.filter(group =>
+      this.allprojects.some(project => project.groupId === group.id)
     );
   }
-}
-async onBrandSelected() {
-  this.selectedProduct = '';
-  this.selectedMarque = '';
-  if (this.selectedGroup && this.selectedBrand) {
-    this.allprojects = await this.projectService.fetchProjects(this.currentUser);
-
-    const allProducts = await this.projectService.getProductsByBrand(this.selectedGroup, this.selectedBrand);
-    this.products = allProducts.filter(product =>
-      this.allprojects.some(project => project.productId === product.id)
-    );
+// method to get the brand by group
+  async onGroupSelected() {
+    // this.applyFilters();
+    this.selectedBrand = '';
+    this.selectedProduct = '';
+    this.selectedMarque = '';
+    if (this.selectedGroup) {
+      this.allprojects = await this.projectService.fetchProjects(this.currentUser);
+      console.log("shshhshshshh", this.fetchProjects())
+      const allBrands = await this.projectService.getBrandsByGroup(this.selectedGroup);
+      this.brands = allBrands.filter(brand =>
+        this.allprojects.some(project => project.brandId === brand.id)
+      );
+    }
   }
-}
-async onProductSelected() {
-  this.selectedMarque = '';
+  // method to get the product by brand
+  async onBrandSelected() {
+    this.selectedProduct = '';
+    this.selectedMarque = '';
+    if (this.selectedGroup && this.selectedBrand) {
+      this.allprojects = await this.projectService.fetchProjects(this.currentUser);
 
-  if (this.selectedGroup && this.selectedBrand && this.selectedProduct) {
-    this.allprojects = await this.projectService.fetchProjects(this.currentUser);
-
-    const allMarques = await this.projectService.getMarquesByProduct(this.selectedGroup, this.selectedBrand, this.selectedProduct);
-    this.marques = allMarques.filter(marque =>
-      this.allprojects.some(project => project.marqueId === marque.id)
-    );
+      const allProducts = await this.projectService.getProductsByBrand(this.selectedGroup, this.selectedBrand);
+      this.products = allProducts.filter(product =>
+        this.allprojects.some(project => project.productId === product.id)
+      );
+    }
   }
-}
+  // method to get the marque by product
+  async onProductSelected() {
+    this.selectedMarque = '';
 
-async onMarqueSelected() {
+    if (this.selectedGroup && this.selectedBrand && this.selectedProduct) {
+      this.allprojects = await this.projectService.fetchProjects(this.currentUser);
 
-  this.selectedMedia= '';
-
-  if (this.selectedGroup && this.selectedBrand && this.selectedProduct && this.selectedMarque) {
-    this.allprojects = await this.projectService.fetchProjects(this.currentUser);
-
-    const allMedias = await this.projectService.getMediaByMarque(this.selectedGroup, this.selectedBrand, this.selectedProduct,this.selectedMarque);
-    this.medias = allMedias.filter(media =>
-      this.allprojects.some(project => project.mediaId === media.id)
-    );
+      const allMarques = await this.projectService.getMarquesByProduct(this.selectedGroup, this.selectedBrand, this.selectedProduct);
+      this.marques = allMarques.filter(marque =>
+        this.allprojects.some(project => project.marqueId === marque.id)
+      );
+    }
   }
-}
-/*
-applyFilters(): void {
-/* if (!this.selectedGroup && !this.selectedBrand && !this.selectedProduct && !this.selectedMarque) {
-    // Aucun filtre sélectionné, afficher tous les projets
-    this.tabProject = this.allprojects;
-  } else if (!this.selectedGroup || !this.selectedBrand || !this.selectedProduct || !this.selectedMarque) {
-    // Afficher seulement "Maladie", "Vacances" et "Disponible" si certains filtres sont manquants
-    this.tabProject = this.allprojects.filter(project => 
-      ['Maladie', 'Vacances', 'Disponible'].includes(project.name)
-    );
-  }/* else {
-    // Appliquer les filtres basés sur le groupe, la marque, le produit et la marque
-   /* this.tabProject = this.allprojects.filter(project => 
-      (project.groupId === this.selectedGroup) &&
-      (project.brandId === this.selectedBrand) &&
-      (project.productId === this.selectedProduct) &&
-      (project.marqueId === this.selectedMarque) ||
-      ['Maladie', 'Vacances', 'Disponible'].includes(project.name)
-    );
-  }*/
+// method to get the media by marque
+  async onMarqueSelected() {
 
-  // Appliquer le filtrage des projets pour les jours de week-end et fériés
-  /*this.filterprojects();
-}*/
-applyFilters() {
-  this.appliedGroup = this.selectedGroup;
-  this.appliedBrand = this.selectedBrand;
-  this.appliedProduct = this.selectedProduct;
-  this.appliedMarque = this.selectedMarque;
-  this.appliedMedia = this.selectedMedia;
+    this.selectedMedia = '';
 
-}
-resetFilters() {
-  this.selectedGroup = '';
-  this.selectedBrand = '';
-  this.selectedProduct = '';
-  this.selectedMarque = '';
-  this.selectedMedia = '';
+    if (this.selectedGroup && this.selectedBrand && this.selectedProduct && this.selectedMarque) {
+      this.allprojects = await this.projectService.fetchProjects(this.currentUser);
 
-  this.appliedGroup = null;
-  this.appliedBrand = null;
-  this.appliedProduct = null;
-  this.appliedMarque = null;
-  this.appliedMedia= null;
-  this.brands = [];
-  this.products = [];
-  this.marques = [];
-  this.medias = [];
+      const allMedias = await this.projectService.getMediaByMarque(this.selectedGroup, this.selectedBrand, this.selectedProduct, this.selectedMarque);
+      this.medias = allMedias.filter(media =>
+        this.allprojects.some(project => project.mediaId === media.id)
+      );
+    }
+  }
+ // method to apply filters
+  applyFilters() {
+    this.appliedGroup = this.selectedGroup;
+    this.appliedBrand = this.selectedBrand;
+    this.appliedProduct = this.selectedProduct;
+    this.appliedMarque = this.selectedMarque;
+    this.appliedMedia = this.selectedMedia;
 
-  // Call any additional functions to refresh data if necessary
-  this.fetchProjects();
-}
-//////
-calculateTotalHoursAllProjects(): number {
-  let totalHours = 0;
+  }
+  // method to reset all filters
+  resetFilters() {
+    this.selectedGroup = '';
+    this.selectedBrand = '';
+    this.selectedProduct = '';
+    this.selectedMarque = '';
+    this.selectedMedia = '';
 
-  this.tabProject.forEach((project) => {
-    project.days.forEach((day) => {
-      const hours = parseFloat(day.nbHeure);
-      if (!isNaN(hours)) {
-        totalHours += hours;
-      }
+    this.appliedGroup = null;
+    this.appliedBrand = null;
+    this.appliedProduct = null;
+    this.appliedMarque = null;
+    this.appliedMedia = null;
+    this.brands = [];
+    this.products = [];
+    this.marques = [];
+    this.medias = [];
+
+    // Call any additional functions to refresh data if necessary
+    this.fetchProjects();
+  }
+ // method to calculate the total hours for all projects
+  calculateTotalHoursAllProjects(): number {
+    let totalHours = 0;
+
+    this.tabProject.forEach((project) => {
+      project.days.forEach((day) => {
+        const hours = parseFloat(day.nbHeure);
+        if (!isNaN(hours)) {
+          totalHours += hours;
+        }
+      });
     });
-  });
 
-  return totalHours;
-}
-
-showFilters: boolean = false; // Variable to track filter visibility
-  // Other variables...
-
+    return totalHours;
+  }
+// method to toggle the visibility of filters
+  showFilters: boolean = true; 
   toggleFilter() {
     this.showFilters = !this.showFilters; // Toggle the visibility
   }

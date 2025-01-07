@@ -12,6 +12,7 @@ import { AddcongeComponent } from './features/conges/components/addconge/addcong
 import { ListcongeComponent } from './features/conges/components/listconge/listconge.component';
 import { DetailscongeComponent } from './features/conges/components/detailsconge/detailsconge.component';
 import { RemoteComponent } from './features/remote/remote.component';
+import { HrPoliciesComponent } from './features/hr-policies/hr-policies.component';
 
 
 
@@ -135,7 +136,14 @@ export const routes: Routes = [
         loadChildren: () => import('./features/remote/remote/remote.module').then(m => m.RemoteModule),
         component: RemoteComponent
       },
-
+      
+      {
+        path: 'hr-policies',
+        loadChildren: () => import('./features/hr-policies/hr-policies.module').then(m => m.HrPoliciesModule),
+        component: HrPoliciesComponent
+      }
+      ,
+      
       {
         path: 'day_off',
         canActivate: [() => isAdmin()],

@@ -112,6 +112,7 @@
       "projectByMonth": "Projets Par Mois",
       "userByMonthWithProject": "Utilisateur Par Mois avec Projet",
       "projectByMonthOf": "Projet Par Mois de",
+      "projectByUser": "Project Par Utilisateur",
       "in_year": "dans l'année",
       "filter": "Filtrer",
       "apply": "Appliquer",
@@ -136,7 +137,8 @@
         "media": "Média",
         "group": "Groupe",
         "client": "Client",
-        "marque": "Marque"
+        "marque": "Marque",
+        "all":"Tout"
       },
       "success": {
         "title": "Le projet est ajouté avec succès",
@@ -308,6 +310,9 @@
       "Week": "Semaine",
       "Today": "Aujourd'hui"
     },
+    "hr-policies": { 
+      "titre ":"Politiques RH"
+  },
     "status": {
       "On going": "En cours",
       "Improved": "Approuvé",

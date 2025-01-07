@@ -174,7 +174,10 @@ export class AuthService {
         const exists = await this.CheckUserExist(user.uid);
 
   
-          if (exists||user.email?.endsWith('@ealan-agency.com')) {
+          if (exists) {
+           this.router.navigate(['/timesheet/' + this.auth.currentUser?.uid + '/' + new Date()]);
+          }
+          else if (exists! || user.email?.endsWith('@ealan-agency.com')) {
             await this.createUser(user);
             this.router.navigate(['/timesheet/' + this.auth.currentUser?.uid + '/' + new Date()]);
           }

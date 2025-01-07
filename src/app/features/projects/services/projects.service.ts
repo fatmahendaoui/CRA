@@ -897,7 +897,6 @@ async getMediaByMarque(groupId,brandId,productId,marqueId): Promise<Media[]> {
       marqueId: marqueId
     });
   });
-  console.log("media",mediaList)
 
   return mediaList;
 }
@@ -1024,7 +1023,7 @@ async updateMediaName(groupId: string, brandId: string, productId: string, marqu
     console.error("Error updating media name:", error);
   }
 }
-////////////
+
 async updateDescription(uid, month, year, description) {
   try {
     // Reference to the document in Firestore
