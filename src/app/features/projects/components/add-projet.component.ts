@@ -180,7 +180,11 @@ export class addNewProjectComponent implements OnInit {
 // Data for autocomplete options
 public groups = ['Locaux', 'Etranger'];
 public brands = ['DU DIGITAL', 'PGH', 'ROAD HERO', 'JII Sport', 'HBG', 'Glovo','Doghri'];
-public products = ['Kiabi', 'Koton', 'Carte Assurace', 'Road Hero', 'JII', 'Glovo'];
+public products = [
+  'Mazraa', 'Medoil', 'GIPA', 'Nety', 'City Market', 'Mazraa Market', 
+  'YAB', 'Goldenchips', 'Ice Vegas', 'Le Patissier', 'Kiabi', 'Koton', 
+  'Carte Assurace', 'Road Hero', 'Du Digital', 'JII', 'Glovo'
+];
 public marques = [
   'Mazraa', 'Jadida', 'Selja', 'Ola', 'Nety', 'MyPets', 'City Market', 
   'Mazraa Market', 'YAB', 'Goldenchips', 'Ice Vegas', 'Le Patissier', 
