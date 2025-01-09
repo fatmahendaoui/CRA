@@ -196,7 +196,7 @@
       "Vacances": "Congé",
       "update": "Le jour férié est modifié avec succès",
       "name": "Nom",
-      "Time-cards": "CRA"
+      "Time-cards": "Timesheet"
     },
     "settings": {
       "title": "Paramètres",
@@ -225,7 +225,7 @@
       "total": "Total Mensuel",
       "Save_Changes": "Enregistrer les modification",
       "Submit_for_Validation": "Envoyer pour validation",
-      "Time_Sheet": "CRA"
+      "Time_Sheet": "Timesheet"
     },
     "conge": {
       "title": "Demandes de congé",
