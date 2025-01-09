@@ -42,6 +42,7 @@ export class RemoteService {
 
   async saveToFirebase(storageKey: string, data: any): Promise<void> {
     try {
+      console.log('Saving data to Firebase:', data);
       const docRef = doc(this.firestore, 'remote', storageKey);
       await setDoc(docRef, data, { merge: true });
     } catch (error) {
@@ -49,11 +50,12 @@ export class RemoteService {
       throw error;
     }
   }
-  async loadFromFirebase(storageKey: string): Promise<any> {
+  async loadAllFromFirebase(storageKey: string): Promise<any> {
     try {
       const docRef = doc(this.firestore, 'remote', storageKey);
       const docSnapshot = await getDoc(docRef);
       if (docSnapshot.exists()) {
+        console.log('Document data:', docSnapshot.data());
         return docSnapshot.data();
       } else {
         return null;

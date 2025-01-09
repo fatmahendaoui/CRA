@@ -66,6 +66,7 @@ export class RemoteComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    this.loadFromFirebase(this.getStorageKey());
     await this.loadUserRole();
     this.loadDisplayNames();
     this.updateCurrentWeekDays();
@@ -75,8 +76,7 @@ export class RemoteComponent implements OnInit {
     this.fetchApprovedCongesInfo();
     this.addTripImageToCurrentWeekDays();
     this.filteredDisplayNames = [...this.displayNames];
-    this.loadFromFirebase(this.getStorageKey());
-
+    
     /*** */
     /* this.currentWeekStart = new Date();
      this.updateHeaderText();
@@ -329,6 +329,7 @@ export class RemoteComponent implements OnInit {
 
   async saveChanges() {
     const storageKey = this.getStorageKey();
+    console.log('Saving changes for key:', storageKey);
     localStorage.setItem(storageKey, JSON.stringify(this.selectedImage));
 
     try {
@@ -364,6 +365,7 @@ export class RemoteComponent implements OnInit {
         });
       });
     }
+    this.loadFromFirebase(this.getStorageKey());
   }
 
   loadDaysOff() {
@@ -593,9 +595,9 @@ export class RemoteComponent implements OnInit {
 
   async loadFromFirebase(storageKey: string): Promise<void> {
     try {
-      const data = await this.remoteService.loadFromFirebase(storageKey);
+      const data = await this.remoteService.loadAllFromFirebase(storageKey);
+      console.log('Data loaded from local storage:', data);
       if (data) {
-        console.log('Data loaded from Firestore:', data);
         this.selectedImage = data;
       } else {
         console.error('No data found in Firestore for the given key.');
