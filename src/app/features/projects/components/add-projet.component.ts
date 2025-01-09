@@ -179,19 +179,24 @@ export class addNewProjectComponent implements OnInit {
   usersMan: Profile[];
 // Data for autocomplete options
 public groups = ['Locaux', 'Etranger'];
-public brands = ['DU DIGITAL', 'PGH', 'ROAD HERO', 'Second chance', 'STE La paix -', 'Textil retail'];
-public products = ['DU DIGITAL', 'Med oil compagny', 'CHAHRAZED', 'CITY MARKET', 'GIPA', 'Mazraa Market', 'KIABI'];
-public marques = ['DU DIGITAL', 'Jadida', 'Golden ships', 'ICE VEGAS', 'OLA', 'ROAD HERO'];
-public mediaTypes = ['Conseil', 'Digital', 'Kepler', 'Offline', 'Produit'];
-public projectNames = [
-  'Strategie', 'Account Mgt', 'Training', 'Etude et recherche "SURVEY"',
-  'Audit Technique', 'UX UI', 'Audit SEO', 'Brand Book', 'Audit DATA',
-  'Social Media Mgt', 'Performance - Paid Social', 'Performance - Google Ads',
-  'Content', 'Influenceur', 'Display', 'Programmatic', 'LISTENING & E-REPUTATION',
-  'MMM (Mix Media Modeling)', 'Segmentation', 'Scoring', 'TV', 'Content- TV', 
-  'Content- Radio', 'Radio', 'OOH', 'Presse', 'DASHBOARDING', 'Chatbot - IA',
-  'Data Management & Reporting'
+public brands = ['DU DIGITAL', 'PGH', 'ROAD HERO', 'JII Sport', 'HBG', 'Glovo','Doghri'];
+public products = ['Kiabi', 'Koton', 'Carte Assurace', 'Road Hero', 'JII', 'Glovo'];
+public marques = [
+  'Mazraa', 'Jadida', 'Selja', 'Ola', 'Nety', 'MyPets', 'City Market', 
+  'Mazraa Market', 'YAB', 'Goldenchips', 'Ice Vegas', 'Le Patissier', 
+  'Kiabi', 'Koton', 'Carte', 'Road Hero', 'JII', 'Glovo'
 ];
+public mediaTypes = ['Conseil', 'Digital', 'Martech', 'Produit', 'Offline'];
+public projectNames = [
+  'Account Mgt', 'Audit DATA', 'Audit SEO', 'Audit Technique', 'Branding', 'CAPI', 
+  'Chatbot - IA', 'Content', 'Content- Radio', 'Content- TV', 'DASHBOARDING', 
+  'Data Management & Reporting', 'Display', 'Etude et recherche "SURVEY"', 'Generative AI', 
+  'Influenceur', 'Kepler MMM', 'Kepler Scoring', 'Kepler Segmentation', 
+  'LISTENING & E-REPUTATION', 'OOH', 'Performance - Google Ads', 'Performance - Paid Social', 
+  'Presse', 'Programmatic', 'Radio', 'Social Media Mgt', 'Strategie', 'Training', 'TV', 'UGC', 
+  'UX UI'
+];
+
   // Filtered autocomplete options
   public filteredGroups: Observable<string[]>;
   public filteredBrands: Observable<string[]>;
