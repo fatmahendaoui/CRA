@@ -188,7 +188,7 @@ public products = [
 public marques = [
   'Mazraa', 'Jadida', 'Selja', 'Ola', 'Nety', 'MyPets', 'City Market', 
   'Mazraa Market', 'YAB', 'Goldenchips', 'Ice Vegas', 'Le Patissier', 
-  'Kiabi', 'Koton', 'Carte', 'Road Hero', 'JII', 'Glovo'
+  'Kiabi', 'Koton', 'Carte', 'Road Hero', 'JII', 'Glovo','Du Digital'
 ];
 public mediaTypes = ['Conseil', 'Digital', 'Martech', 'Produit', 'Offline'];
 public projectNames = [

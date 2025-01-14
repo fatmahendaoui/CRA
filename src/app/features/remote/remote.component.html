@@ -7,25 +7,15 @@
     <h3 style="color: #E50060;">{{ 'features.remote.Week_starting' | transloco }} {{
       formatDate(currentWeekStart,'MMMM d, yyyy') }}</h3>
     <mat-icon color="primary" (click)="nextWeek()">navigate_next</mat-icon>
-    <!-- <button class="pink-button" (click)="saveChanges()">{{'features.projects.button.save' | transloco}}</button>-->
   </div>
   <div class="week-navigation" *ngIf="selectedView === 'month'">
     <mat-icon color="primary" (click)="navigate('prev')">navigate_before</mat-icon>
     <h3 style="color: #E50060;">{{ calendarToolbarTitle }}</h3>
     <mat-icon color="primary" (click)="navigate('next')">navigate_next</mat-icon>
-    <!-- <button class="pink-button" (click)="saveChanges()">{{'features.projects.button.save' | transloco}}</button>-->
   </div>
   <button mat-button (click)="goToToday()" class="today" style="color: white;">{{ 'features.remote.Today' | transloco
     }}</button>
-  <!--
-  <div class="view-selection">
-    <mat-button-toggle-group [(ngModel)]="selectedView" (change)="onViewChange($event)" aria-label="View selection">
-      <mat-button-toggle value="week" class="modern-button-toggle">{{ 'features.remote.Week' | transloco
-        }}</mat-button-toggle>
-      <mat-button-toggle value="month" class="modern-button-toggle">{{ 'features.remote.Month' | transloco
-        }}</mat-button-toggle>
-    </mat-button-toggle-group>
-  </div>-->
+
 </mat-toolbar>
 <!----------------- Month---------------------->
 <div class="table-container" *ngIf=" filteredDisplayNames && filteredDisplayNames.length > 0">
@@ -39,15 +29,15 @@
 
     <tbody>
       <ng-container *ngFor="let displayName of filteredDisplayNames; let i = index">
-        <tr *ngIf="displayName.name">
-          <td class="name-cell">
+        <tr *ngIf="displayName.name"   >
+          <td class="name-cell" [ngStyle]="{'background-color': displayName.id == currentUserId ? '#E8F1FD' : ''}">
             <div class="name-container">
               <img *ngIf="displayName.photoURL" [src]="displayName.photoURL" class="photo" />
               <mat-icon *ngIf="!displayName.photoURL" class="user-avatar">person</mat-icon>
               <span class="text-color">{{ displayName.name }}</span>
             </div>
           </td>
-          <td *ngFor="let day of currentWeekDays; let j = index" class="day-separator">
+          <td *ngFor="let day of currentWeekDays; let j = index" class="day-separator" [ngStyle]="{'background-color': displayName.id == currentUserId ? '#E8F1FD' : ''}">
             <div class="image-container">
               <div *ngIf="day.isDayOff">
                 <div class="day-off-container">
@@ -67,11 +57,11 @@
                 </div>
                 <div *ngIf="showChoices[i]?.[j]" class="image-choices">
                   <div (click)="selectRemoteImage(i, j)">
-                    <img src="assets/images/remote.jpg" class="example-image" />
+                    <img src="assets/images/remote.png" class="example-image" />
                     <span>{{ 'features.remote.remote' | transloco }}</span>
                   </div>
                   <div (click)="selectClientImage(i, j)">
-                    <img src="assets/images/client.jpg" class="example-image" />
+                    <img src="assets/images/client.png" class="example-image" />
                     <span>Client</span>
                   </div>
                 </div>
@@ -84,7 +74,3 @@
   </table>
 </div>
 
-<!----------------- week---------------------->
-<!--<div class="table-week" *ngIf="selectedView === 'month' ">
-  <full-calendar #calendar [options]="calendarOptions" (eventClick)="handleEventClick($event)"></full-calendar>
-</div>-->

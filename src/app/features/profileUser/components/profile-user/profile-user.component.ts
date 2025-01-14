@@ -308,16 +308,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
       this.updateChartData(); // Appeler la méthode pour recalculer et mettre à jour les données du graphique
     }
   }
-  //fonction pour calculer le pourcentage des conges
-  /* getCongesPercentage(conge: string): string {
-     const congeInHours = parseInt(conge, 10); // Supposons que `conge` est une chaîne contenant des heures
-     const TOTAL_CONGE_HOURS = 176;
-     if (isNaN(congeInHours)) {
-       return 'N/A';
-     }
-     const percentage = ((congeInHours / TOTAL_CONGE_HOURS) * 100).toFixed(2);
-     return `${percentage}%`;
-   }*/
+
 
   //fonction pour charger le profil de l'utilisateur selon l'ID
   loadUserProfileById(userId: string): void {
@@ -386,9 +377,8 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
     }).catch(error => {
       console.error('Error fetching projects:', error);
     });
-    this.getcongeMaladie(userId);
     this.getcongePaye(userId);
-
+    this.getcongeMaladie(userId);
   }
 
   //fonction pour activer le mode d'édition
@@ -450,7 +440,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
               return;
             }
           
-            remainingHours = 176 - totalHours; // Calcul du nombre d'heures restantes
+            remainingHours = 176 - totalHours; 
             // Convertir les heures restantes en jours et heures
             const remainingHoursText = this.profilService.convertToDaysAndHours(remainingHours);
             // Mettre à jour le champ maladie dans le formulaire

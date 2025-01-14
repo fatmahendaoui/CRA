@@ -49,7 +49,7 @@ export class UsersTableComponent extends AbstractTableComponent<Profile> {
   public override readonly displayedColumns: string[] = [
     'email',
     'role',
-    'created_on',
+    'dateEmbauche',
     'actions'
   ];
 

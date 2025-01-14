@@ -67,7 +67,6 @@ startMonthIndex=0;
 endMonthIndex=13;
   ngOnInit() {
     this.loadGroups();
-   
     this.filteredUsers = this.listuser;
     this.theDate = new Date();
     if (this.theDate) {
@@ -229,12 +228,27 @@ getAllProjectsForAllUsers() {
 
     this.data = this.processProjects(result);
 
+// Calculate dynamic dimensions based on data size
+const baseWidth = 1250; 
+const baseHeight = 800; 
+const additionalWidthPerUser = 50; 
+const additionalHeightPerProject = 30;
+
+const calculatedWidth = Math.max(
+  baseWidth,
+  allUsers.size * additionalWidthPerUser
+);
+const calculatedHeight = Math.max(
+  baseHeight,
+  allProjects.size * additionalHeightPerProject
+);
+
     // Configurer les options du graphique
     this.chartOptions = {
       series: this.data,
       chart: {
-        height: 800,
-        width: 1250,
+        height:  calculatedHeight,
+        width: calculatedWidth,
         type: "heatmap",
         background: "#FFFFFF",
       },
@@ -265,8 +279,7 @@ getAllProjectsForAllUsers() {
               // Vérifier si c'est la ligne ou la colonne "Total"
               const isTotal = val === "Total" || seriesIndex === 0 || dataPointIndex === w.config.series[0].data.length - 1;
               // Appliquer le style en gras si c'est "Total", sinon le style normal
-            w.config.dataLabels.style.fontWeight = isTotal ? 'bold' : 'normal';
-    
+              w.config.dataLabels.style.fontWeight = isTotal ? 'bold' : 'normal';
               // Appliquer le style de la police uniquement pour la ligne ou la colonne "Total"
               w.config.dataLabels.style.fontFamily = isTotal ? '60px' : undefined;
           const data = w.config.series[seriesIndex].data[dataPointIndex];
@@ -583,10 +596,17 @@ private updateMonthYear(newMonth: number, newYear: number): void {
     result = this.calculateHoursWorkedByMonthinuser(this.allvalues, this.currentuser, this.year,startMonthIndex, endMonthIndex);
     console.log("this.allvalues",result)
     this.dataProject = result;
+    // Calculate dynamic dimensions based on data size
+    const baseHeight = 500;
+    const additionalHeightPerProject = 30;
+    const calculatedHeight = Math.max(
+      baseHeight,
+      result.length * additionalHeightPerProject  
+    );
     this.chartOptionsproject = {
       series: this.dataProject,
       chart: {
-        height: 500,
+        height: calculatedHeight,
         width: 1200,
         type: "heatmap",
         background: '#FFFFFF'
@@ -812,8 +832,6 @@ result.forEach((user) => {
   return result;
 }
 
-
-
 // Capitalize the first letter of a string
   capitalizeFirstLetter(inputString: string): string {
     if (inputString.length === 0) {
@@ -828,6 +846,7 @@ result.forEach((user) => {
     const domainId = this.profileService.profile.idDomaine; // Replace with the actual ID you need
     this.groups = await this.projectService.getGroupsByDomain(domainId);
   }
+  
 // Fetch brands by group
   async onGroupSelected() {
     if (this.selectedGroup) {
@@ -1055,17 +1074,29 @@ applyFilters() {
 this.getAllProjectsForAllUsers()
   }
 
-  // Autocomplete user search
+// Autocomplete user search
   onUserSelected(event: MatAutocompleteSelectedEvent): void {
     this.currentuser = event.option.value;
+    console.log("this.currentuser",event.option.id)  
     this.fetchUser(this.startMonthIndex, this.endMonthIndex);
     this. onApplyDateRange();
+}
+async getGroups(usersId) {
+  console.log('hello : ',usersId)
+  const domainId = this.profileService.profile.idDomaine; 
+  const allprojects = await this.projectService.fetchProjects(usersId); 
+console.log('allprojects : ', allprojects)  
+  const allGroups = await this.projectService.getGroupsByDomain(domainId); 
+  this.groups = allGroups.filter(group =>
+    allprojects.some(project => project.groupId === group.id)
+  );
+  console.log('groups : ', this.groups)
 }
 applyFilterss() {
   this.loader = false;
 // Reset the filtered result array
 let filteredProjects = this.allvalues;
-
+console.log("filteredProjects",filteredProjects)
 // Filter projects based on selected group
 if (this.selectedGroup) {
   filteredProjects = filteredProjects.filter(project => project.groupId === this.selectedGroup);
