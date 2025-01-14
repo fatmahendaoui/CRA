@@ -504,8 +504,6 @@ export class TimesheetComponent implements OnInit {
 
       })
     })
-
-
   }
   // method to calculate the total hours in a project
   calculateTotalHours(days: any[]): number {
