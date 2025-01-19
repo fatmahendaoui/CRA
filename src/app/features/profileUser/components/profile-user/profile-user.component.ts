@@ -79,7 +79,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
           }
         }
       },
-      colors: ['#193F77', '#E50060'], // Set the color of the bars here
+      colors: ['#193F77', '#E50060'],
       title: {
         text: `Statistique des projets pour ${this.currentYear.toString()}`,
         style: {
@@ -436,9 +436,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
           if (projectData) {
             // Calculer le total des heures du congé de maladie pour ce projet
             const totalHours = this.calculateTotalHours(projectData, vacancesProjectId);
-            if (totalHours < 4) {
-              return;
-            }
+           
           
             remainingHours = 176 - totalHours; 
             // Convertir les heures restantes en jours et heures

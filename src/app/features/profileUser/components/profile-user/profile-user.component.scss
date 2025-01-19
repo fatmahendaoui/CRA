@@ -112,7 +112,7 @@ h4 {
 }
 .Conge-payee,
 .Conge-maladie {
-  width: 94%; /* Ajuster la largeur selon vos besoins */
+  width: 100%; /* Ajuster la largeur selon vos besoins */
   height: 171px;
   display: flex;
   flex-direction: column;
@@ -126,7 +126,7 @@ h4 {
   //display: flex;
   margin-top: 10px;
   text-align: center;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 500;
 }
 .texte-img-container {
@@ -137,7 +137,7 @@ h4 {
 }
 .texte {
  margin-left: 8px;
-  font-size: 13px;
+  font-size: 18px;
   flex: 1; /* Permet au texte de prendre tout l'espace disponible à gauche */
   font-weight: 500;
 }

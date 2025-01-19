@@ -115,7 +115,7 @@
                             
                             <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onUserSelected($event)">
                                 <mat-option *ngFor="let user of filteredUsers" [value]="user">
-                                    {{ user }}
+                                    {{ user }} 
                                 </mat-option>
                             </mat-autocomplete>
                         </mat-form-field>
@@ -124,27 +124,27 @@
                         <mat-form-field class="field"appearance="outline">
                   <mat-label>{{ 'features.projects.add-dialog.origine' | transloco }}</mat-label>
                   <mat-select [(value)]="selectedGroup" (selectionChange)="onGroupSelected()">
-                    <mat-option *ngFor="let group of groups" [value]="group.id">{{ group.name }}</mat-option>
+                    <mat-option *ngFor="let group of groupss" [value]="group.id">{{ group.name }}</mat-option>
                   </mat-select>
                 </mat-form-field>
                 
                 <mat-form-field appearance="outline">
                   <mat-label>{{ 'features.projects.add-dialog.group' | transloco }}</mat-label>
                   <mat-select [(value)]="selectedBrand" (selectionChange)="onBrandSelected()">
-                    <mat-option *ngFor="let brand of brands" [value]="brand.id">{{ brand.name }}</mat-option>
+                    <mat-option *ngFor="let brand of brandss" [value]="brand.id">{{ brand.name }}</mat-option>
                   </mat-select>
                 </mat-form-field>
                 
                 <mat-form-field appearance="outline">
                   <mat-label>{{ 'features.projects.add-dialog.client' | transloco }}</mat-label>
                   <mat-select [(value)]="selectedProduct" (selectionChange)="onProductSelected()">
-                    <mat-option *ngFor="let product of products" [value]="product.id">{{ product.name }}</mat-option>
+                    <mat-option *ngFor="let product of productss" [value]="product.id">{{ product.name }}</mat-option>
                   </mat-select>
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                   <mat-label>{{ 'features.projects.add-dialog.marque' | transloco }}</mat-label>
                   <mat-select [(value)]="selectedMarque" (selectionChange)="onMarqueSelected()">
-                    <mat-option *ngFor="let marque of marques" [value]="marque.id">{{ marque.name }}</mat-option>
+                    <mat-option *ngFor="let marque of marquess" [value]="marque.id">{{ marque.name }}</mat-option>
                   </mat-select>
                 </mat-form-field>
                 <mat-form-field appearance="outline">
@@ -153,7 +153,7 @@
                       <!-- Add "All" option to the dropdown -->
                       <mat-option value="All">{{ 'features.projects.add-dialog.all' | transloco }}</mat-option>
                       <!-- Existing media options -->
-                      <mat-option *ngFor="let media of medias" [value]="media.id">{{ media.name }}</mat-option>
+                      <mat-option *ngFor="let media of mediass" [value]="media.id">{{ media.name }}</mat-option>
                     </mat-select>
                   </mat-form-field>
                  <!-- Buttons for Apply and Reset -->
