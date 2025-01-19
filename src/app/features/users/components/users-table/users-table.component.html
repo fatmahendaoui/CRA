@@ -51,12 +51,12 @@
 
 
 
-  <ng-container matColumnDef="created_on">
+  <ng-container matColumnDef="dateEmbauche">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>
       {{ 'features.users.table.added_at' | transloco }}
     </th>
     <td mat-cell *matCellDef="let element">
-      <span>{{ element.created_on | date:'mediumDate'}}</span>
+      {{ element.dateEmbauche ? (element.dateEmbauche.toDate() | date: 'mediumDate') : '' }}
     </td>
   </ng-container>
 

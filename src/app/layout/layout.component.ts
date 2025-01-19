@@ -78,7 +78,11 @@ export class LayoutComponent implements OnInit, OnDestroy {
     const defaultLanguage = localStorage.getItem('current_language');
     if (defaultLanguage) {
       this.selectedLanguage = defaultLanguage;
+    }else {
+      this.selectedLanguage = 'fr'; // Langue par défaut
+      localStorage.setItem('current_language', 'fr'); // Sauvegarder dans localStorage
     }
+    this.transloco.setActiveLang(this.selectedLanguage);
 
     const domaineId = this.profileService.profile.idDomaine;
     this.authService.getDomainName(domaineId).then((domaineName) => {

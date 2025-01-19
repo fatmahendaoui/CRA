@@ -81,7 +81,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
       },
       colors: ['#193F77', '#E50060'], // Set the color of the bars here
       title: {
-        text: `Statistique des projets pour ${this.currentYear.toString()}`,
+        text: `Statistiques des projets par jour pour ${this.currentYear.toString()}`,
         style: {
           color: '#E50060',
           margin: '20px 0'
@@ -197,7 +197,9 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
         });
       }
     }
-    this.totalHours[projectId] = totalHours;
+     // Convertir le total des heures en jours (1 jour = 8 heures)
+  const totalDays = totalHours / 8;
+  this.totalHours[projectId] = totalDays;
 
     // Update the chart with the new data
     this.updateChartData();
@@ -308,16 +310,6 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
       this.updateChartData(); // Appeler la méthode pour recalculer et mettre à jour les données du graphique
     }
   }
-  //fonction pour calculer le pourcentage des conges
-  /* getCongesPercentage(conge: string): string {
-     const congeInHours = parseInt(conge, 10); // Supposons que `conge` est une chaîne contenant des heures
-     const TOTAL_CONGE_HOURS = 176;
-     if (isNaN(congeInHours)) {
-       return 'N/A';
-     }
-     const percentage = ((congeInHours / TOTAL_CONGE_HOURS) * 100).toFixed(2);
-     return `${percentage}%`;
-   }*/
 
   //fonction pour charger le profil de l'utilisateur selon l'ID
   loadUserProfileById(userId: string): void {
@@ -365,30 +357,30 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
     // Appel de la fonction getProjects
     this.profilService.getProjects(userId).then(projectIds => {
       this.projects = projectIds; // Assigner les IDs des projets à la variable de composant
+      const projectNames: string[] = []; // Temporary array to store project names
 
-      // Mettre à jour les catégories de l'axe x
-      this.chartOptions.xaxis.categories = projectIds;
-
-      // Mettre à jour le graphique
-      this.renderChart();
-
-      projectIds.forEach(projectId => {
+      const projectDetailsPromises = projectIds.map(projectId => {
         this.profilService.getProjectDetails(userId, projectId).then(projectData => {
-          if (projectData) {
+          if (projectData && projectData.name) {
+            projectNames.push(projectData.name); // Add project name to the array
             this.calculateTotalHours(projectData, projectId);
           }
         }).catch(error => {
           console.error(`Error fetching details for project ID`, error);
         });
+
+      
+      });
+      Promise.all(projectDetailsPromises).then(() => {
+        this.chartOptions.xaxis.categories = projectNames; // Update chart categories with project names
+        this.renderChart(); // Render the chart with updated categories
       });
     }).catch(error => {
       console.error('Error fetching projects:', error);
     });
-    this.getcongeMaladie(userId);
     this.getcongePaye(userId);
-
+    this.getcongeMaladie(userId);
   }
-
   //fonction pour activer le mode d'édition
   enterEditMode(): void {
     this.isEditing = true;
@@ -410,7 +402,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
           if (projectData) {
             // Calculer le total des heures du congé de maladie pour ce projet
             const totalHours = this.calculateTotalHours(projectData, maladieProjectId);
-            remainingHours = 32 - totalHours; // Calcul du nombre d'heures restantes
+            remainingHours = 64 - totalHours; // Calcul du nombre d'heures restantes
 
             // Convertir les heures restantes en jours et heures
             const remainingHoursText = this.profilService.convertToDaysAndHours(remainingHours);
@@ -444,10 +436,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
           if (projectData) {
             // Calculer le total des heures du congé de maladie pour ce projet
             const totalHours = this.calculateTotalHours(projectData, vacancesProjectId);
-            if (totalHours < 4) {
-              console.log('Le nombre d\'heures est inférieur à 4, aucune soustraction ne sera effectuée.');
-              return;
-            }
+           
           
           
             remainingHours = 176 - totalHours; // Calcul du nombre d'heures restantes

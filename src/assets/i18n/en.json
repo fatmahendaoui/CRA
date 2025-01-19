@@ -297,7 +297,8 @@
       "Week_starting": "Week starting",
       "Month": "Month",
       "Week": "Week",
-      "Today": "Today"
+      "Today": "Today",
+      "total_remote_days": "Total"
     },  "hr-policies": { 
       "titre ":"HR Policies"
   },

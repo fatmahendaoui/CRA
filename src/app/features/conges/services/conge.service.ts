@@ -244,7 +244,7 @@ export class CongeService {
       querySnapshot.forEach((doc) => {
         approvedConges.push(doc.data());
       });
-      // console.log('Liste des congés approuvés:', approvedConges); // Ajout de la console log
+     console.log('Liste des congés approuvés:', approvedConges); // Ajout de la console log
       return approvedConges;
     } catch (error) {
       console.error('Erreur lors de la récupération des congés approuvés :', error);
@@ -265,7 +265,7 @@ export class CongeService {
       querySnapshot.forEach((doc) => {
         allConges.push(doc.data());
       });
-      console.log('Liste de tous les congés:', allConges);
+      //console.log('Liste de tous les congés:', allConges);
       return allConges;
     } catch (error) {
       console.error('Erreur lors de la récupération de tous les congés :', error);
@@ -276,7 +276,7 @@ export class CongeService {
   async loadConges(): Promise<void> {
     try {
       const conges = await this.getAllConges();
-      console.log('Congés chargés:', conges);
+      //console.log('Congés chargés:', conges);
     } catch (error) {
       console.error('Erreur lors du chargement des congés :', error);
     }

@@ -26,8 +26,8 @@
           <mat-select [(ngModel)]="natureConge" name="natureConge">
             <!-- Options pour le type de congé -->
             <mat-option value="Congé Payé">{{ 'features.conge.paid_leave' | transloco }}</mat-option>
-            <mat-option *ngIf="userId && congesLengths[userId] !== 4" value="Congé de maladie (1 jour)">
-              {{ 'features.conge.sick_leave' | transloco }}
+            <mat-option  *ngIf="isSickLeaveEligible"  value="Congé de maladie (1 jour)">
+              {{ 'features.conge.sick_leave' | transloco }} 
             </mat-option>
 
 
@@ -99,6 +99,10 @@
           <mat-datepicker #picker1></mat-datepicker>
         </mat-form-field>
       </ng-container>
+     <!-- Message d'alerte pour les congés maladie -->
+  <div *ngIf="alertVisible" class="error-messag" style="color: #E50060;">
+    {{ alertMessage }}
+  </div>
     </div>
 
 
@@ -116,8 +120,6 @@
       {{ 'features.conge.file_error' | transloco }}
     </span>
 
-
-
     <!-- Commentaires -->
     <div class="form-Comment">
       <mat-form-field appearance="outline" class="Commentaire">
@@ -128,7 +130,7 @@
       </mat-form-field>
       <!-- Bouton de sauvegarde -->
       <div class="buttons">
-        <button mat-flat-button color="primary" type="submit"> {{
+        <button mat-flat-button color="primary" type="submit"  [disabled]="isSubmitting"> {{
           'features.projects.button.save' | transloco
           }}</button>
       </div>

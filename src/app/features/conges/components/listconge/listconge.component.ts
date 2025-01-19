@@ -51,8 +51,6 @@ export class ListcongeComponent<T> implements OnInit {
   async loadConges(): Promise<void> {
     const firestore = getFirestore();
     const congesCollectionRef = collection(firestore, 'conge');
-    console.log('Congés chargés:', this.conges); 
-
     try {
       const querySnapshot = await getDocs(congesCollectionRef);
       querySnapshot.forEach(async (doc) => {
@@ -184,11 +182,11 @@ export class ListcongeComponent<T> implements OnInit {
     return monthMap[month];
   }
 
-
   async validerConge(conge: any, numberOfDays: number): Promise<void> {
     const firestore = getFirestore();
     const congDocRef = doc(firestore, 'conge', conge.id);
-
+    console.log("congee ::: ", conge);
+  
     try {
       const { isConfirmed } = await Swal.fire({
         title: this.translocoService.translate('features.conge.validate_confirm'),
@@ -197,183 +195,123 @@ export class ListcongeComponent<T> implements OnInit {
         confirmButtonText: this.translocoService.translate('common.confirm'),
         cancelButtonText: this.translocoService.translate('common.cancel')
       });
-
+  
       if (isConfirmed) {
+        // Mise à jour de l'état du congé dans Firestore
         await updateDoc(congDocRef, { status: 1 });
         this.showSuccessAlert('Congé accepté');
         conge.status = 1;
         conge.statusLabel = 'Approuvé';
-
-        // Appel de la méthode sendEmailToUser avec l'ID du congé
+  
+        // Envoi de l'email à l'utilisateur
         await this.sendEmailToUser(conge.id);
-
-        // Mettre à jour les congés filtrés pour retirer le congé approuvé
+  
+        // Mise à jour de la liste des congés filtrés
         this.filteredConges = this.filteredConges.filter(c => c.id !== conge.id);
         this.dataSource.data = this.filteredConges;
-
-        // Récupérer l'identifiant de l'utilisateur à partir des détails du congé
+  
+        // Récupération des informations de l'utilisateur
         const userId = conge.userId;
         const natureConge = conge.nature;
-
-
-        // Accéder à la collection de projets avec le chemin approprié incluant l'identifiant de l'utilisateur
+  
+        // Définition du nom du document en fonction du type de congé
         const documentName = natureConge === 'Congé de maladie (1 jour)' ? 'Maladie' : 'Vacances';
         const projectsCollectionRef = collection(firestore, `membership_CRA/${userId}/Projects`);
         const projectsQuery = query(projectsCollectionRef);
-
         const projectsSnapshot = await getDocs(projectsQuery);
-        //documentName : Le mois (April_2024 par example )
-
+  
         for (const doc of projectsSnapshot.docs) {
+          console.log("doc.id ::: ", doc.id, "documentName ::: ", documentName);
           if (doc.id === documentName) {
-
-            // champ date f conge yekhou mois_year
+  
+            // Accès aux tableaux du mois
             const tableName = conge.date;
             const nexttablename = conge.dateF;
-
-            // Accéder au tableau correspondant dans le document
-            let tableData = doc.data()[tableName];
-
+            let tableData = doc.data()[tableName] || [];
+  
             // Si le tableau n'existe pas, le créer
-            if (!tableData) {
-              tableData = [];
-
+            if (tableData.length === 0) {
               for (let i = 1; i <= 31; i++) {
-                // Vérifiez si le jour est un jour de week-end ou un jour férié avant de l'ajouter
                 if (!this.isWeekendDay(conge.year, this.monthToNumber(conge.month), i)) {
                   tableData.push({
                     year: conge.year,
                     month: conge.month,
                     day: i,
-                    nbHeure: '',
-                    nbTotal: '',
-                    projectTotal: ''
+                    nbHeure: 0,
+                    nbTotal: 0,
+                    projectTotal: 0
                   });
                 }
               }
             }
-
-            // Extraire les champs day, year, month et nombreHeures du congé
+  
+            // Traitement des heures du congé
             const { day, year, month, nombreHeures } = conge;
-
-            // Parcourir les éléments du tableau correspondant
-
+  
+            let remainingHours = nombreHeures;
             tableData.forEach((element, index) => {
-              // Vérifier si les champs day, month et year correspondent
               if (element.day === day && element.month === month && element.year === year) {
-                // Stocker la valeur de nombreHeures dans le champ nbheure de l'indice correspondant
-                if (nombreHeures <= 8) {
-                  tableData[index].nbHeure = nombreHeures;
-                } else {
-                  // Mettre 8 heures pour ce jour
-                  tableData[index].nbHeure = 8;
-                  // Déclarer remainingHours comme une variable modifiable
-                  let remainingHours = nombreHeures - 8;
-                  // Trouver le jour suivant dans le tableau et ajouter les heures restantes
-                  let nextDayIndex = index + 1;
-
-                  while (remainingHours > 0 && nextDayIndex < tableData.length) {
-                    const availableHours = Math.min(remainingHours, 8); // Maximum de 8 heures par jour
-                    tableData[nextDayIndex].nbHeure += availableHours;
-                    remainingHours -= availableHours;
-                    nextDayIndex++;
-                  }
-
-                  if (remainingHours > 0) {
-                    let remainingHoursToStore = remainingHours; // Stocker les heures restantes dans une variable
-                    // Entrer dans le tableau suivant (nexttablename) pour ajouter les heures restantes
-                    let tableData = doc.data()[nexttablename];
-                    if (!tableData) {
-                      tableData = [];
-                      for (let i = 1; i <= 31; i++) {
-                        // Vérifiez si le jour est un jour de week-end ou un jour férié avant de l'ajouter
-                        if (!this.isWeekendDay(conge.year, this.monthToNumber(conge.nextMonth), i)) {
-                          tableData.push({
-                            year: conge.year,
-                            month: conge.nextMonth,
-                            day: i,
-                            nbHeure: '',
-                            nbTotal: '',
-                            projectTotal: ''
-                          });
-                        }
-                      }
-                    }
-                    if (tableData && tableData.length > 0) {
-                      if (remainingHoursToStore <= 8) {
-                        // S'il reste moins de 8 heures, ajoutez-les simplement au premier index
-                        tableData[0].nbHeure += remainingHoursToStore;
-                        remainingHoursToStore = 0; // Aucune heure restante à stocker
-                      } else {
-                        // Ajouter 8 heures au premier index
-                        tableData[0].nbHeure += 8;
-                        remainingHoursToStore -= 8; // Réduire les heures restantes
-                      }
-                      doc.data()[nexttablename] = tableData;
-                    }
-
-
-                    // Si remainingHoursToStore est toujours supérieur à 0,
-                    // cela signifie qu'il reste encore des heures à ajouter au tableau suivant
-                    if (remainingHoursToStore > 0) {
-                      let currentIndex = 1; // Commencer par le deuxième index du tableau
-                      while (remainingHoursToStore > 0 && currentIndex < tableData.length) {
-                        const availableHours = Math.min(remainingHoursToStore, 8); // Maximum de 8 heures par jour
-                        tableData[currentIndex].nbHeure += availableHours;
-                        remainingHoursToStore -= availableHours;
-                        currentIndex++;
-                      }
-                      updateDoc(doc.ref, { [nexttablename]: tableData });
-
-                    }
-
+                // Assigner les heures de congé pour ce jour
+                element.nbHeure += Math.min(remainingHours, 8);
+                remainingHours -= Math.min(remainingHours, 8);
+              }
+            });
+  
+            // Si des heures restent à affecter sur d'autres jours
+            if (remainingHours > 0) {
+              let nextDayIndex = tableData.findIndex(e => e.day === day + 1);
+              while (remainingHours > 0 && nextDayIndex < tableData.length) {
+                const availableHours = Math.min(remainingHours, 8);
+                tableData[nextDayIndex].nbHeure += availableHours;
+                remainingHours -= availableHours;
+                nextDayIndex++;
+              }
+            }
+  
+            // Mise à jour des données du tableau dans Firestore
+            await updateDoc(doc.ref, { [tableName]: tableData });
+  
+            // Gestion du tableau suivant (nexttablename)
+            if (remainingHours > 0) {
+              let nextTableData = doc.data()[nexttablename] || [];
+              if (nextTableData.length === 0) {
+                for (let i = 1; i <= 31; i++) {
+                  if (!this.isWeekendDay(conge.year, this.monthToNumber(conge.nextMonth), i)) {
+                    nextTableData.push({
+                      year: conge.year,
+                      month: conge.nextMonth,
+                      day: i,
+                      nbHeure: 0,
+                      nbTotal: 0,
+                      projectTotal: 0
+                    });
                   }
                 }
               }
-            });
-
-
-            // Mettre à jour le document avec les nouvelles données
-            await updateDoc(doc.ref, { [tableName]: tableData });
-
-
-            break; // Sortir de la boucle une fois le document trouvé
+              nextTableData[0].nbHeure += remainingHours;
+              await updateDoc(doc.ref, { [nexttablename]: nextTableData });
+            }
+  
+            break;
           }
         }
-
-        // Mise à jour du champ maladie ou conge dans le document membership_CRA/${userId}
+  
+        // Mise à jour des heures de congé dans le document utilisateur
         const userDocRef = doc(firestore, `membership_CRA/${userId}`);
         const userDocSnapshot = await getDoc(userDocRef);
         if (userDocSnapshot.exists()) {
           const userData = userDocSnapshot.data();
-
-          // Déterminer le champ à mettre à jour
-          let fieldToUpdate = '';
-          if (natureConge === 'Congé de maladie (1 jour)') {
-            fieldToUpdate = 'maladie';
-          } else {
-            fieldToUpdate = 'conge';
-          }
-
-          if (userData && userData[fieldToUpdate] !== undefined) {
-            let updatedHours = userData[fieldToUpdate] - conge.nombreHeures; // Soustraire le nombre d'heures de congé
-
-
-            // Assurez-vous que la valeur mise à jour n'est pas NaN ou undefined
-            if (isNaN(updatedHours) || updatedHours < 0) {
-              updatedHours = 0; // Définir une valeur par défaut si nécessaire
-            }
-            // Mettre à jour le champ
-            await updateDoc(userDocRef, { [fieldToUpdate]: updatedHours });
-
-          }
+          let fieldToUpdate = natureConge === 'Congé de maladie (1 jour)' ? 'maladie' : 'conge';
+          let updatedHours = userData[fieldToUpdate] - conge.nombreHeures;
+          updatedHours = Math.max(0, updatedHours);  // Assurer que l'heure est positive
+          await updateDoc(userDocRef, { [fieldToUpdate]: updatedHours });
         }
       }
     } catch (error) {
       console.error('Erreur lors de la validation du congé:', error);
     }
   }
-
+  
 
 
   async refuserConge(conge: any): Promise<void> {
