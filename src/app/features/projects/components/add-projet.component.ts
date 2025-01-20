@@ -112,7 +112,7 @@ export class addNewProjectComponent implements OnInit {
     this.formGroup = this.formBuilder.group({
       name: ['', Validators.required],
       users: [[], Validators.required],
-      manager: ['', Validators.required]  // Ajoutez ce champ pour le manager
+      //manager: ['', Validators.required]  // Ajoutez ce champ pour le manager
     });
 
   }/*
@@ -128,7 +128,7 @@ export class addNewProjectComponent implements OnInit {
       idproject,
       projectData.name,
       iduser,
-      projectData.manager,
+      //projectData.manager,
       projectData.users
     );
    

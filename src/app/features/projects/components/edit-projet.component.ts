@@ -108,27 +108,27 @@ export class editProjectComponent implements OnInit {
   public ngOnInit(): void {
     this.formGroup = this.formBuilder.group({
       users: [[], Validators.required],
-      manager: ['', Validators.required],
+      //manager: ['', Validators.required],
       name: ['', Validators.required]
     });
     this.usersService.fetchAllUsers().subscribe((list) => {
       this.users = list;
       // Filtrer les utilisateurs ayant le rôle "manager"
-      this.usersMan = list.filter(user => user.role === 'manager');
+     // this.usersMan = list.filter(user => user.role === 'manager');
       const promises = this.users.map((user) => {
         return this.usersService.getAllUsersForProject(this.data.idproject, user.uid).then((isUserInProject) => {
           if (isUserInProject) {
             this.formGroup.get('users')?.value.push(user.uid);
           }
-          if (user.uid === this.data.managerId) {
+         /* if (user.uid === this.data.managerId) {
             this.initialManager = user;
-          }
+          }*/
 
         });
       });
       Promise.all(promises).then(() => {
         this.formGroup.get('users')?.setValue(this.formGroup.get('users')?.value);
-        this.formGroup.get('manager')?.setValue(this.initialManager?.uid);
+       // this.formGroup.get('manager')?.setValue(this.initialManager?.uid);
         this.formGroup.get('name')?.setValue(this.data.nameproject);
 
       });

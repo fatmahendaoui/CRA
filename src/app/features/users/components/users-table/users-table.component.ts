@@ -63,7 +63,7 @@ export class UsersTableComponent extends AbstractTableComponent<Profile> {
   ///////////////////
   public managedUserEmails: string[] = []; // Add this property to store managed user emails
 
-  public async loadManagedUsersEmails(managerId: string): Promise<void> {
+  /*public async loadManagedUsersEmails(managerId: string): Promise<void> {
     try {
       // Call the method to get managed user emails
       const emails = await this.usersService.groupUserManager(managerId);
@@ -72,7 +72,7 @@ export class UsersTableComponent extends AbstractTableComponent<Profile> {
     } catch (error) {
       console.error('Error loading managed user emails:', error);
     }
-  }
+  }*/
 
   //////////////////
   public onDelete(user: Profile): void {

@@ -4,6 +4,6 @@ export interface Project {
   name: string;
   id: string;
   projectTotal: number;
-  managerId: string;
+  //managerId: string;
   users: string[];
 }

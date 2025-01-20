@@ -131,7 +131,7 @@ export class ProjectsComponent implements OnInit {
       .open(editProjectComponent, {
         panelClass: 'bottom-sheet-without-padding',
         data: {
-          nameproject: project.name, idproject: project.id, managerId: project.managerId // Add managerId here
+          nameproject: project.name, idproject: project.id
         } // Add your parameters here
       })
       .afterDismissed()
@@ -142,12 +142,12 @@ export class ProjectsComponent implements OnInit {
   }
 
   updateproject(nomproject, users) {
-    const managerId = users.existuser.manager; // Assurez-vous que `manager` existe et est bien défini
+    //const managerId = users.existuser.manager; // Assurez-vous que `manager` existe et est bien défini
     users.allusers.map(li => {
       const foundUser = users.existuser.users.find(user => user === li.uid);
       if (foundUser) {
         this.projectService.updateProjectName(nomproject, li.uid, users.existuser.name);
-        this.projectService.updateProjectManager(nomproject, li.uid, managerId); // Update manager here
+       // this.projectService.updateProjectManager(nomproject, li.uid, managerId); 
       }
       this.projectService.getAllUsersForProject(nomproject, li.uid).then(bool => {
         if (bool) {
@@ -156,7 +156,7 @@ export class ProjectsComponent implements OnInit {
           }
         } else {
           if (foundUser) {
-            this.projectService.addNewProject(nomproject, users.existuser.name, li.uid, managerId, []);
+            this.projectService.addNewProject(nomproject, users.existuser.name, li.uid, []);
           }
         }
       });
@@ -176,10 +176,10 @@ export class ProjectsComponent implements OnInit {
   private inviteproject(project): void {
     // TODO: add a loading spinner
     if (project) {
-      const managerId = project.manager; // Assurez-vous que `manager` existe et est bien défini
-      const users = [...project.users, managerId];
+      //const managerId = project.manager; // Assurez-vous que `manager` existe et est bien défini
+      const users = [...project.users];
       project.users.map(li => {
-        this.projectService.addNewProject(project.name, project.name, li, managerId, users);
+        this.projectService.addNewProject(project.name, project.name, li, users);
       })
       this.fetchAll();
       handleResponseSuccessWithAlerts(

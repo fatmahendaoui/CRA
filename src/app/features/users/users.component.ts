@@ -128,10 +128,10 @@ export class UsersComponent implements OnInit {
       .updateUserRole(user.uid, user)
       .subscribe(() => this.fetchAll());
   }
-  private inviteUser(user: Partial<Profile>, managerId: string): void {
+  private inviteUser(user: Partial<Profile>): void {
     // TODO: add a loading spinner
     if (user) {
-      this.usersService.sendInvitation(user, managerId)
+      this.usersService.sendInvitation(user)
         .then(() => {
           // Invitation was successful
           this.fetchAll(); // Replace this with your fetchAll logic
@@ -169,11 +169,11 @@ export class UsersComponent implements OnInit {
 
 
   public addUser(): void {
-    const managerId = '';
+    //const managerId = '';
     this.bottomSheet
       .open(InviteUserComponent, { panelClass: 'bottom-sheet-without-padding' })
       .afterDismissed()
       .pipe(filter((user) => !!user))
-      .subscribe((user: Partial<Profile>) => this.inviteUser(user, managerId));
+      .subscribe((user: Partial<Profile>) => this.inviteUser(user));
   }
 }

@@ -51,17 +51,17 @@ export class ProjectService {
 
     return false;
   }
-  async addNewProject(idproject: string, newprojects: string, iduser: string, managerId: string, users: string[]): Promise<void> {
+  async addNewProject(idproject: string, newprojects: string, iduser: string, /*managerId: string,*/users: string[]): Promise<void> {
     const usersList: Profile[] = [];
     if (idproject.trim() === "") {
       return;
     }
-    const usersWithManager = [...users, managerId];
+    const usersWithManager = [...users,/* managerId*/];
 
     const projectData = {
       'name': newprojects,
       'projectTotal': 0,
-      managerId: managerId, // Store the manager's user ID
+      //managerId: managerId, // Store the manager's user ID
       users: usersWithManager // Add the users' IDs to the project data
     };
     /*
@@ -85,13 +85,13 @@ export class ProjectService {
     querySnapshot.forEach((doc) => {
       usersList.push(doc.data() as Profile);
     });
-    for await (const user of usersList) {
+  /*  for await (const user of usersList) {
      
-      if (user.uid === managerId) {
+    if (user.uid === managerId) {
         this.updateUserRoleManager(user.uid, UserRole.Manager, projectData.users);
         //user.role = UserRole.Manager;
       }
-    }
+    }*/
     try {
       // Update the manager's role to 'manager'
 
@@ -129,7 +129,7 @@ export class ProjectService {
     }
   }
 
-  async updateProjectManager(projectId: string, iduser: string, newManagerId: string): Promise<void> {
+  /*async updateProjectManager(projectId: string, iduser: string, newManagerId: string): Promise<void> {
     const projectRef = doc(this.firestore, 'membership_CRA', iduser, 'Projects', projectId);
 
     try {
@@ -154,7 +154,7 @@ export class ProjectService {
       console.error('Error updating project manager:', error);
     }
   }
-
+*/
   async updateProjectsMonth(newproject: string, iduser: string, days): Promise<void> {
 
     if (newproject.trim() === "") {
