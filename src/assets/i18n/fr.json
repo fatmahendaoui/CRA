@@ -308,7 +308,8 @@
       "Week_starting": "Semaine commençant le",
       "Month": "Mois",
       "Week": "Semaine",
-      "Today": "Aujourd'hui"
+      "Today": "Aujourd'hui",
+      "total_remote_days": "Total"
     },
     "hr-policies": { 
       "titre ":"Politiques RH"

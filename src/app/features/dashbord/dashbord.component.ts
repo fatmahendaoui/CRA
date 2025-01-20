@@ -65,8 +65,13 @@ startDate: Date | null = null;
 endDate: Date | null = null;   
 startMonthIndex=0;
 endMonthIndex=13;
+groupss: { id: string; name: string }[] = [];
+brandss: { id: string; name: string }[] = [];
+productss: { id: string; name: string }[] = [];
+marquess: { id: string; name: string }[] = [];
+mediass: { id: string; name: string }[] = [];
   ngOnInit() {
-    this.loadGroups();
+   this.loadGroups();
     this.filteredUsers = this.listuser;
     this.theDate = new Date();
     if (this.theDate) {
@@ -596,6 +601,8 @@ private updateMonthYear(newMonth: number, newYear: number): void {
     result = this.calculateHoursWorkedByMonthinuser(this.allvalues, this.currentuser, this.year,startMonthIndex, endMonthIndex);
     console.log("this.allvalues",result)
     this.dataProject = result;
+    this.selectListe(result)
+
     // Calculate dynamic dimensions based on data size
     const baseHeight = 500;
     const additionalHeightPerProject = 30;
@@ -686,7 +693,6 @@ private updateMonthYear(newMonth: number, newYear: number): void {
       }
     };
     this.loader = true;
-
   }
   
   // Calculate hours worked by month for a specific project
@@ -734,7 +740,7 @@ private updateMonthYear(newMonth: number, newYear: number): void {
     const months = Object.keys(columnTotals);
     const columnTotalData = months.map((month) => ({ x: month, y: columnTotals[month] }));
     result.unshift({ name: 'Total', data: columnTotalData });
-
+    this.loadGroups()
     return result;
   }
 
@@ -784,10 +790,15 @@ calculateHoursWorkedByMonthinuser(
         name,
         data,
         groupeId: item.groupId,
+        groupeName:item.groupName,
         brandId: item.brandId,
+        brandName: item.brandName,
         productId: item.productId,
+        productName: item.productName,
         marqueId: item.marqueId,
-        mediaId: item.mediaId
+        marqueName: item.marqueName,
+        mediaId: item.mediaId,
+        mediaName: item.mediaName,
       };
     });
 
@@ -827,6 +838,7 @@ result.forEach((user) => {
     }
   });
 });
+this.loadGroups()
 
 
   return result;
@@ -846,19 +858,17 @@ result.forEach((user) => {
     const domainId = this.profileService.profile.idDomaine; // Replace with the actual ID you need
     this.groups = await this.projectService.getGroupsByDomain(domainId);
   }
-  
+
 // Fetch brands by group
   async onGroupSelected() {
     if (this.selectedGroup) {
       this.brands = await this.projectService.getBrandsByGroup(this.selectedGroup);
-
     }
   }
 // Fetch brands by group
   async onBrandSelected() {
     if (this.selectedGroup && this.selectedBrand) {
       this.products = await this.projectService.getProductsByBrand(this.selectedGroup, this.selectedBrand);
-
     }
   }
   // Fetch marques by product
@@ -1081,17 +1091,27 @@ this.getAllProjectsForAllUsers()
     this.fetchUser(this.startMonthIndex, this.endMonthIndex);
     this. onApplyDateRange();
 }
-async getGroups(usersId) {
-  console.log('hello : ',usersId)
-  const domainId = this.profileService.profile.idDomaine; 
-  const allprojects = await this.projectService.fetchProjects(usersId); 
-console.log('allprojects : ', allprojects)  
-  const allGroups = await this.projectService.getGroupsByDomain(domainId); 
-  this.groups = allGroups.filter(group =>
-    allprojects.some(project => project.groupId === group.id)
-  );
-  console.log('groups : ', this.groups)
+
+selectListe(data) {
+  // Fonction générique pour créer une liste unique
+  const uniqueList = (items: any[], idKey: string, nameKey: string) => 
+    items
+      .map((item) => ({
+        id: item[idKey] || '',
+        name: item[nameKey] || ''
+      }))
+      .filter((item) => item.id && item.name)
+      .reduce<{ id: string; name: string }[]>((unique, item) => 
+        unique.some((e) => e.id === item.id) ? unique : [...unique, item], []); // Spécification du type ici
+
+  this.groupss = uniqueList(data, 'groupeId', 'groupeName');
+  this.brandss= uniqueList(data, 'brandId', 'brandName');
+  this.productss = uniqueList(data, 'productId', 'productName');
+  this.marquess = uniqueList(data, 'marqueId', 'marqueName');
+  this.mediass = uniqueList(data, 'mediaId', 'mediaName');
+
 }
+
 applyFilterss() {
   this.loader = false;
 // Reset the filtered result array
@@ -1123,6 +1143,8 @@ if (this.selectedMedia && this.selectedMedia !== 'All') {
 }
 console.log("filteredProjects",filteredProjects)
 console.log("this.currentuser",this.currentuser)
+this.selectListe(this.allvalues)
+
   // Update the displayed data
   this.dataProject = this.calculateHoursWorkedByMonthinuser(filteredProjects, this.currentuser, this.year,this.startMonthIndex, this.endMonthIndex);
 

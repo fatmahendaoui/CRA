@@ -7,14 +7,18 @@ import Swal from 'sweetalert2';
 import { ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../sign-in/services/auth.service';
 import { ProfileService } from 'src/app/services/profile.service';
-
+/*
+import interactionPlugin from '@fullcalendar/interaction';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import { CalendarOptions } from '@fullcalendar/core';
+import { FullCalendarComponent } from '@fullcalendar/angular';
+ */
 @Component({
   selector: 'app-remote',
   templateUrl: './remote.component.html',
   styleUrls: ['./remote.component.scss']
 })
 export class RemoteComponent implements OnInit {
-
   displayNames: { name: string, photoURL: string, id: string }[] = [];
   currentWeekStart: Date = new Date();
   currentWeekDays: { date: string, isDayOff: boolean }[] = [];
@@ -41,6 +45,7 @@ export class RemoteComponent implements OnInit {
     private profileService: ProfileService
   ) {
     this.currentWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+    this.addTripImageToCurrentWeekDays();
 
   }
 
@@ -53,9 +58,8 @@ export class RemoteComponent implements OnInit {
     this.loadDaysOff();
     this.loadApprovedConges()
     this.fetchApprovedCongesInfo();
-    this.addTripImageToCurrentWeekDays();
     this.filteredDisplayNames = [...this.displayNames];
-    
+
   }
 
   @HostListener('document:click', ['$event'])
@@ -78,71 +82,108 @@ export class RemoteComponent implements OnInit {
     this.isInsideChoice = true;
   }
 // function to close all choices
-  closeAllChoices() {
-    this.displayNames.forEach((_, i) => {
-      this.currentWeekDays.forEach((_, j) => {
-        this.showChoices[i][j] = false;
+closeAllChoices() {
+  this.displayNames.forEach((displayName) => {
+    const userId = displayName.id;
+    if (this.showChoices[userId]) {
+      this.currentWeekDays.forEach((day) => {
+        const dateKey = day.date;
+        if (this.showChoices[userId][dateKey] !== undefined) {
+          this.showChoices[userId][dateKey] = false;
+        }
+      });
+    }
+  });
+}
+
+// function to load display names
+async loadDisplayNames() {
+  try {
+    this.displayNames = await this.remoteService.getAllDisplayNames();
+    this.currentUserId = await this.auth.getCurrentUserId();
+    this.displayNames.sort((a, b) => {
+     if (a.id ===  this.currentUserId) return -1; 
+       if (b.id ===  this.currentUserId) return 1;
+      if (a.name < b.name) { return -1; }
+      if (a.name > b.name) { return 1; }
+      return 0;
+    });
+    // Initialize structures for `selectedImage` and `showChoices`
+    this.displayNames.forEach((displayName) => {
+      const userId = displayName.id;
+      if (!this.selectedImage[userId]) this.selectedImage[userId] = {};
+      if (!this.showChoices[userId]) this.showChoices[userId] = {};
+
+      this.currentWeekDays.forEach((day) => {
+        const dateKey = day.date;
+        if (!this.selectedImage[userId][dateKey]) {
+          this.selectedImage[userId][dateKey] = { image: 'plus' };
+        }
+        if (!this.showChoices[userId][dateKey]) {
+          this.showChoices[userId][dateKey] = false;
+        }
       });
     });
-  }
-  // function to load display names
-  async loadDisplayNames() {
-    try {
 
-      this.displayNames = await this.remoteService.getAllDisplayNames();
-      // Récupérer l'utilisateur actuel
-      this.currentUserId = await this.auth.getCurrentUserId();
-      // Trier les noms par ordre alphabétique
-      this.displayNames.sort((a, b) => {
-        /* if (a.id === currentUserId) return -1; // Mettre l'utilisateur actuel en premier
-         if (b.id === currentUserId) return 1;*/
-        if (a.name < b.name) { return -1; }
-        if (a.name > b.name) { return 1; }
-        return 0;
-      });
-      this.displayNames.forEach((_, i) => {
-        this.selectedImage[i] = this.selectedImage[i] || {};
-        this.showChoices[i] = this.showChoices[i] || {};
-        this.currentWeekDays.forEach((_, j) => {
-          this.selectedImage[i][j] = this.selectedImage[i][j] || { image: 'plus' };
-          this.showChoices[i][j] = this.showChoices[i][j] || false;
-        });
-      });
-      // Assigner les noms triés à filteredDisplayNames
-      this.filteredDisplayNames = [...this.displayNames];
-      this.filteredSelectedImage = this.filterSelectedImages();
-    } catch (error) {
-      console.error('Error loading display names:', error);
-    }
+    this.filteredDisplayNames = [...this.displayNames];
+    this.filteredSelectedImage = this.filterSelectedImages();
+  } catch (error) {
+    console.error('Error loading display names:', error);
   }
+}
+
+
 // function to update current week days
-  updateCurrentWeekDays() {
-    this.currentWeekDays = [];
-    for (let i = 0; i < 7; i++) {
-      const day = addDays(this.currentWeekStart, i);
-      const dayName = format(day, 'EEEE');
-      if (dayName !== 'Saturday' && dayName !== 'Sunday') {
-        const formattedDay = format(day, 'EEEE, MMMM d');
-        const isDayOff = this.daysOff.includes(formattedDay);
-        this.currentWeekDays.push({ date: formattedDay, isDayOff });
-      }
+updateCurrentWeekDays() {
+  this.currentWeekDays = [];
+  // Iterate through each day of the current week
+  for (let i = 0; i < 7; i++) {
+    const day = addDays(this.currentWeekStart, i);
+    const formattedDate = format(day, 'EEEE, MMMM d');
+    const dayName = format(day, 'EEEE'); 
+
+    // Skip weekends (Saturday and Sunday)
+    if (dayName !== 'Saturday' && dayName !== 'Sunday') {
+      const isDayOff = this.daysOff.includes(formattedDate);
+
+      // Add the day to the current week days array
+      this.currentWeekDays.push({ date: formattedDate, isDayOff });
+
+      // Ensure `selectedImage` and `showChoices` structures are initialized for each user and date
+      this.displayNames.forEach((displayName) => {
+        const userId = displayName.id;
+        if (!this.selectedImage[userId]) this.selectedImage[userId] = {};
+        if (!this.showChoices[userId]) this.showChoices[userId] = {};
+
+        if (!this.selectedImage[userId][formattedDate]) {
+          this.selectedImage[userId][formattedDate] = { image: 'plus' };
+        }
+        if (!this.showChoices[userId][formattedDate]) {
+          this.showChoices[userId][formattedDate] = false;
+        }
+      });
     }
   }
+}
+
+
+
+
 // function to previous week
-  previousWeek() {
+  async previousWeek() {
     this.currentWeekStart = subWeeks(this.currentWeekStart, 1);
     this.updateCurrentWeekDays();
     this.loadSavedChanges();
     this.loadDaysOff();
-    this.addTripImageToCurrentWeekDays();
+    await this.addTripImageToCurrentWeekDays();
   }
 // function to next week
-  nextWeek() {
+ async nextWeek() {
     this.currentWeekStart = addWeeks(this.currentWeekStart, 1);
     this.updateCurrentWeekDays();
     this.loadSavedChanges();
     this.loadDaysOff();
-    this.addTripImageToCurrentWeekDays();
+    await this.addTripImageToCurrentWeekDays();
   }
 // function to format date
   formatDate(date: Date, dateFormat: string): string {
@@ -166,42 +207,51 @@ export class RemoteComponent implements OnInit {
     }
   }
 // function to show image choices
-  showImageChoices(i: number, j: number) {
-    if (this.selectedImage[i][j].image === 'plus' && this.userCanModify(i, j)) {
-      this.markAsInsideChoice();
-      this.showChoices[i][j] = !this.showChoices[i][j];
-    }
+showImageChoices(userId: string, dateKey: string) {
+  if (!this.selectedImage[userId]) {
+    console.error(`No data found for userId: ${userId}`);
+    this.selectedImage[userId] = {}; // Initialize if not present
   }
+  if (!this.selectedImage[userId][dateKey]) {
+    console.error(`No data found for dateKey: ${dateKey}`);
+    this.selectedImage[userId][dateKey] = { image: 'plus' }; // Initialize if not present
+  }
+  if (this.selectedImage[userId][dateKey].image === 'plus' && this.userCanModify(userId, dateKey)) {
+    this.markAsInsideChoice();
+    this.showChoices[userId][dateKey] = !this.showChoices[userId][dateKey];
+  }
+}
+
 // function to toggle image choices
-  toggleImageChoices(i: number, j: number) {
+  toggleImageChoices(i: string, j: string) {
     if (this.selectedImage[i][j].image !== 'plus' && this.userCanModify(i, j)) {
       this.markAsInsideChoice();
       this.showChoices[i][j] = !this.showChoices[i][j];
     }
   }
 // function to select remote image
-  selectRemoteImage(i: number, j: number) {
+  selectRemoteImage(i: string, j: string) {
     this.selectedImage[i][j] = { image: 'remote' };
     this.showChoices[i][j] = false;
     this.saveToLocalStorage();
     this.saveChanges();
   }
 // function to select trip image
-  selectTripImage(i: number, j: number) {
+  selectTripImage(i: string, j: string) {
     this.selectedImage[i][j] = { image: 'hol' };
     this.showChoices[i][j] = false;
     this.saveToLocalStorage();
     this.saveChanges();
   }
 // function to  select client image
-  selectClientImage(i: number, j: number) {
+  selectClientImage(i: string, j: string) {
     this.selectedImage[i][j] = { image: 'client' };
     this.showChoices[i][j] = false;
     this.saveToLocalStorage();
     this.saveChanges();
   }
 // function to select auto image
-  selectAutoImage(i: number, j: number) {
+  selectAutoImage(i: string, j: string) {
     this.selectedImage[i][j] = { image: 'auto' };
     this.showChoices[i][j] = false;
     this.saveToLocalStorage();
@@ -231,24 +281,56 @@ export class RemoteComponent implements OnInit {
       });
     }
   }
-  loadSavedChanges() {
+  async loadSavedChanges(): Promise<void> {
     const storageKey = this.getStorageKey();
-    const savedImages = localStorage.getItem(storageKey);
-    if (savedImages) {
-      this.selectedImage = JSON.parse(savedImages);
-    } else {
-      this.selectedImage = {};
-      this.displayNames.forEach((_, i) => {
-        this.selectedImage[i] = this.selectedImage[i] || {};
-        this.showChoices[i] = this.showChoices[i] || {};
-        this.currentWeekDays.forEach((_, j) => {
-          this.selectedImage[i][j] = this.selectedImage[i][j] || { image: 'plus' };
-          this.showChoices[i][j] = this.showChoices[i][j] || false;
+    try {
+      // Attempt to load data from Firebase
+      const firebaseData = await this.remoteService.loadAllFromFirebase(storageKey);
+  
+      if (firebaseData) {
+        // If data exists in Firebase, load it
+        this.selectedImage = firebaseData;
+      } else {
+        // If no data exists in Firebase, initialize with default values for all users
+        this.selectedImage = {};
+        this.displayNames.forEach((displayName) => {
+          const userId = displayName.id;
+          if (!this.selectedImage[userId]) this.selectedImage[userId] = {};
+          this.currentWeekDays.forEach((day) => {
+            const dateKey = day.date;
+            if (!this.selectedImage[userId][dateKey]) {
+              this.selectedImage[userId][dateKey] = { image: 'plus' };
+            }
+          });
         });
+  
+        // Save the initialized data to Firebase
+        await this.remoteService.saveToFirebase(storageKey, this.selectedImage);
+      }
+    } catch (error) {
+      console.error('Error loading saved changes:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Failed to load saved changes!',
+        text: 'Please check your connection and try again.',
+        showConfirmButton: true,
       });
     }
-    this.loadFromFirebase(this.getStorageKey());
+  
+    // Ensure structures for `showChoices` are initialized
+    this.displayNames.forEach((displayName) => {
+      const userId = displayName.id;
+      if (!this.showChoices[userId]) this.showChoices[userId] = {};
+      this.currentWeekDays.forEach((day) => {
+        const dateKey = day.date;
+        if (!this.showChoices[userId][dateKey]) {
+          this.showChoices[userId][dateKey] = false;
+        }
+      });
+    });
   }
+  
+  
 
   loadDaysOff() {
     this.dayOffService.fetchAlldaysoff().subscribe({
@@ -264,7 +346,7 @@ export class RemoteComponent implements OnInit {
     });
   }
 
-  removeImage(i: number, j: number) {
+  removeImage(i: string, j: string) {
     if (this.userCanModify(i, j)) {
       this.selectedImage[i][j] = { image: 'plus' };
       this.saveToLocalStorage();
@@ -304,15 +386,18 @@ export class RemoteComponent implements OnInit {
         console.warn('Aucun congé approuvé disponible.');
         return [];
       }
+      const idDomaine = await this.profileService.getIdDomaine();
       const approvedCongesInfo = this.formattedConges.map(conge => {
-        const { formattedDateDebut, nature, displayName, nombreHeures } = conge;
-
-        return {
-          formattedDateDebut,
-          nature,
-          displayName,
-          nombreHeures
-        };
+if (idDomaine===conge.domainId){
+  const { formattedDateDebut, nature, displayName, nombreHeures } = conge;
+  return {
+    formattedDateDebut,
+    nature,
+    displayName,
+    nombreHeures,
+  };
+}
+       
       });
 
       return approvedCongesInfo;
@@ -322,55 +407,68 @@ export class RemoteComponent implements OnInit {
     }
   }
 
-  addTripImageToCurrentWeekDays() {
+  async addTripImageToCurrentWeekDays() :Promise<void> {
+    const storageKey = this.getStorageKey();
     this.formattedConges.forEach((conge) => {
       const displayName = conge.displayName;
-      const userId = conge.userId; // Assuming userId is available in conge
+      const userId = conge.userId; 
       const formattedDateDebut = conge.formattedDateDebut;
       const nature = conge.nature;
       let nombreHeures = conge.nombreHeures;
       let dayIndex = this.currentWeekDays.findIndex(day => day.date === formattedDateDebut);
+
       while (dayIndex !== -1 && nombreHeures > 0) {
-        // const i = this.displayNames.findIndex(name => name.name === displayName);
-        const i = this.displayNames.findIndex(user => user.id === userId); // Verify by ID
-        if (i !== -1) {
-          const j = dayIndex;
-          switch (nature) {
-            case 'Congé payé':
-              this.selectedImage[i][j] = { image: 'hol' };
-              break;
-            case 'Congé de maladie (1 jour)':
-              this.selectedImage[i][j] = { image: 'maladie' };
-              break;
-            case 'Autorisation de sortie':
-              this.selectedImage[i][j] = { image: 'auto' };
-              break;
-            default:
-              this.selectedImage[i][j] = { image: 'trip' };
-              break;
-          }
-          this.saveToLocalStorage();
-          nombreHeures -= 8;
-          dayIndex++;
-          while (dayIndex < this.currentWeekDays.length && this.currentWeekDays[dayIndex].isDayOff) {
-            dayIndex++;
-          }
-          if (dayIndex >= this.currentWeekDays.length && nombreHeures > 0) break;
-        } else {
-          break;
+        const dateKey = this.currentWeekDays[dayIndex].date; 
+        console.log("datekey",dateKey);
+        if (!this.selectedImage[userId]) {
+          this.selectedImage[userId] = {}; 
         }
+        
+        if (!this.selectedImage[userId][dateKey]) {
+          this.selectedImage[userId][dateKey] = { image: "plus" }; // Initialize image if not present
+        }
+        // Set the image based on the nature of the conge
+        switch (nature) {
+          case 'Congé Payé':
+            this.selectedImage[userId][dateKey] = { image: "trip" };
+            console.log("conger paye",this.selectedImage[userId][dateKey]);
+            break;
+          case 'Congé de maladie (1 jour)':
+            this.selectedImage[userId][dateKey] = { image: "maladie" };
+            console.log("conger maladie",this.selectedImage[userId][dateKey],'texttt',userId,dateKey);
+            break;
+          case 'Autorisation de sortie':
+            this.selectedImage[userId][dateKey] = { image: "auto" };
+            console.log("autorisation ",this.selectedImage[userId][dateKey],'texttt',userId,dateKey);
+            break;
+          default:
+            this.selectedImage[userId][dateKey] = { image: "plus" };
+            break;
+        }
+        this.saveToLocalStorage(); // Save the updated changes to localStorage
+
+        nombreHeures -= 8; // Deduct 8 hours
+        dayIndex++;
+        
+        // Skip over any days that are days off
+        while (dayIndex < this.currentWeekDays.length && this.currentWeekDays[dayIndex].isDayOff) {
+          dayIndex++;
+        }
+        if (dayIndex >= this.currentWeekDays.length && nombreHeures > 0) break;
       }
+
     });
-    this.updateCurrentWeekDays();
-    this.loadSavedChanges();
+    await this.remoteService.saveToFirebase(storageKey,this.selectedImage)
+
   }
+  
 
   refreshUI() {
-    this.changeDetectorRef.detectChanges(); // Utiliser ChangeDetectorRef pour forcer la détection des changements
+    this.changeDetectorRef.detectChanges(); 
   }
 
-  filterSelectedImages(): { [key: number]: { [key: number]: { image: string } } } {
-    const filteredImages: { [key: number]: { [key: number]: { image: string } } } = {};
+  filterSelectedImages(): { [key: string]: { [key: string]: { image: string } } } {
+    const filteredImages: { [key: string]: { [key: string]: { image: string } } } = {};
     this.filteredDisplayNames.forEach((displayName, i) => {
       const originalIndex = this.displayNames.findIndex(name => name.name === displayName.name);
       if (originalIndex !== -1) {
@@ -385,6 +483,7 @@ export class RemoteComponent implements OnInit {
       const data = await this.remoteService.loadAllFromFirebase(storageKey);
       if (data) {
         this.selectedImage = data;
+        console.log("datafrom firbase ",data)      
       } else {
         console.error('No data found in Firestore for the given key.');
       }
@@ -398,21 +497,36 @@ export class RemoteComponent implements OnInit {
     localStorage.setItem(storageKey, JSON.stringify(this.selectedImage));
   }
 
-  userCanModify(i: number, j: number): boolean {
+  userCanModify(i: string, j: string): boolean {
     if (this.userRole === 'admin') {
-      return true; // L'admin peut modifier toutes les lignes
+      return true; 
     } else {
-      const userId = this.displayNames[i].id; // ID de l'utilisateur pour cette ligne
+      const userId =i; 
       return userId === this.auth.getCurrentUserId(); // Seul l'utilisateur peut modifier sa propre ligne
     }
   }
 
-  goToToday() {
+  async goToToday() {
     this.currentWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
     this.updateCurrentWeekDays();
     this.loadSavedChanges();
     this.loadDaysOff();
-    this.addTripImageToCurrentWeekDays();
+    await this.addTripImageToCurrentWeekDays();
  
   }
+  // function to get remote total for day
+calculateRemoteTotalForDay(dayDate: string): number {
+  let remoteDaysCount = 0;
+
+  this.displayNames.forEach(displayName => {
+    const userId = displayName.id;
+    const selectedDayImage = this.selectedImage[userId]?.[dayDate]?.image;
+
+    if (selectedDayImage === 'remote') {
+      remoteDaysCount++;
+    }
+  });
+
+  return remoteDaysCount;
+}
 }
