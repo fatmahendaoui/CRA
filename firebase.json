@@ -1,6 +1,7 @@
 {
   "hosting": {
     "public": "dist",
+    "site": "dev-cra-390314-f609b",
     "ignore": [
       "firebase.json",
       "**/.*",
