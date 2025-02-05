@@ -1,6 +1,9 @@
+import { CongeService } from 'src/app/features/conges/services/conge.service';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { getFirestore, collection, getDocs, query, where, setDoc, doc, getDoc } from 'firebase/firestore';
 import { ProfileService } from 'src/app/services/profile.service';
+import { Profile } from 'src/app/models/profile.model';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +11,9 @@ import { ProfileService } from 'src/app/services/profile.service';
 export class RemoteService {
   private firestore;
   private readonly profileService = inject(ProfileService);
+    private readonly http = inject(HttpClient);    
+    private readonly congeService = inject(CongeService);
+  
   constructor() {
     this.firestore = getFirestore();
   }
@@ -74,4 +80,33 @@ export class RemoteService {
     const userRole = await this.profileService.getUserRole();
     return userRole;
   }
+  async sendEmailRemoteExeption(data): Promise<void>  {
+
+         const adminUsers: Profile[] = await this.congeService.getAdminUsers();
+         console.log('adminUsers',adminUsers);
+         for await (const adminUser of adminUsers) {
+          const adminEmailData = {
+            ...data,
+            emailData: adminUser.email,
+            AdminName: adminUser.displayName,
+  
+          };
+          console.log('adminEmailData',adminEmailData);
+          try {
+            await this.http.post<void>(
+              `https://us-central1-dev-cra-390314.cloudfunctions.net/sendRemotExeptionEmail`,
+              adminEmailData
+            ).toPromise();
+          } catch (error) {
+            console.error('Error sending email to admin:', error);
+          } 
+        }
+  /*  try {
+      await this.http.post<void>(
+        `https://us-central1-dev-cra-390314.cloudfunctions.net/sendCongeNotificationEmail`,
+        data
+      ).toPromise();
+    } catch (error) {
+      console.error('Error sending email to admin:', error);
+    }  */}
 }

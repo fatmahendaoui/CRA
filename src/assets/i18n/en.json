@@ -309,7 +309,11 @@
       "Month": "Month",
       "Week": "Week",
       "Today": "Today",
-      "total_remote_days": "Total"
+      "total_remote_days": "Total",
+      "attention":"Attention!",
+      "limit_remote_days":"You have reached the maximum allowed limit (5 people per day).",
+      "comment": "Add a comment here in case of exceptions ..."
+
     },
     "hr-policies": { 
       "titre ":"HR Policies"

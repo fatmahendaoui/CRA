@@ -6,7 +6,9 @@ import { CongeService } from '../conges/services/conge.service';
 import Swal from 'sweetalert2';
 import { ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../sign-in/services/auth.service';
+import { Auth, user } from '@angular/fire/auth';
 import { ProfileService } from 'src/app/services/profile.service';
+import { TranslocoService } from '@ngneat/transloco';
 /*
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -28,21 +30,26 @@ export class RemoteComponent implements OnInit {
   isInsideChoice: boolean = false;
   formattedConges;
   selectedFilter: string = 'all';
-  filteredDisplayNames: { name: string, photoURL: string }[] = [];
+  filteredDisplayNames: { name: string, photoURL: string ,id:string}[] = [];
   filterText: string = '';
   filteredSelectedImage: { [key: number]: { [key: number]: { image: string } } } = {};
   userRole: string; 
   selectedView: string = 'week';
   headerText: string;
   currentUserId: string | null = null; 
+  public isAdmin: boolean = true;
+  public isNotManager: boolean = true;
+
 
   constructor(
     private remoteService: RemoteService,
     private dayOffService: Day_offService,
     private congeService: CongeService,
     private changeDetectorRef: ChangeDetectorRef,
-    private auth: AuthService,
-    private profileService: ProfileService
+    private authS: AuthService,
+    private auth: Auth,
+    private profileService: ProfileService,
+    private translocoService: TranslocoService
   ) {
     this.currentWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
     this.addTripImageToCurrentWeekDays();
@@ -59,7 +66,8 @@ export class RemoteComponent implements OnInit {
     this.loadApprovedConges()
     this.fetchApprovedCongesInfo();
     this.filteredDisplayNames = [...this.displayNames];
-
+    // Vérifier l'accès de l'utilisateur
+    this.checkUserAccess();
   }
 
   @HostListener('document:click', ['$event'])
@@ -100,7 +108,7 @@ closeAllChoices() {
 async loadDisplayNames() {
   try {
     this.displayNames = await this.remoteService.getAllDisplayNames();
-    this.currentUserId = await this.auth.getCurrentUserId();
+    this.currentUserId = await this.authS.getCurrentUserId();
     this.displayNames.sort((a, b) => {
      if (a.id ===  this.currentUserId) return -1; 
        if (b.id ===  this.currentUserId) return 1;
@@ -210,11 +218,11 @@ updateCurrentWeekDays() {
 showImageChoices(userId: string, dateKey: string) {
   if (!this.selectedImage[userId]) {
     console.error(`No data found for userId: ${userId}`);
-    this.selectedImage[userId] = {}; // Initialize if not present
+    this.selectedImage[userId] = {}; 
   }
   if (!this.selectedImage[userId][dateKey]) {
     console.error(`No data found for dateKey: ${dateKey}`);
-    this.selectedImage[userId][dateKey] = { image: 'plus' }; // Initialize if not present
+    this.selectedImage[userId][dateKey] = { image: 'plus' }; 
   }
   if (this.selectedImage[userId][dateKey].image === 'plus' && this.userCanModify(userId, dateKey)) {
     this.markAsInsideChoice();
@@ -229,8 +237,80 @@ showImageChoices(userId: string, dateKey: string) {
       this.showChoices[i][j] = !this.showChoices[i][j];
     }
   }
+  loadPreviousWeekRemoteDays(i, j) {
+    const previousWeekStart = subWeeks(this.currentWeekStart, 1);
+    const previousWeekDay = addDays(previousWeekStart, this.currentWeekDays.findIndex(day => day.date === j));
+  
+    // Format the previousWeekDay to display DAY, Month Date (in English)
+    const formattedDate = previousWeekDay.toLocaleDateString('en-US', {
+      weekday: 'long', // Full day of the week (e.g., 'Thursday')
+      month: 'long',   // Full month name (e.g., 'January')
+      day: 'numeric',  // Numeric day (e.g., '30')
+    });
+  
+    console.log("previousWeekDay:", formattedDate);
+  }
+  
+  
 // function to select remote image
   selectRemoteImage(i: string, j: string) {
+    const previousWeekStart = subWeeks(this.currentWeekStart, 1);
+    const previousWeekDay = addDays(previousWeekStart, this.currentWeekDays.findIndex(day => day.date === j));
+  
+    // Format the previousWeekDay to display DAY, Month Date (in English)
+    const formattedDate = previousWeekDay.toLocaleDateString('en-US', {
+      weekday: 'long', // Full day of the week (e.g., 'Thursday')
+      month: 'long',   // Full month name (e.g., 'January')
+      day: 'numeric',  // Numeric day (e.g., '30')
+    });
+    console.log("this.selectedImage[i][previousWeekDay]:", this.selectedImage[i][formattedDate]);
+    console.log("this.selectedImage[i][formattedDate]:", this.selectedImage[i][formattedDate].image === 'remote');
+    if (this.selectedImage[i] && this.selectedImage[i][formattedDate] && this.selectedImage[i][formattedDate].image === 'remote') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Restriction de télétravail',
+        text: `Vous ne pouvez pas sélectionner le même jour de télétravail deux semaines de suite (${j}).`,
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+ this.loadPreviousWeekRemoteDays(i,j);
+    const remoteDaysCount = this.calculateRemoteTotalForDay(j);
+    if (!this.isAdmin && remoteDaysCount >= 5) {
+      Swal.fire({
+        icon: 'warning',
+        iconColor: 'rgb(239, 64, 100)',
+       // title: this.translocoService.translate('features.remote.attention'),
+        text: this.translocoService.translate('features.remote.limit_remote_days'),
+        input: 'textarea',
+        inputPlaceholder: this.translocoService.translate('features.remote.comment'),
+        showCancelButton: true,
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Annuler',
+        confirmButtonColor: 'rgb(239, 64, 100)' ,
+        cancelButtonColor: '#193F77',
+      }).then((result) => {
+        if (result.isConfirmed && result.value) {
+          const comment = result.value;
+          let userName = '';
+          this.filteredDisplayNames.forEach((displayName) => {
+            if (i === displayName.id) {
+               userName = displayName.name;
+            }
+          });
+          console.log("userName",userName);
+          console.log("comment",comment);
+          console.log("j :",j);
+          let data ={ 
+            Name:userName, 
+            Comment:comment,
+            Date: j }
+         this.remoteService.sendEmailRemoteExeption(data);
+        }
+      });
+      return; 
+    }
+    console.log("i : ",i ,"j : ",j);
     this.selectedImage[i][j] = { image: 'remote' };
     this.showChoices[i][j] = false;
     this.saveToLocalStorage();
@@ -502,7 +582,7 @@ if (idDomaine===conge.domainId){
       return true; 
     } else {
       const userId =i; 
-      return userId === this.auth.getCurrentUserId(); // Seul l'utilisateur peut modifier sa propre ligne
+      return userId === this.authS.getCurrentUserId(); // Seul l'utilisateur peut modifier sa propre ligne
     }
   }
 
@@ -529,4 +609,24 @@ calculateRemoteTotalForDay(dayDate: string): number {
 
   return remoteDaysCount;
 }
+  // Méthode pour vérifier l'accès de l'utilisateur
+  public async checkUserAccess() {
+    // Vérifier si l'utilisateur est un administrateur en utilisant le service de profil
+    const queryResult = await this.profileService.checkAdmin(
+      this.auth.currentUser!.uid
+    );
+
+    // Vérifier si le résultat de la requête contient des documents et si le rôle de l'utilisateur est "admin"
+    this.isAdmin =
+      queryResult.docs.length > 0 &&
+      queryResult.docs[0].data()['role'] === 'admin' || queryResult.docs[0].data()['role'] === 'manager';
+    this.isNotManager = queryResult.docs.length > 0 && queryResult.docs[0].data()['role'] === 'admin';
+    // Retourner la valeur de isAdmin
+    return this.isAdmin;
+  }
+  isTuesday(date: string): boolean {
+    const dayTuesday = date.split(',')[0].trim(); 
+   // console.log("dayTuesday",dayTuesday);
+    return dayTuesday === "Tuesday"; 
+  }
 }

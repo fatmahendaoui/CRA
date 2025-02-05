@@ -309,7 +309,10 @@
       "Month": "Mois",
       "Week": "Semaine",
       "Today": "Aujourd'hui",
-      "total_remote_days": "Total"
+      "total_remote_days": "Total",
+      "attention":"Attention!",
+      "limit_remote_days":"Vous avez atteint le seuil maximal autorisé (5 personnes par jour).",
+      "comment": "Ajoutez un commentaire ici en cas d'exeptions ..."
     },
     "hr-policies": { 
       "titre ":"Politiques RH"
