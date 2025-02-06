@@ -179,18 +179,18 @@ export class addNewProjectComponent implements OnInit {
   usersMan: Profile[];
 // Data for autocomplete options
 public groups = ['Locaux', 'Etranger'];
-public brands = ['DU DIGITAL', 'PGH', 'ROAD HERO', 'JII Sport', 'HBG', 'Glovo','Doghri'];
+public brands = ['DU DIGITAL', 'PGH', 'ROAD HERO', 'JII Sport', 'HBG', 'Glovo','Doghri','Ealan','La Paix'];
 public products = [
   'Mazraa', 'Medoil', 'GIPA', 'Nety', 'City Market', 'Mazraa Market', 
   'YAB', 'Goldenchips', 'Ice Vegas', 'Le Patissier', 'Kiabi', 'Koton', 
-  'Carte Assurace', 'Road Hero', 'Du Digital', 'JII', 'Glovo'
+  'Carte Assurace', 'Road Hero', 'Du Digital', 'JII', 'Glovo','Ealan','La Paix'
 ];
 public marques = [
   'Mazraa', 'Jadida', 'Selja', 'Ola', 'Nety', 'MyPets', 'City Market', 
   'Mazraa Market', 'YAB', 'Goldenchips', 'Ice Vegas', 'Le Patissier', 
-  'Kiabi', 'Koton', 'Carte', 'Road Hero', 'JII', 'Glovo','Du Digital'
+  'Kiabi', 'Koton', 'Carte', 'Road Hero', 'JII', 'Glovo','Du Digital','Ealan','El Medina','Diar el Medina','Regency','Solaria','Belisaire','White Elephant','Carthageland'
 ];
-public mediaTypes = ['Conseil', 'Digital', 'Martech', 'Produit', 'Offline'];
+public mediaTypes = ['Conseil', 'Digital', 'Martech', 'Produit', 'Offline','Internal','Pitch'];
 public projectNames = [
   'Account Mgt', 'Audit DATA', 'Audit SEO', 'Audit Technique', 'Branding', 'CAPI', 
   'Chatbot - IA', 'Content', 'Content- Radio', 'Content- TV', 'DASHBOARDING', 
@@ -198,7 +198,7 @@ public projectNames = [
   'Influenceur', 'Kepler MMM', 'Kepler Scoring', 'Kepler Segmentation', 
   'LISTENING & E-REPUTATION', 'OOH', 'Performance - Google Ads', 'Performance - Paid Social', 
   'Presse', 'Programmatic', 'Radio', 'Social Media Mgt', 'Strategie', 'Training', 'TV', 'UGC', 
-  'UX UI'
+  'UX UI','Activities','HR House','Offline','Performance','Social','Product','Martech Solution','Presentation'
 ];
 
   // Filtered autocomplete options
