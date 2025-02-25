@@ -162,7 +162,7 @@
                 project.marqueId === appliedMarque&&
               project.mediaId===appliedMedia) || 
                ['Maladie', 'Vacances', 'Disponible'].includes(project.name) || 
-               (!appliedGroup && !appliedBrand && !appliedProduct && !appliedMarque&&!appliedMedia)">
+               (!appliedGroup && !appliedBrand && !appliedProduct && !appliedMarque&&!appliedMedia) && calculateDaysFromHours(calculateTotalHours(project.days)) != 0">
 
                 <td class="col-projects" style="border-bottom: 0.01rem solid white;"
                   [ngStyle]="{'background-color': project.name == 'Disponible' || project.name == 'Maladie' || project.name == 'Vacances' ? '#193F77' : '', 'color': project.name == 'Disponible' || project.name == 'Maladie' || project.name == 'Vacances' ? 'white' : ''}">
@@ -195,8 +195,7 @@
                   {{ calculateDaysFromHours(calculateTotalHours(project.days)) }}
 
                 </td>
-              </tr>
-            </ng-container>
+              </tr></ng-container>
             <tr class="total-hours-row">
               <!-- Display total hours for each day -->
               <td class="col-projects" style="border-bottom: 0.01rem solid white;">
@@ -206,8 +205,10 @@
                 [ngStyle]="{'background':isDayOff(day.day) ? '#fee9ba' : ''}">
                 <div class="form-group div-heure" *ngIf="!isWeekendDay(day.year, this.month2, day.day)">
                   <input type="number" class="form-control input-heure input" [(ngModel)]="day.nbHeure"
-                    [value]="totalHours[dayIndex] || ''" [disabled]="true" [ngStyle]="{'background':   day.nbHeure != 8 && day.nbHeure != 0 ? '#E50060' :  '',
-                'color':   day.nbHeure != 8 && day.nbHeure != 0 ? 'white' :  ''}" />
+                    [value]="totalHours[dayIndex] || ''" [disabled]="true"  [ngStyle]="{
+                      'background': day.nbHeure > 8 ? '#ffa500 ' : (day.nbHeure != 0 ? '#E50060' : ''),
+                      'color': day.nbHeure > 8 ? 'white' : (day.nbHeure != 0 ? 'white' : '')
+                    }" />
                 </div>
               </td>
               <td class="totaldays" >{{calculateDaysFromHours(calculateTotalHoursInmonth())}}

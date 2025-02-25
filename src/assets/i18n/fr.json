@@ -321,6 +321,14 @@
       "On going": "En cours",
       "Improved": "Approuvé",
       "Submitted": "Soumis"
+    },
+    "popup": {
+      "title": "Mes Congés",
+      "singleDay": "Le",
+      "range": "Du",
+      "duration": "Durée",
+      "day": "jour",
+      "cancelRequest": "Annuler la demande"
     }
   }
 }

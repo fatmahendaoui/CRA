@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { AuthService } from 'src/app/features/sign-in/services/auth.service';
 import { DatePipe } from '@angular/common';
@@ -8,6 +8,8 @@ import { ActivatedRoute } from '@angular/router';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { ProfilService } from '../../services/profile.service';
 import { CongeService } from 'src/app/features/conges/services/conge.service';
+import { ca } from 'date-fns/locale';
+import { TranslocoService } from '@ngneat/transloco';
 
 
 
@@ -34,7 +36,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
   IsAdmin: boolean;
   isEditing: boolean = false;
   congesUtilisateurConnecte: any[] = [];
-
+  private readonly transloco = inject(TranslocoService);
   showPopup = false;
 
   constructor(
@@ -45,7 +47,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
     private projectService: ProjectService,
     private route: ActivatedRoute, // Ajoutez cette ligne
     private fireStorage: AngularFireStorage,
-    private congeService: CongeService 
+    private congeService: CongeService
 
   ) {
     // Vérifier si l'utilisateur est un administrateur
@@ -111,7 +113,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    
+
     // Récupérer l'ID de l'utilisateur à partir des paramètres de la route
     this.route.paramMap.subscribe(params => {
       const userId = params.get('id');
@@ -368,7 +370,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
           console.error(`Error fetching details for project ID`, error);
         });
 
-      
+
       });
       Promise.all(projectDetailsPromises).then(() => {
         this.chartOptions.xaxis.categories = projectNames; // Update chart categories with project names
@@ -436,9 +438,9 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
           if (projectData) {
             // Calculer le total des heures du congé de maladie pour ce projet
             const totalHours = this.calculateTotalHours(projectData, vacancesProjectId);
-           
-          
-            remainingHours = 176 - totalHours; 
+
+
+            remainingHours = 176 - totalHours;
             // Convertir les heures restantes en jours et heures
             const remainingHoursText = this.profilService.convertToDaysAndHours(remainingHours);
             // Mettre à jour le champ maladie dans le formulaire
@@ -453,14 +455,14 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
     });
   }
 
-  
+
   async fetchConges(): Promise<void> {
     try {
       if (!this.userId) {
         console.error('User ID is null or undefined.');
         return;
       }
-  
+
       const conges = await this.congeService.getAllConges(); // Récupérer tous les congés
       this.congesUtilisateurConnecte = conges
         .filter(conge => conge.userId === this.userId)
@@ -469,12 +471,12 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
           dateDebut: conge.dateDebut.toDate(), // Conversion du timestamp en Date
           dateFin: conge.dateFin.toDate() // Conversion du timestamp en Date
         }));
-        
+
     } catch (error) {
       console.error('Error fetching congés:', error);
     }
   }
-  
+
   openPopup(): void {
     this.fetchConges(); // Appeler la méthode pour récupérer les congés
     this.showPopup = true; // Activer l'affichage de la popup
@@ -486,20 +488,25 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
   getStatusLabel(status: number): string {
     switch (status) {
       case 1:
-        return 'Approuvé';
+        return this.transloco.translate('features.liste_conge.approved');
       case 0:
-        return 'En attente';
+        return this.transloco.translate('features.liste_conge.awaiting');
       case 2:
-        return 'Sous Réserve';
+        return this.transloco.translate('features.liste_conge.rejected');
       default:
         return '';
     }
   }
-  
+  async onAnnulerConger(conge: any) {
+    console.log('Annulation du congé :', conge);
+    try {
+      await this.congeService.anulerConger(conge);
+      this.fetchConges();
+    } catch (error) {
+      console.error('Erreur lors de l\'annulation du congé :', error);
+    }
+  }
+
 }
 
 
-
-
-
-//exports.monthlyTimesheetReminder = functions.pubsub.schedule('00 10 28 * *')

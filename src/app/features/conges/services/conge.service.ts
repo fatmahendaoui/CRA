@@ -11,6 +11,8 @@ import { getDocs, } from '@angular/fire/firestore';
 import { HttpClient } from '@angular/common/http';
 import { Profile } from 'src/app/models/profile.model';
 import { ProfileService } from 'src/app/services/profile.service';
+import { TranslocoService } from '@ngneat/transloco';
+import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +32,7 @@ export class CongeService {
   private currentUser: User | null;
   private authInitialized: boolean = false;
 
-  constructor() {
+  constructor(private translocoService: TranslocoService) {
     const app = initializeApp(environment.firebaseConfig);
     this.firestore = getFirestore(app);
     this.currentUser = null;
@@ -255,15 +257,18 @@ export class CongeService {
       const congeCollectionRef = collection(this.firestore, 'conge');
       const querySnapshot = await getDocs(congeCollectionRef);
       const allConges: any[] = [];
+  
       querySnapshot.forEach((doc) => {
-        allConges.push(doc.data());
+        allConges.push({ id: doc.id, ...doc.data() }); // Ajoute l'ID du document
       });
+  
       return allConges;
     } catch (error) {
       console.error('Erreur lors de la récupération de tous les congés :', error);
       return [];
     }
   }
+  
 
   async loadConges(): Promise<void> {
     try {
@@ -272,5 +277,32 @@ export class CongeService {
       console.error('Erreur lors du chargement des congés :', error);
     }
   }
+
+async anulerConger(conge: any): Promise<void> {
+  try {
+    // Get the conge ID from the passed object
+    const congeId = conge.id;
+
+    // Update the status of the conge to '2' for canceled
+    const congeDocRef = doc(this.firestore, 'conge', congeId);
+    await updateDoc(congeDocRef, { status: 2 ,commentaires :`Congé annulé par ${conge.displayName}`});
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Congé annulé',
+      text: 'Le congé a été annulé avec succès!',
+    });
+
+  } catch (error) {
+    console.error('Erreur lors de l\'annulation du congé:', error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Erreur',
+      text: 'Une erreur est survenue lors de l\'annulation du congé.',
+    });
+  }
+}
+
+  
 }
 

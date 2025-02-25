@@ -552,10 +552,9 @@ async createMedia(idMedia: string, mediaName: string, groupId: string, brandId: 
     return allProjects;
   }
   public async fetchAllProjects(
-    selectedMarque?: string): Promise<any[]> {
+    selectedMedia?: string): Promise<any[]> {
     const usersList: Profile[] = [];
     const allProjects: any[] = [];
-
     const querySnapshot = await getDocs(
       query(
         collection(this.firestore, 'membership_CRA'),
@@ -576,8 +575,10 @@ async createMedia(idMedia: string, mediaName: string, groupId: string, brandId: 
  const filteredProjects = projects.filter((project) => {
   let isValid = project.name !== "Disponible" && project.name !== "Maladie" && project.name !== "Vacances";
 
-  if (selectedMarque) {
-    isValid = isValid && project.marqueId === selectedMarque;
+  if (selectedMedia) {
+    isValid = isValid && project.mediaId === selectedMedia;
+    console.log('selectedMedia',selectedMedia , " : project.mediaId",project.mediaId);  
+
   }
 
   return isValid;

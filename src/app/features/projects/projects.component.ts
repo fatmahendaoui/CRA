@@ -185,7 +185,7 @@ showFilters: boolean = false;
 
   async fetchAll() {
     this.allprojects = null;
-    this.projectService.fetchAllProjects(this.selectedMarque).then(li => {
+    this.projectService.fetchAllProjects(this.selectedMedia).then(li => {
       this.allprojects = li
     })
 
