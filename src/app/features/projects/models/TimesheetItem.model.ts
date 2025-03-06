@@ -7,6 +7,5 @@ export interface TimesheetItem  {
   nameDay: string;
   numberDay: number;
   nbHeure: number;
-  projectTotal: number; // Total for the project
-
+  projectTotal: number; 
 }
