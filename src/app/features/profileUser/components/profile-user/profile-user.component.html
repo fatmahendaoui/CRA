@@ -3,32 +3,47 @@
         
         <h1>{{ 'features.profile.title' | transloco }}</h1>
         <ng-container *ngIf="!isEditing; else editingButtons">
-            <button mat-flat-button color="primary" class="right-aligned" (click)="openPopup()">Mes congés</button>
+            <button mat-flat-button color="primary" class="right-aligned" (click)="openPopup()">{{ 'features.popup.title' | transloco }}</button>
             &nbsp;&nbsp;&nbsp;
           <!-- Popup pour afficher les congés -->
 
-          <div class="popup-container" *ngIf="showPopup">
-            <div class="popup-content">
-              <h3>Mes Congés</h3>
-              <ul>
-                <li *ngFor="let conge of congesUtilisateurConnecte">
-                    <div class="conge-item">
-                        
-                      <span class="conge-nature">{{ conge.nature }}</span> 
-                      <span class="conge-duree">{{ conge.duree }}</span> 
-                      De&nbsp;&nbsp;&nbsp;<span class="conge-date">{{ conge.dateDebut | date: 'dd/MM/yyyy' }}</span>à&nbsp;&nbsp;&nbsp;
-                      <span class="conge-date">{{ conge.dateFin | date: 'dd/MM/yyyy' }}</span> 
-                      <mat-chip-list>
-                        <mat-chip [ngClass]="{'approved': conge.status === 1, 'pending': conge.status === 0, 'refused': conge.status === 2}">
-                          {{ getStatusLabel(conge.status) }}
-                        </mat-chip>
-                      </mat-chip-list>
+          <div class="popup-container" *ngIf="showPopup" (click)="closePopup()">
+            <div class="popup-content" (click)="$event.stopPropagation()">
+              <span class="close-icon" (click)="closePopup()">&times;</span>
+              <h3 class="title">{{ 'features.popup.title' | transloco }}</h3>
+              <div class="conge-list">
+                <div *ngFor="let conge of congesUtilisateurConnecte" class="conge-card">
+                  <div class="conge-header">
+                    <span class="conge-nature">{{ conge.nature }}</span>
+                    <span class="status-badge" [ngClass]="{'approved': conge.status === 1, 'pending': conge.status === 0, 'refused': conge.status === 2}">
+                      {{ getStatusLabel(conge.status) }}
+                    </span>
+                  </div>
+                  <div class="conge-details">
+                    <div class="date">
+                      <mat-icon>event</mat-icon> 
+                      <span *ngIf="conge.dateDebut?.getTime() === conge.dateFin?.getTime()">
+                        {{ 'features.popup.singleDay' | transloco }} {{ conge.dateDebut | date: 'dd/MM/yyyy' }}
+                      </span>
+                      <span *ngIf="conge.dateDebut?.getTime() !== conge.dateFin?.getTime()">
+                        {{ 'features.popup.range' | transloco }} {{ conge.dateDebut | date: 'dd/MM/yyyy' }} → {{ conge.dateFin | date: 'dd/MM/yyyy' }} 
+                      </span>
                     </div>
-                  </li>
-                </ul>
-                <button mat-button color="warn" (click)="closePopup()">Fermer</button>
+                    <div class="duration">
+                      <mat-icon>access_time</mat-icon> 
+                      {{ 'features.popup.duration' | transloco }}: {{ conge.duree }} jour{{ conge.duree > 1 ? 's' : '' }}
+                    </div>
+                  </div>
+                  <button *ngIf="conge.status === 0" class="cancel-button" (click)="onAnnulerConger(conge)">
+                    {{ 'features.popup.cancelRequest' | transloco }}                  </button>
+                </div>
               </div>
             </div>
+          </div>
+          
+          
+          
+          
           
 
 

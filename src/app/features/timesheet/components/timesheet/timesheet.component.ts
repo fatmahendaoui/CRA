@@ -432,13 +432,13 @@ export class TimesheetComponent implements OnInit {
         const element = project.days[index];
         this.resultTimesheet[index].nbHeure = (+this.resultTimesheet[index].nbHeure) + (+element.nbHeure) === 0 ? '' : (+this.resultTimesheet[index].nbHeure) + (+element.nbHeure) || '';
 
-        if (this.resultTimesheet[index].nbHeure > 8) {
+       /* if (this.resultTimesheet[index].nbHeure > 8) {
           displayAlertwarning(
             "Attention :",
             'Ok',
             this.transloco.translate('features.projects.dialog.warning.message'),
           )
-        }
+        }*/
       }
 
     });

@@ -323,5 +323,15 @@
       "Improved": "Approved",
       "Submitted": "Submitted"
     }
+    ,
+      "popup": {
+        "title": "My Leaves",
+        "singleDay": "On",
+        "range": "From",
+        "duration": "Duration",
+        "day": "day",
+        "cancelRequest": "Cancel request"
+    }
+    
   }
 }
