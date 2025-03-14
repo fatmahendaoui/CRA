@@ -133,7 +133,7 @@
                                 <div class="percent">({{ entry.percentage }}%)</div>
                             </td>
                             <td class="sticky-col-last total-hour">
-                                {{ project.data[project.data.length - 1].y }}h
+                                <div class="hour"> {{ formatHours(project.data[project.data.length - 1].y )}}</div>
                                 <div class="percent-total">({{ project.data[project.data.length - 1].percentage }}%)
                                 </div>
                             </td>
@@ -276,7 +276,7 @@
                                 <div class="percent">({{ entry.percentage }}%)</div>
                             </td>
                             <td class="sticky-col-last total-hour">
-                                {{ formatHours(project.data[project.data.length - 1].y )}}h
+                                <div class="hour"> {{ formatHours(project.data[project.data.length - 1].y )}}</div>
                                 <div class="percent-total">({{ project.data[project.data.length - 1].percentage }}%)
                                 </div>
                             </td>
