@@ -163,12 +163,12 @@
             </ng-container>
         </mat-tab>
         <mat-tab class="mat-tab" label="{{ 'features.dashbord.User-by-project' | transloco }}">
-            <div class="cra" *ngIf="dataProject">
+            <div class="cra">
                 <div class="col-12 header-timesheet">
                     <div class="filter-table">
                         <mat-form-field appearance="outline" class="filter-field">
                             <input matInput type="text" placeholder="{{ 'features.dashbord.Search_User' | transloco }}"
-                                [matAutocomplete]="auto" [(ngModel)]="searchUser" (input)="filterUsers()">
+                                [matAutocomplete]="auto" [(ngModel)]="searchUser" (input)="filterUsers()" [disabled]="filteredUsers.length === 0">
 
                             <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onUserSelected($event)">
                                 <mat-option *ngFor="let user of filteredUsers" [value]="user">

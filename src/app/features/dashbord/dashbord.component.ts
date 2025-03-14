@@ -1511,64 +1511,96 @@ console.log("this.groupss",this.groupss)
   exportTableToPNG() {
     const tableContainer = document.querySelector('.table-container') as HTMLElement;
     const title = document.querySelector('.table-title') as HTMLElement;
-
+  
     if (!tableContainer || !title) return;
-
-    // Create a temporary container
+  
+    // Sauvegarder les styles originaux
+    const originalOverflow = tableContainer.style.overflow;
+    const originalHeight = tableContainer.style.height;
+  
+    // Rendre toutes les lignes visibles temporairement
+    tableContainer.style.overflow = 'visible';
+    tableContainer.style.height = 'auto';
+  
+    // Créer un conteneur temporaire
     const container = document.createElement('div');
     container.style.position = 'fixed';
     container.style.left = '-9999px';
-    container.style.width = tableContainer.scrollWidth + 'px'; // Use scrollWidth to include hidden content
+    container.style.width = tableContainer.scrollWidth + 'px'; // Inclure tout le contenu
     document.body.appendChild(container);
-
-    // Clone title and table
+  
+    // Cloner le titre et la table
     const clonedTitle = title.cloneNode(true) as HTMLElement;
     const clonedTable = tableContainer.cloneNode(true) as HTMLElement;
-
-    // Apply styles to ensure proper rendering
+  
+    // Appliquer les styles pour un rendu correct
     clonedTable.style.width = '100%';
     clonedTable.style.margin = '0';
-    clonedTitle.style.margin = '0 0 20px 0'; // Adjust as needed
-
+    clonedTitle.style.margin = '0 0 20px 0';
+  
+    // Désactiver les styles "sticky" temporairement
+    const stickyElements = clonedTable.querySelectorAll('.sticky-header, .sticky-footer, .sticky-col, .sticky-col-last');
+    stickyElements.forEach(element => {
+      (element as HTMLElement).style.position = 'static';
+    });
+  
     container.appendChild(clonedTitle);
     container.appendChild(clonedTable);
-
-    // Use html2canvas with options to improve rendering
+  
+    // Exporter en PNG avec html2canvas
     html2canvas(container, { scale: 2, scrollX: -window.scrollX, scrollY: -window.scrollY }).then(canvas => {
       canvas.toBlob(blob => {
         if (blob) {
           saveAs(blob, 'table.png');
         }
         document.body.removeChild(container);
+  
+        // Restaurer les styles originaux
+        tableContainer.style.overflow = originalOverflow;
+        tableContainer.style.height = originalHeight;
       });
     });
   }
-
+  
   exportTableToSVG() {
     const tableContainer = document.querySelector('.table-container') as HTMLElement;
     const title = document.querySelector('.table-title') as HTMLElement;
-
+  
     if (!tableContainer || !title) return;
-
-    // Create a temporary container
+  
+    // Sauvegarder les styles originaux
+    const originalOverflow = tableContainer.style.overflow;
+    const originalHeight = tableContainer.style.height;
+  
+    // Rendre toutes les lignes visibles temporairement
+    tableContainer.style.overflow = 'visible';
+    tableContainer.style.height = 'auto';
+  
+    // Créer un conteneur temporaire
     const container = document.createElement('div');
     container.style.position = 'fixed';
     container.style.left = '-9999px';
-    container.style.width = tableContainer.scrollWidth + 'px'; // Use scrollWidth to include hidden content
+    container.style.width = tableContainer.scrollWidth + 'px'; // Inclure tout le contenu
     document.body.appendChild(container);
-
-    // Clone title and table
+  
+    // Cloner le titre et la table
     const clonedTitle = title.cloneNode(true) as HTMLElement;
     const clonedTable = tableContainer.cloneNode(true) as HTMLElement;
-
+  
     clonedTable.style.width = '100%';
     clonedTable.style.margin = '0';
     clonedTitle.style.margin = '0 0 20px 0';
-
+  
+    // Désactiver les styles "sticky" temporairement
+    const stickyElements = clonedTable.querySelectorAll('.sticky-header, .sticky-footer, .sticky-col, .sticky-col-last');
+    stickyElements.forEach(element => {
+      (element as HTMLElement).style.position = 'static';
+    });
+  
     container.appendChild(clonedTitle);
     container.appendChild(clonedTable);
-
-    // Render to canvas and embed in SVG
+  
+    // Exporter en SVG
     html2canvas(container, { scale: 2, scrollX: -window.scrollX, scrollY: -window.scrollY }).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
       const svgContent = `
@@ -1579,6 +1611,10 @@ console.log("this.groupss",this.groupss)
       const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
       saveAs(svgBlob, 'table.svg');
       document.body.removeChild(container);
+  
+      // Restaurer les styles originaux
+      tableContainer.style.overflow = originalOverflow;
+      tableContainer.style.height = originalHeight;
     });
   }
 }
