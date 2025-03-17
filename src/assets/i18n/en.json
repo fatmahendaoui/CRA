@@ -116,6 +116,8 @@
       "in_year": "in year",
       "filter": "Filter",
       "apply": "Apply",
+      "hide_zero": "Hide 0h/0%",
+      "show_all": "Show All",
     "reset": "Reset",
       "table": {
         "name": "Tasks",

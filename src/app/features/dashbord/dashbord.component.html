@@ -5,25 +5,21 @@
             <!-- Bloc moins -->
             <div class="moins-small">
                 <mat-form-field class="date" appearance="outline">
-                  <mat-date-range-input 
-                    [rangePicker]="rangePicker" 
-                    (dateInput)="onDateRangeChange($event)">
-                    <input matStartDate placeholder="Start date" [(ngModel)]="startDate"/>
-                    <input matEndDate placeholder="End date" [(ngModel)]="endDate" />
-                  </mat-date-range-input>
-                  
-                  <mat-datepicker-toggle matIconSuffix [for]="rangePicker"></mat-datepicker-toggle>
-                  <mat-date-range-picker #rangePicker>
-                    <mat-date-range-picker-actions>
-                      <button mat-button matDateRangePickerCancel  (click)="onCancelDateRange()">Cancel</button>
-                      <button 
-                        mat-raised-button 
-                        matDateRangePickerApply 
-                        (click)="onApplyDateRange()">Apply</button>
-                    </mat-date-range-picker-actions>
-                  </mat-date-range-picker>
+                    <mat-date-range-input [rangePicker]="rangePicker" (dateInput)="onDateRangeChange($event)">
+                        <input matStartDate placeholder="Start date" [(ngModel)]="startDate" />
+                        <input matEndDate placeholder="End date" [(ngModel)]="endDate" />
+                    </mat-date-range-input>
+
+                    <mat-datepicker-toggle matIconSuffix [for]="rangePicker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #rangePicker>
+                        <mat-date-range-picker-actions>
+                            <button mat-button matDateRangePickerCancel (click)="onCancelDateRange()">Cancel</button>
+                            <button mat-raised-button matDateRangePickerApply
+                                (click)="onApplyDateRange()">Apply</button>
+                        </mat-date-range-picker-actions>
+                    </mat-date-range-picker>
                 </mat-form-field>
-              </div>
+            </div>
             <div class="year">
                 <button mat-mini-fab color="primary" (click)="getYear(false)">
                     <mat-icon>navigate_before</mat-icon>
@@ -40,58 +36,124 @@
 <div class="mat-mdc-card">
     <mat-tab-group>
         <mat-tab class="mat-tab" label="{{ 'features.dashbord.Project-by-month' | transloco }}">
-          <div class="filter" *ngIf="data">
-        <mat-form-field class="field" appearance="outline">
-            <mat-label>{{ 'features.projects.add-dialog.origine' | transloco }}</mat-label>
-            <mat-select [(value)]="selectedGroup" (selectionChange)="onGroupSelected()">
-                <mat-option *ngFor="let group of groups" [value]="group.id">{{ group.name }}</mat-option>
-            </mat-select>
-        </mat-form-field>
 
-        <mat-form-field appearance="outline">
-            <mat-label>{{ 'features.projects.add-dialog.group' | transloco }}</mat-label>
-            <mat-select [(value)]="selectedBrand" (selectionChange)="onBrandSelected()">
-                <mat-option *ngFor="let brand of brands" [value]="brand.id">{{ brand.name }}</mat-option>
-            </mat-select>
-        </mat-form-field>
+            <div class="cra" *ngIf="data">
+                <div class="col-12 header-timesheet">
+                    <div class="filter" *ngIf="data">
+                        <mat-form-field class="field" appearance="outline">
+                            <mat-label>{{ 'features.projects.add-dialog.origine' | transloco }}</mat-label>
+                            <mat-select [(value)]="selectedGroup" (selectionChange)="onGroupSelected()">
+                                <mat-option *ngFor="let group of groups" [value]="group.id">{{ group.name
+                                    }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
 
-        <mat-form-field appearance="outline">
-            <mat-label>{{ 'features.projects.add-dialog.client' | transloco }}</mat-label>
-            <mat-select [(value)]="selectedProduct" (selectionChange)="onProductSelected()">
-                <mat-option *ngFor="let product of products" [value]="product.id">{{ product.name }}</mat-option>
-            </mat-select>
-        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                            <mat-label>{{ 'features.projects.add-dialog.group' | transloco }}</mat-label>
+                            <mat-select [(value)]="selectedBrand" (selectionChange)="onBrandSelected()">
+                                <mat-option *ngFor="let brand of brands" [value]="brand.id">{{ brand.name
+                                    }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
 
-        <mat-form-field appearance="outline">
-            <mat-label>{{ 'features.projects.add-dialog.marque' | transloco }}</mat-label>
-            <mat-select [(value)]="selectedMarque" (selectionChange)="onMarqueSelected()">
-                <mat-option *ngFor="let marque of marques" [value]="marque.id">{{ marque.name }}</mat-option>
-            </mat-select>
-        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                            <mat-label>{{ 'features.projects.add-dialog.client' | transloco }}</mat-label>
+                            <mat-select [(value)]="selectedProduct" (selectionChange)="onProductSelected()">
+                                <mat-option *ngFor="let product of products" [value]="product.id">{{ product.name
+                                    }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
 
-        <mat-form-field appearance="outline">
-            <mat-label>{{ 'features.projects.add-dialog.media' | transloco }}</mat-label>
-            <mat-select [(value)]="selectedMedia" (selectionChange)="onMarqueSelected()">
-                <mat-option value="All">{{ 'features.projects.add-dialog.all' | transloco }}</mat-option>
-                <mat-option *ngFor="let media of medias" [value]="media.id">{{ media.name }}</mat-option>
-            </mat-select>
-        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                            <mat-label>{{ 'features.projects.add-dialog.marque' | transloco }}</mat-label>
+                            <mat-select [(value)]="selectedMarque" (selectionChange)="onMarqueSelected()">
+                                <mat-option *ngFor="let marque of marques" [value]="marque.id">{{ marque.name
+                                    }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
 
-        <!-- Buttons for Apply and Reset -->
-        <div class="button-row">
-            <button mat-raised-button style="background-color: #E50060; color:white" (click)="applyFilters()">
-                {{ 'features.projects.apply' | transloco }}
-            </button>
-            <button mat-raised-button style="color: #193F66;" (click)="resetFilters()">
-                {{ 'features.projects.reset' | transloco }}
-            </button>
-        </div>
-    </div>
-          <div id="chart" *ngIf="data">
-                <apx-chart [tooltip]="chartOptions.tooltip" [series]="chartOptions.series" [chart]="chartOptions.chart"
-                    [dataLabels]="chartOptions.dataLabels" [colors]="chartOptions.colors" [stroke]="chartOptions.stroke"
-                    [plotOptions]="chartOptions.plotOptions" [xaxis]="chartOptions.xaxis"
-                    [title]="chartOptions.title"></apx-chart>
+                        <mat-form-field appearance="outline">
+                            <mat-label>{{ 'features.projects.add-dialog.media' | transloco }}</mat-label>
+                            <mat-select [(value)]="selectedMedia" (selectionChange)="onMarqueSelected()">
+                                <mat-option value="All">{{ 'features.projects.add-dialog.all' | transloco
+                                    }}</mat-option>
+                                <mat-option *ngFor="let media of medias" [value]="media.id">{{ media.name
+                                    }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <div class="button-row">
+                            <button mat-raised-button style="background-color: #E50060; color:white"
+                                (click)="applyFilters()">
+                                {{ 'features.projects.apply' | transloco }}
+                            </button>
+                            <button mat-raised-button style="color: #193F66;" (click)="resetFilters()">
+                                {{ 'features.projects.reset' | transloco }}
+                            </button>
+                            <!-- Bouton pour basculer l'affichage des lignes -->
+                            <button mat-raised-button style="color: #193F66;" (click)="showAllRows = !showAllRows">
+                                {{ showAllRows ? ('features.projects.hide_zero' | transloco) :
+                                ('features.projects.show_all' | transloco) }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="data" class="table-header">
+                <div class="table-title">
+                    {{ 'features.projects.projectByUser' | transloco }} {{ currentProject }} in year {{ year }}
+                </div>
+                <div>
+                    <button mat-raised-button style="color: #193F66;" [matMenuTriggerFor]="exportMenu">
+                        Exporter
+                    </button>
+                    <mat-menu #exportMenu="matMenu">
+                        <button mat-menu-item (click)="exportTable('svg')">Exporter en SVG</button>
+                        <button mat-menu-item (click)="exportTable('png')">Exporter en PNG</button>
+                        <button mat-menu-item (click)="exportTable('csv')">Exporter en CSV</button>
+                    </mat-menu>
+                </div>
+            </div>
+            <div *ngIf="data" class="table-container">
+                <table class="project-table" id="exportTable">
+                    <thead>
+                        <tr class="sticky-header">
+                            <th class="sticky-col"></th>
+                            <th *ngFor="let user of data[0].data.slice(0, -1)">{{ user.x }}</th>
+                            <th class="sticky-col-last">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let project of data.slice(1)"
+                            [ngClass]="{'hidden-row': !shouldDisplayRow(project)}">
+                            <td class="sticky-col project-name">{{ project.name }}</td>
+                            <td *ngFor="let entry of project.data.slice(0, -1)" class="hour-percent-cell">
+                                <div class="hour">{{ formatHours(entry.y) }}</div>
+                                <div class="percent">({{ entry.percentage }}%)</div>
+                            </td>
+                            <td class="sticky-col-last total-hour">
+                                <div class="hour"> {{ formatHours(project.data[project.data.length - 1].y )}}</div>
+                                <div class="percent-total">({{ project.data[project.data.length - 1].percentage }}%)
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="sticky-footer">
+                            <td class="sticky-col">{{ data[0].name }}</td>
+                            <td *ngFor="let entry of data[0].data.slice(0, -1)" class="total-hour">
+                                <div class="hour">{{ formatHours(entry.y) }}</div>
+                                <div class="percent-total">({{ entry.percentage }}%)</div>
+                            </td>
+                            <td class="sticky-col-last total-hour">
+                                <div class="hour">{{ formatHours(data[0].data[data[0].data.length - 1].y) }}</div>
+                                <div class="percent-total">({{ data[0].data[data[0].data.length - 1].percentage }}%)
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
             <ng-container *ngIf="currentProject && loader==false">
                 <app-loader>Chargement ...</app-loader>
@@ -100,126 +162,145 @@
                 <app-loader>Chargement ...</app-loader>
             </ng-container>
         </mat-tab>
-      
         <mat-tab class="mat-tab" label="{{ 'features.dashbord.User-by-project' | transloco }}">
-            <div class="cra" *ngIf="data">
+            <div class="cra">
                 <div class="col-12 header-timesheet">
                     <div class="filter-table">
                         <mat-form-field appearance="outline" class="filter-field">
-                            <input matInput 
-                                   type="text" 
-                                   placeholder="{{ 'features.dashbord.Search_User' | transloco }}" 
-                                   [matAutocomplete]="auto" 
-                                   [(ngModel)]="searchUser" 
-                                   (input)="filterUsers()">
-                            
+                            <input matInput type="text" placeholder="{{ 'features.dashbord.Search_User' | transloco }}"
+                                [matAutocomplete]="auto" [(ngModel)]="searchUser" (input)="filterUsers()" [disabled]="filteredUsers.length === 0">
+
                             <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onUserSelected($event)">
                                 <mat-option *ngFor="let user of filteredUsers" [value]="user">
-                                    {{ user }} 
+                                    {{ user }}
                                 </mat-option>
                             </mat-autocomplete>
                         </mat-form-field>
                     </div>
-                    <div class="filter" *ngIf="data">
-                        <mat-form-field class="field"appearance="outline">
-                  <mat-label>{{ 'features.projects.add-dialog.origine' | transloco }}</mat-label>
-                  <mat-select [(value)]="selectedGroup" (selectionChange)="onGroupSelected()">
-                    <mat-option *ngFor="let group of groupss" [value]="group.id">{{ group.name }}</mat-option>
-                  </mat-select>
-                </mat-form-field>
-                
-                <mat-form-field appearance="outline">
-                  <mat-label>{{ 'features.projects.add-dialog.group' | transloco }}</mat-label>
-                  <mat-select [(value)]="selectedBrand" (selectionChange)="onBrandSelected()">
-                    <mat-option *ngFor="let brand of brandss" [value]="brand.id">{{ brand.name }}</mat-option>
-                  </mat-select>
-                </mat-form-field>
-                
-                <mat-form-field appearance="outline">
-                  <mat-label>{{ 'features.projects.add-dialog.client' | transloco }}</mat-label>
-                  <mat-select [(value)]="selectedProduct" (selectionChange)="onProductSelected()">
-                    <mat-option *ngFor="let product of productss" [value]="product.id">{{ product.name }}</mat-option>
-                  </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                  <mat-label>{{ 'features.projects.add-dialog.marque' | transloco }}</mat-label>
-                  <mat-select [(value)]="selectedMarque" (selectionChange)="onMarqueSelected()">
-                    <mat-option *ngFor="let marque of marquess" [value]="marque.id">{{ marque.name }}</mat-option>
-                  </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>{{ 'features.projects.add-dialog.media' | transloco }}</mat-label>
-                    <mat-select [(value)]="selectedMedia" (selectionChange)="onMarqueSelected()">
-                      <!-- Add "All" option to the dropdown -->
-                      <mat-option value="All">{{ 'features.projects.add-dialog.all' | transloco }}</mat-option>
-                      <!-- Existing media options -->
-                      <mat-option *ngFor="let media of mediass" [value]="media.id">{{ media.name }}</mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                 <!-- Buttons for Apply and Reset -->
-                 <div class="button-row">
-                    <button mat-raised-button style="background-color: #E50060; color:white" (click)="applyFilterss()">
-                        {{ 'features.projects.apply' | transloco }}
-                      </button>
-                      <button mat-raised-button style="color: #193F66;" (click)="resetFilterss()">
-                        {{ 'features.projects.reset' | transloco }}
-                      </button>
-                      
-                  </div>
-                </div>    
+                    <div class="filter" *ngIf="dataProject && currentuser">
+                        <mat-form-field class="field" appearance="outline">
+                            <mat-label>{{ 'features.projects.add-dialog.origine' | transloco }}</mat-label>
+                            <mat-select [(value)]="selectedGroup" (selectionChange)="onGroupSelected()">
+                                <mat-option *ngFor="let group of groupss" [value]="group.id">{{ group.name
+                                    }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>{{ 'features.projects.add-dialog.group' | transloco }}</mat-label>
+                            <mat-select [(value)]="selectedBrand" (selectionChange)="onBrandSelected()">
+                                <mat-option *ngFor="let brand of brandss" [value]="brand.id">{{ brand.name
+                                    }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>{{ 'features.projects.add-dialog.client' | transloco }}</mat-label>
+                            <mat-select [(value)]="selectedProduct" (selectionChange)="onProductSelected()">
+                                <mat-option *ngFor="let product of productss" [value]="product.id">{{ product.name
+                                    }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                            <mat-label>{{ 'features.projects.add-dialog.marque' | transloco }}</mat-label>
+                            <mat-select [(value)]="selectedMarque" (selectionChange)="onMarqueSelected()">
+                                <mat-option *ngFor="let marque of marquess" [value]="marque.id">{{ marque.name
+                                    }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                            <mat-label>{{ 'features.projects.add-dialog.media' | transloco }}</mat-label>
+                            <mat-select [(value)]="selectedMedia" (selectionChange)="onMarqueSelected()">
+                                <mat-option value="All">{{ 'features.projects.add-dialog.all' | transloco
+                                    }}</mat-option>
+                                <mat-option *ngFor="let media of mediass" [value]="media.id">{{ media.name
+                                    }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <div class="button-row">
+                            <button mat-raised-button style="background-color: #E50060; color:white"
+                                (click)="applyFilterss()">
+                                {{ 'features.projects.apply' | transloco }}
+                            </button>
+                            <button mat-raised-button style="color: #193F66;" (click)="resetFilterss()">
+                                {{ 'features.projects.reset' | transloco }}
+                            </button>
+                            <!-- Bouton pour basculer l'affichage des lignes -->
+                            <button mat-raised-button style="color: #193F66;" (click)="showAllRows = !showAllRows">
+                                {{ showAllRows ? ('features.projects.hide_zero' | transloco) :
+                                ('features.projects.show_all' | transloco) }}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div *ngIf="!dataProject && data">
+            <div *ngIf="!dataProject || !currentuser">
                 <div class="error-page">
                     <p> {{ 'features.dashbord.dashbordvideuser' | transloco }} .</p>
                 </div>
             </div>
-
-            <div id="chart" *ngIf="dataProject">
-                <apx-chart [tooltip]="chartOptions.tooltip" [series]="chartOptionsproject.series"
-                    [chart]="chartOptionsproject.chart" [dataLabels]="chartOptionsproject.dataLabels"
-                    [colors]="chartOptionsproject.colors" [stroke]="chartOptionsproject.stroke"
-                    [plotOptions]="chartOptionsproject.plotOptions" [xaxis]="chartOptionsproject.xaxis"
-                    [title]="chartOptionsproject.title"></apx-chart>
+            <div *ngIf="dataProject && currentuser" class="table-header">
+                <div class="table-title">
+                    {{ 'features.projects.projectByMonthOf' | transloco }} {{ currentuser }} in year {{ year }}
+                </div>
+                <div>
+                    <button mat-raised-button style="color: #193F66;" [matMenuTriggerFor]="exportMenu">
+                        Exporter
+                    </button>
+                    <mat-menu #exportMenu="matMenu">
+                        <button mat-menu-item (click)="exportTable('svg')">Exporter en SVG</button>
+                        <button mat-menu-item (click)="exportTable('png')">Exporter en PNG</button>
+                        <button mat-menu-item (click)="exportTable('csv')">Exporter en CSV</button>
+                    </mat-menu>
+                </div>
             </div>
+            <div *ngIf="dataProject && currentuser" class="table-container">
+                <!--<div *ngIf="dataProject && currentuser">
+            <pre>{{ dataProject | json }}</pre>
+          </div>-->
+                <table *ngIf="dataProject.length > 0" class="project-table" id="exportTable">
+                    <thead>
+                        <tr class="sticky-header">
+                            <th class="sticky-col"></th>
+                            <th *ngFor="let months of getUniqueMonths(dataProject)">{{ months }}</th>
+                            <th class="sticky-col-last">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let project of dataProject.slice(1)"
+                            [ngClass]="{'hidden-row': !shouldDisplayRow(project)}">
+                            <td class="sticky-col project-name">{{ project.name }}</td>
+                            <td *ngFor="let entry of project.data.slice(0, -1)" class="hour-percent-cell">
+                                <div class="hour">{{ formatHours(entry.y) }}</div>
+                                <div class="percent">({{ entry.percentage }}%)</div>
+                            </td>
+                            <td class="sticky-col-last total-hour">
+                                <div class="hour"> {{ formatHours(project.data[project.data.length - 1].y )}}</div>
+                                <div class="percent-total">({{ project.data[project.data.length - 1].percentage }}%)
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="sticky-footer">
+                            <td class="sticky-col">{{ dataProject[0].name }}</td>
+                            <td *ngFor="let entry of dataProject[0].data.slice(0, -1)" class="total-hour">
+                                <div class="hour">{{ formatHours(entry.y) }}</div>
+                                <div class="percent-total">({{ entry.percentage }}%)</div>
+                            </td>
+                            <td class="sticky-col-last total-hour">
+                                <div class="hour">{{ formatHours(dataProject[0].data[dataProject[0].data.length - 1].y)
+                                    }}</div>
+                                <div class="percent-total">({{ dataProject[0].data[dataProject[0].data.length -
+                                    1].percentage }}%)
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
         </mat-tab>
     </mat-tab-group>
 </div>
- <!-- <mat-tab class="mat-tab" label="{{ 'features.dashbord.Project-by-user' | transloco }}">
-            <div class="cra" *ngIf="data">
-                <div class="col-12 header-timesheet">
-                    <div class="filter-table">
-
-                        <mat-form-field appearance="outline" class="filter-field">
-
-                            <div class="filter-wrapper">
-                                <input matInput type="text"
-                                    placeholder="{{ 'features.dashbord.Search_Project' | transloco }}"
-                                    [(ngModel)]="projectFilter" (ngModelChange)="applyProjectFilter()">
-                                <mat-select [(ngModel)]="currentProject" (ngModelChange)="fetchProjects()">
-                                    <ng-container *ngFor="let element of filteredProjects">
-                                        <mat-option [value]="element.name">{{element.name}}</mat-option>
-                                    </ng-container>
-                                </mat-select>
-                            </div>
-                        </mat-form-field>
-
-
-                    </div>
-                </div>
-            </div>
-            <div *ngIf="!dataUser && data">
-                <div class="error-page">
-                    <p> {{ 'features.dashbord.dashbordvide' | transloco }} .</p>
-                </div>
-            </div>
-            <div id="chart" *ngIf="dataUser">
-                <apx-chart [tooltip]="chartOptions.tooltip" [series]="chartOptionsuser.series"
-                    [chart]="chartOptionsuser.chart" [dataLabels]="chartOptionsuser.dataLabels"
-                    [colors]="chartOptionsuser.colors" [stroke]="chartOptionsuser.stroke"
-                    [plotOptions]="chartOptionsuser.plotOptions" [xaxis]="chartOptionsuser.xaxis"
-                    [title]="chartOptionsuser.title"></apx-chart>
-            </div>
-        </mat-tab>
-    -->

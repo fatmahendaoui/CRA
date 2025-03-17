@@ -116,6 +116,8 @@
       "in_year": "dans l'année",
       "filter": "Filtrer",
       "apply": "Appliquer",
+      "hide_zero": "Masquer 0h/0%",
+      "show_all": "Tout afficher",
     "reset": "Réinitialiser",
       "table": {
         "name": "Tache",

@@ -142,19 +142,162 @@
   align-items: center;
   gap: 8px; /* Espace entre les boutons et l'année */
 }
+
 //filter
 .filter {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
   margin-top: 10px;
   margin-left: 25px;
-  align-items: center; 
-  gap: 10px; 
-  flex-wrap: wrap;
 
   .button-row {
     display: flex;
     gap: 10px;
     align-items: center;
-    margin-bottom:20px ;
+    margin-bottom: 20px;
   }
+
+  mat-form-field {
+    flex: 1; // Allows fields to adjust dynamically
+    min-width: 200px; // Ensures a minimum size
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column; // Stack elements in mobile view
+    align-items: stretch; // Full width items
+
+    mat-form-field {
+      width: 100%;
+    }
+
+    .button-row {
+      flex-direction: column;
+      width: 100%;
+      button {
+        width: 100%;
+      }
+    }
+  }
+}
+
+/* Conteneur de la table */
+.table-container {
+  overflow-x: auto;
+  max-height: 70vh;
+  margin: 20px;
+  position: relative;
+  background: white;
+  //width: 100%;
+}
+
+.project-table {
+  border-collapse: collapse;
+  min-width: 100%; /* Adapter la table à l'écran */
+  table-layout: auto; /* Permettre une largeur flexible */
+}
+
+/* Colonnes fixes */
+.sticky-col, .sticky-col-last {
+  position: sticky;
+  z-index: 2;
+  background: #f8f9fa;
+  font-weight: bold;
+  border: 1px solid #dee2e6 !important;
+  white-space: nowrap; /* Éviter le retour à la ligne */
+}
+
+.sticky-col {
+  left: 0;
+  color: #193F66;
+  box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1);
+}
+
+.sticky-col-last {
+  right: 0;
+  background: #fec1db;
+  color: #193F66;
+  box-shadow: -2px 0 5px -2px rgba(0,0,0,0.1);
+}
+
+/* En-tête et pied de tableau fixes */
+.sticky-header, .sticky-footer {
+  position: sticky;
+  z-index: 3;
+  background: #193F66;
+  color: white;
+  font-weight: bold;
+  border: 1px solid #dee2e6 !important;
+  color: #193F66;
+
+}
+
+.sticky-header {
+  top: 0;
+  box-shadow: 0 3px 5px -2px rgba(0,0,0,0.1);
+}
+
+.sticky-footer {
+  bottom: 0;
+  background: #fec1db;
+  box-shadow: 0 -3px 5px -2px rgba(0,0,0,0.1);
+}
+
+/* Style des cellules */
+th, td {
+  padding: 10px;
+  border: 1px solid #dee2e6 !important;
+  text-align: center;
+  min-width: 100px; /* Ajuster pour les petits écrans */
+  background: white;
+}
+.table-title {
+  font-family: 'Roboto', sans-serif; /* Utilisez une police moderne */
+  font-size: 16px; /* Taille de police par défaut (pour les écrans larges) */
+  font-weight: 600; /* Graisse plus épaisse */
+  color: #E50060; /* Couleur principale */
+  padding: 4px 22px; 
+}
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px; /* Espacement entre le titre et la table */
+  margin-right: 25px;
+}
+
+
+/* Adapter la police pour mobile */
+@media (max-width: 768px) {
+  th, td {
+    font-size: 12px; /* Réduction de la taille de la police */
+    padding: 8px;
+    min-width: 80px;
+  }
+
+ .table-title {
+    font-size: 16px; /* Taille de police réduite pour les tablettes */
+    margin: 15px 0; /* Espacement vertical réduit */
+    padding: 8px 12px; /* Espacement interne réduit */
+  }
+}
+
+@media (max-width: 480px) {
+  th, td {
+    font-size: 10px;
+    padding: 6px;
+    min-width: 70px;
+  }
+
+  .table-title {
+    
+    font-size: 14px;
+    margin: 10px 0; 
+    padding: 0px 19px; 
+    border-radius: 6px; 
+  }
+}
+.hidden-row {
+  display: none;
 }

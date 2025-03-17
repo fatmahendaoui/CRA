@@ -24,6 +24,7 @@ import { MatSortModule } from '@angular/material/sort';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import {  MatMenuModule } from '@angular/material/menu';
 
 const routes: Routes = [
   {
@@ -35,7 +36,7 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    DashbordComponent
+    DashbordComponent,
   ],
   imports: [
     CommonModule,
@@ -64,6 +65,7 @@ const routes: Routes = [
     MatDatepickerModule,
     MatNativeDateModule,    
     MatAutocompleteModule,
+    MatMenuModule
   ],
   providers: [ProjectService]
 })
