@@ -109,8 +109,8 @@
                         Exporter
                     </button>
                     <mat-menu #exportMenu="matMenu">
-                        <button mat-menu-item (click)="exportTable('svg')">Exporter en SVG</button>
-                        <button mat-menu-item (click)="exportTable('png')">Exporter en PNG</button>
+                        <button mat-menu-item (click)="exportTable('svg')"*ngIf="!showAllRows">Exporter en SVG</button>
+                        <button mat-menu-item (click)="exportTable('png')"*ngIf="!showAllRows">Exporter en PNG</button>
                         <button mat-menu-item (click)="exportTable('csv')">Exporter en CSV</button>
                     </mat-menu>
                 </div>
@@ -249,8 +249,8 @@
                         Exporter
                     </button>
                     <mat-menu #exportMenu="matMenu">
-                        <button mat-menu-item (click)="exportTable('svg')">Exporter en SVG</button>
-                        <button mat-menu-item (click)="exportTable('png')">Exporter en PNG</button>
+                        <button mat-menu-item (click)="exportTable('svg')"*ngIf="!showAllRows">Exporter en SVG</button>
+                        <button mat-menu-item (click)="exportTable('png')"*ngIf="!showAllRows">Exporter en PNG</button>
                         <button mat-menu-item (click)="exportTable('csv')">Exporter en CSV</button>
                     </mat-menu>
                 </div>
