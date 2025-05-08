@@ -245,7 +245,6 @@ export class TimesheetComponent implements OnInit {
         this.transloco.translate('features.projects.dialog.success.message'),
         this.transloco.translate('common.close'),
         () => { }
-
       );
     
     } catch (error) {
