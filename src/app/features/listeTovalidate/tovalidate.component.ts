@@ -28,7 +28,7 @@ import { MatIconModule } from '@angular/material/icon';
             <button mat-mini-fab color="primary" (click)="getMonth(false)">
               <mat-icon>navigate_before</mat-icon>
             </button>
-            <h3 style="font-weight: bold;">{{ nameMonth }}</h3>
+            <h3 style="font-weight: bold;">{{ displayedMonth }}</h3>
             <button mat-mini-fab color="primary" (click)="getMonth(true)">
               <mat-icon>navigate_next</mat-icon>
             </button>
@@ -51,7 +51,7 @@ import { MatIconModule } from '@angular/material/icon';
           <mat-select [(ngModel)]="status" (ngModelChange)="fetchAll()">
             <mat-option value="Submitted">{{ 'features.projects.table.submitted' | transloco }}</mat-option>
             <mat-option value="Improved">{{ 'features.liste_conge.approved' | transloco }}</mat-option>
-            <mat-option value="On going">{{ 'features.projects.table.ongoing' | transloco }} ({{ nameMonth }} {{ year }})</mat-option>
+            <mat-option value="On going">{{ 'features.projects.table.ongoing' | transloco }} ({{ displayedMonth }} {{ year }})</mat-option>
           </mat-select>
         </mat-form-field>
         <app-tovalidate-table *ngIf="tovalidate" [data]="tovalidate"></app-tovalidate-table>
@@ -84,7 +84,8 @@ export class tovalidateComponent implements OnInit {
   private readonly bottomSheet = inject(MatBottomSheet);
   public tovalidate;
   private readonly transloco = inject(TranslocoService);
-  nameMonth: string;
+  nameMonth: string; // Internal English month name for comparison
+  displayedMonth: string; // Displayed month name in current language
   private ProjectService = inject(ProjectService);
   month: string[] = Months;
   year: number;
@@ -99,24 +100,27 @@ export class tovalidateComponent implements OnInit {
       'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
     ]
   };
+  
   public ngOnInit() {
     this.year = new Date().getFullYear();
-    this.setMonthName();
-    this.transloco.langChanges$.subscribe(() => this.setMonthName());
+    this.setMonthNames();
+    this.transloco.langChanges$.subscribe(() => this.setMonthNames());
     this.fetchAll();
   }
 
-  private setMonthName() {
+  private setMonthNames() {
     const currentMonthIndex = new Date().getMonth();
     const currentLang = this.transloco.getActiveLang();
-    this.nameMonth = this.monthNames[currentLang][currentMonthIndex];
-
-
+    // Always use English for internal comparison
+    this.nameMonth = this.monthNames['en'][currentMonthIndex];
+    // Display month in current language
+    this.displayedMonth = this.monthNames[currentLang][currentMonthIndex];
   }
 
   public fetchAll(): void {
     this.tovalidate = null;
-    const monthYear = this.nameMonth + '_' + this.year;
+    // Always use English month name for Firebase comparison
+    const monthYear = `${this.nameMonth}_${this.year}`;
 
     if (this.status === 'On going') {
       this.ProjectService.getongoingDateShipCRAs(this.status, monthYear).then((items) => {
@@ -124,7 +128,7 @@ export class tovalidateComponent implements OnInit {
       });
     } else {
       this.ProjectService.getSubmittedDateShipCRAs(this.status).then((items) => {
-        this.tovalidate = items.filter((item) => item.month === monthYear);
+        this.tovalidate = items.filter(item => item.month === monthYear && item.status === this.status);
       });
     }
   }
@@ -136,17 +140,20 @@ export class tovalidateComponent implements OnInit {
 
   getMonth(op: boolean): void {
     const currentLang = this.transloco.getActiveLang();
-    const currentMonthIndex = this.monthNames[currentLang].indexOf(this.nameMonth);
+    const currentMonthIndex = this.monthNames['en'].indexOf(this.nameMonth);
     let newMonthIndex = currentMonthIndex + (op ? 1 : -1);
+    
     if (newMonthIndex < 0) {
-      newMonthIndex = 11; // décembre
+      newMonthIndex = 11; // December
       this.year--;
     } else if (newMonthIndex > 11) {
-      newMonthIndex = 0; // janvier
+      newMonthIndex = 0; // January
       this.year++;
     }
-    this.nameMonth = this.monthNames[currentLang][newMonthIndex];
-
+    
+    // Update both internal (English) and displayed month names
+    this.nameMonth = this.monthNames['en'][newMonthIndex];
+    this.displayedMonth = this.monthNames[currentLang][newMonthIndex];
     this.fetchAll();
   }
 }
