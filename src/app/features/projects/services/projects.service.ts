@@ -212,64 +212,80 @@ export class ProjectService {
     // Return the user list outside of the forEach loop.
     return usersList;
   }
-  async getSubmittedDateShipCRAs(status) {
+  async getSubmittedDateShipCRAs(status: string) {
     let submittedStatusItems: any[] = [];
-
+  
     const querySnapshot = await getDocs(
       query(
         collection(this.firestore, 'dateship_CRA')
       )
     );
-    const docs = querySnapshot.docs.map((doc) => {
-      return {
-        id: doc.id,
-        ...doc.data(),
-      };
-    });
-
-    for (const item of docs) {
-      const user = await this.getuserbyid(item.id);
-      if (user && user.idDomaine == this.profileService.profile.idDomaine) {
-        for (const key in item) {
-          if (item[key].status === status) {
-            // await the return value of the getuserbyid() function before pushing the item to the submittedStatusItems array.
-            submittedStatusItems.push({ month: key, id: item.id, user });
+  
+    for (const doc of querySnapshot.docs) {
+      const user = await this.getuserbyid(doc.id);
+      
+      if (user && user.idDomaine === this.profileService.profile.idDomaine) {
+        const data = doc.data();
+        
+        // Iterate through all properties of the document
+        for (const [monthYear, monthData] of Object.entries(data)) {
+          // Check if the property is a month_year format and has the correct status
+          if (monthData && monthData.status === status) {
+            submittedStatusItems.push({
+              month: monthYear,
+              id: doc.id,
+              user,
+              status: monthData.status,
+              description: monthData.description
+            });
           }
         }
       }
     }
-
+  console.log('submite',submittedStatusItems)
     return submittedStatusItems;
   }
-  async getongoingDateShipCRAs(status, date) {
+  
+  async getongoingDateShipCRAs(status: string, date: string) {
     let submittedStatusItems: any[] = [];
-
+  
     const querySnapshot = await getDocs(
       query(
         collection(this.firestore, 'dateship_CRA')
       )
     );
-    const docs = querySnapshot.docs.map((doc) => {
-      return {
-        id: doc.id,
-        ...doc.data(),
-      };
-    });
-
-    for (const item of docs) {
-      const user = await this.getuserbyid(item.id);
-      if (user && user.idDomaine == this.profileService.profile.idDomaine) {
-        if (item[date]) {
-          for (const key in item) {
-            if (key == date && item[key].status === status) {
-              submittedStatusItems.push({ month: key, id: item.id, user });
-            }
+  
+    for (const doc of querySnapshot.docs) {
+      const user = await this.getuserbyid(doc.id);
+      
+      if (user && user.idDomaine === this.profileService.profile.idDomaine) {
+        const data = doc.data();
+        
+        // Check if the specific date exists in the document
+        if (data[date]) {
+          // If it exists and has the correct status, add it
+          if (data[date].status === status) {
+            submittedStatusItems.push({
+              month: date,
+              id: doc.id,
+              user,
+              status: data[date].status,
+              description: data[date].description
+            });
           }
         } else {
-          submittedStatusItems.push({ month: date, id: item.id, user });
+          // If the date doesn't exist, it's considered "On going" by default
+          //if (status === 'On going') {
+            submittedStatusItems.push({
+              month: date,
+              id: doc.id,
+              user
+            });
+          //}
         }
       }
     }
+    console.log('ongoing',submittedStatusItems)
 
     return submittedStatusItems;
   }

@@ -171,15 +171,15 @@
 
 
         <button mat-flat-button color="primary" *ngIf=" (status =='On going' || !status)"
-          (click)="Savewithemail();Save()">
+          (click)="Savewithemail();changestatus();">
           {{ 'features.projects.button.Envoye' | transloco }}
         </button>
         <button *ngIf="(IsAdmin||IsManager) && status =='Submitted'" mat-flat-button color="primary"
-          (click)="status ='Improved' ; changeStatus(); sendmail('Approved')">
+          (click)="status ='Improved' ; changeStatus('Improved'); sendmail('Approved')">
           {{ 'features.projects.button.approved' | transloco }}
         </button>
         <button *ngIf="(IsAdmin ||IsManager) && status =='Submitted'" mat-flat-button color="primary"
-          (click)="status ='On going' ; changeStatus(); sendmail('Rejected')">
+          (click)="status ='On going' ; changeStatus('On going'); sendmail('Rejected')">
           {{ 'features.projects.button.reject' | transloco }}
         </button>
       </div>

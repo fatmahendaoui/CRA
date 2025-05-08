@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, inject } from '@angular/core';
+import { Component, OnInit, Input, inject, ChangeDetectorRef } from '@angular/core';
 import { DaysOfWeek, Months } from '../../models/dates.constants';
 import { DateService } from '../../services/date.service';
 import { TimesheetItem } from '../../models/TimesheetItem.model';
@@ -72,6 +72,7 @@ export class TimesheetComponent implements OnInit {
   IsAdmin: boolean;
   IsManager: boolean;
   displayNamecurent;
+
   private monthNames = {
     en: [
       'January', 'February', 'March', 'April', 'May', 'June',
@@ -85,7 +86,7 @@ export class TimesheetComponent implements OnInit {
   constructor(
     private dateService: DateService,
     private projectService: ProjectService,
-    private profileService: ProfileService
+    private profileService: ProfileService, private cdr: ChangeDetectorRef 
   ) {
     this.route.params.subscribe((params: Params) => {
       this.currentUser = params['uid'];
@@ -176,8 +177,10 @@ export class TimesheetComponent implements OnInit {
   async Save() {
     try {
       this.tabProject.forEach((project) => {
-
+        this.status = "";
         this.projectService.updateProjectsMonth(project.id, this.currentUser, project.days);
+        this.changeStatus(this.status)
+
       });
       if (!this.IsAdmin) {
         handleResponseSuccessWithAlerts(
@@ -234,19 +237,25 @@ export class TimesheetComponent implements OnInit {
         "year": this.year
       }
       this.projectService.sendNotificationToAdmin(data);
+      this.status = 'Submitted';
+      this.changeStatus(this.status);
+      this.fetchProjects()
       handleResponseSuccessWithAlerts(
         this.transloco.translate('features.projects.dialog.success.title'),
         this.transloco.translate('features.projects.dialog.success.message'),
         this.transloco.translate('common.close'),
         () => { }
-
       );
-      this.status = 'Submitted';
-      this.changeStatus();
-      this.fetchProjects()
+    
     } catch (error) {
       console.error('Error adding project via ProjectService:', error);
     }
+  }
+  changestatus(): void {
+    setTimeout(() => {
+      this.cdr.detectChanges()
+      this.cdr.markForCheck()
+    }, 500)
   }
   async sendmail(Type) {
     let user;
@@ -508,12 +517,12 @@ export class TimesheetComponent implements OnInit {
 
     return final;
   }
-  async changeStatus(): Promise<void> {
+  async changeStatus(status): Promise<void> {
     const idDomaine = await this.profileService.getIdDomaine();
     try {
       let data = {
         'description': this.description,
-        'status': this.status,
+        'status': status,
         'idDomaine': idDomaine,
       }
       this.projectService.updatestatusbyUidandMonth(this.currentUser, this.nameMonth, this.year, data);
