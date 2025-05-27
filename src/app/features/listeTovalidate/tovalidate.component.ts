@@ -28,7 +28,7 @@ import { MatIconModule } from '@angular/material/icon';
             <button mat-mini-fab color="primary" (click)="getMonth(false)">
               <mat-icon>navigate_before</mat-icon>
             </button>
-            <h3 style="font-weight: bold;">{{ nameMonth }}</h3>
+            <h3 style="font-weight: bold;">{{ displayedMonth }}</h3>
             <button mat-mini-fab color="primary" (click)="getMonth(true)">
               <mat-icon>navigate_next</mat-icon>
             </button>
@@ -51,7 +51,7 @@ import { MatIconModule } from '@angular/material/icon';
           <mat-select [(ngModel)]="status" (ngModelChange)="fetchAll()">
             <mat-option value="Submitted">{{ 'features.projects.table.submitted' | transloco }}</mat-option>
             <mat-option value="Improved">{{ 'features.liste_conge.approved' | transloco }}</mat-option>
-            <mat-option value="On going">{{ 'features.projects.table.ongoing' | transloco }} ({{ nameMonth }} {{ year }})</mat-option>
+            <mat-option value="On going">{{ 'features.projects.table.ongoing' | transloco }} ({{ displayedMonth }} {{ year }})</mat-option>
           </mat-select>
         </mat-form-field>
         <app-tovalidate-table *ngIf="tovalidate" [data]="tovalidate"></app-tovalidate-table>
@@ -85,6 +85,7 @@ export class tovalidateComponent implements OnInit {
   public tovalidate;
   private readonly transloco = inject(TranslocoService);
   nameMonth: string;
+  displayedMonth: string;
   private ProjectService = inject(ProjectService);
   month: string[] = Months;
   year: number;
@@ -109,15 +110,14 @@ export class tovalidateComponent implements OnInit {
   private setMonthName() {
     const currentMonthIndex = new Date().getMonth();
     const currentLang = this.transloco.getActiveLang();
-    this.nameMonth = this.monthNames[currentLang][currentMonthIndex];
-
+    this.nameMonth = this.monthNames['en'][currentMonthIndex];
+    this.displayedMonth = this.monthNames[currentLang][currentMonthIndex];
 
   }
 
   public fetchAll(): void {
     this.tovalidate = null;
-    const monthYear = this.nameMonth + '_' + this.year;
-
+    const monthYear = `${this.nameMonth}_${this.year}`;
     if (this.status === 'On going') {
       this.ProjectService.getongoingDateShipCRAs(this.status, monthYear).then((items) => {
         this.tovalidate = items;
@@ -136,7 +136,7 @@ export class tovalidateComponent implements OnInit {
 
   getMonth(op: boolean): void {
     const currentLang = this.transloco.getActiveLang();
-    const currentMonthIndex = this.monthNames[currentLang].indexOf(this.nameMonth);
+    const currentMonthIndex = this.monthNames['en'].indexOf(this.nameMonth);
     let newMonthIndex = currentMonthIndex + (op ? 1 : -1);
     if (newMonthIndex < 0) {
       newMonthIndex = 11; // décembre
@@ -145,8 +145,8 @@ export class tovalidateComponent implements OnInit {
       newMonthIndex = 0; // janvier
       this.year++;
     }
-    this.nameMonth = this.monthNames[currentLang][newMonthIndex];
-
+    this.nameMonth = this.monthNames['en'][newMonthIndex];
+    this.displayedMonth = this.monthNames[currentLang][newMonthIndex];
     this.fetchAll();
   }
 }
