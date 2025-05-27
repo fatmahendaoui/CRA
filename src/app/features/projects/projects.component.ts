@@ -85,7 +85,7 @@ import { MatIconModule } from '@angular/material/icon';
 </mat-form-field>
 <mat-form-field appearance="outline">
   <mat-label>{{ 'features.projects.add-dialog.media' | transloco }}</mat-label>
-  <mat-select [(value)]="selectedMedia" (selectionChange)="onMarqueSelected() ">
+  <mat-select [(value)]="selectedMedia">
     <mat-option *ngFor="let media of medias" [value]="media.id">{{ media.name }}</mat-option>
   </mat-select>
 </mat-form-field>
@@ -108,7 +108,8 @@ import { MatIconModule } from '@angular/material/icon';
     <ng-container *ngIf="!allprojects">
       <app-loader>Chargement ...</app-loader>
     </ng-container>
-  `,styles: [`
+  `,
+  styles: [`
  mat-card {
   display: flex;
   flex-direction: column;
@@ -161,35 +162,38 @@ export class ProjectsComponent implements OnInit {
   private readonly bottomSheet = inject(MatBottomSheet);
   private readonly transloco = inject(TranslocoService);
   public project$: Observable<Profile[]>;
-//////
-groups: Group[] = [];
-brands: Brand[] = [];
-products: Product[] = [];
-marques:Marque[]=[];
-medias: Media[] = [];
-selectedGroup: string = '';
-selectedBrand: string = '';
-selectedProduct: string = '';
-selectedMarque:string='';
-selectedMedia:string='';
-showFilters: boolean = false;
-
-
+  //////
+  groups: Group[] = [];
+  brands: Brand[] = [];
+  products: Product[] = [];
+  marques: Marque[] = [];
+  medias: Media[] = [];
+  selectedGroup: string = '';
+  selectedBrand: string = '';
+  selectedProduct: string = '';
+  selectedMarque: string = '';
+  selectedMedia: string = '';
+  showFilters: boolean = false;
 
   public ngOnInit() {
     this.fetchAll();
     this.loadGroups();
-
   }
+  
   allprojects;
 
   async fetchAll() {
     this.allprojects = null;
-    this.projectService.fetchAllProjects(this.selectedMedia).then(li => {
-      this.allprojects = li
-    })
-
+    // Pass all selected filters to the service
+    this.allprojects = await this.projectService.fetchAllProjectsWithFilters(
+      this.selectedGroup,
+      this.selectedBrand,
+      this.selectedProduct,
+      this.selectedMarque,
+      this.selectedMedia
+    );
   }
+
   removeDuplicatesByPropertyName(arr: any[]) {
     const uniqueObjects: { [key: string]: any } = {};
 
@@ -200,8 +204,8 @@ showFilters: boolean = false;
     }
     return Object.values(uniqueObjects);
   }
+
   public deleteproject(project: Project): void {
-    // TODO : add a loading spinner
     displayConfirmationAlert(
       this.transloco.translate('features.projects.dialog.confirmation'),
       this.transloco.translate('common.confirm'),
@@ -211,10 +215,10 @@ showFilters: boolean = false;
         this.projectService.deleteProject(project.id).then(li => {
           this.fetchAll()
         })
-
       }
     });
   }
+
   handleResponse(arg0: Subscription, arg1: string) {
     throw new Error('Method not implemented.');
   }
@@ -225,62 +229,59 @@ showFilters: boolean = false;
         panelClass: 'bottom-sheet-without-padding',
         data: {
           nameproject: project.name, idproject: project.id, managerId: project.managerId,
-          groupId:project.groupId ,brandId:project.brandId,productId:project.productId,marqueId:project.marqueId,mediaId:project.mediaId
-        } // Add your parameters here
+          groupId: project.groupId, brandId: project.brandId, productId: project.productId, marqueId: project.marqueId, mediaId: project.mediaId
+        }
       })
       .afterDismissed()
       .pipe(filter((project) => !!project))
       .subscribe((projects: Partial<any>) => {
-        this.updateproject(project.id, projects,project.groupId,project.brandId,project.productId,project.marqueId,project.mediaId);
+        this.updateproject(project.id, projects, project.groupId, project.brandId, project.productId, project.marqueId, project.mediaId);
       });
   }
 
-  updateproject(nomproject, users,groupId,brandId,productId,marqueId,mediaId) {
-    const managerId = users.existuser.manager; // Assurez-vous que `manager` existe et est bien défini
-    const groupName=users.existuser.group;
-      const brandName=users.existuser.brand;
-      const productName=users.existuser.product;
-      const marqueName=users.existuser.marque;
-      const mediaName=users.existuser.media;
+  updateproject(nomproject, users, groupId, brandId, productId, marqueId, mediaId) {
+    const managerId = users.existuser.manager;
+    const groupName = users.existuser.group;
+    const brandName = users.existuser.brand;
+    const productName = users.existuser.product;
+    const marqueName = users.existuser.marque;
+    const mediaName = users.existuser.media;
 
     users.allusers.map(li => {
-    
-
       const foundUser = users.existuser.users.find(user => user === li.uid);
       if (foundUser) {
         this.projectService.updateProjectName(nomproject, li.uid, users.existuser.name);
-        this.projectService.updateProjectManager(nomproject, li.uid, managerId); // Update manager here
+        this.projectService.updateProjectManager(nomproject, li.uid, managerId);
       }
       this.projectService.getAllUsersForProject(nomproject, li.uid).then(bool => {
         if (bool) {
           if (!foundUser) {
             this.projectService.deleteUserProject(nomproject, li.uid);
-
           }
         } else {
           if (foundUser) {
-            this.projectService.addNewProject(nomproject, users.existuser.name, li.uid, managerId, [],groupId,brandId,productId,marqueId,mediaId,groupName,brandName,productName,marqueName,mediaName);
+            this.projectService.addNewProject(nomproject, users.existuser.name, li.uid, managerId, [], groupId, brandId, productId, marqueId, mediaId, groupName, brandName, productName, marqueName, mediaName);
           }
         }
       });
-// New Update Methods for group, brand, product, and marque
+
       if (groupId) {
-        this.projectService.updateGroupName(groupId, groupName); // Assuming li.groupName exists
+        this.projectService.updateGroupName(groupId, groupName);
       }
 
       if (brandId) {
-        this.projectService.updateBrandName(groupId, brandId, brandName); // Assuming li.brandName exists
+        this.projectService.updateBrandName(groupId, brandId, brandName);
       }
 
       if (productId) {
-        this.projectService.updateProductName(groupId, brandId, productId, productName); // Assuming li.productName exists
+        this.projectService.updateProductName(groupId, brandId, productId, productName);
       }
 
       if (marqueId) {
-        this.projectService.updateMarqueName(groupId, brandId, productId, marqueId, marqueName); // Assuming li.marqueName exists
+        this.projectService.updateMarqueName(groupId, brandId, productId, marqueId, marqueName);
       }
       if (mediaId) {
-        this.projectService.updateMediaName(groupId, brandId, productId, marqueId,mediaId, mediaName); // Assuming li.marqueName exists
+        this.projectService.updateMediaName(groupId, brandId, productId, marqueId, mediaId, mediaName);
       }
       this.fetchAll();
       handleResponseSuccessWithAlerts(
@@ -290,105 +291,89 @@ showFilters: boolean = false;
         () => {
         }
       );
-
     })
-
   }
- private inviteproject(project): void {
-  if (project) {
-    const managerId = project.manager; // Assurez-vous que `manager` existe et est bien défini
-    const users = [...project.users, managerId];
 
-    // Replace generating a new ID with checking if a group already exists
-    this.projectService.findGroupByNameAndDomain(project.group, this.profileService.profile.idDomaine)
-      .then(existingGroupId => {
-        let groupId = existingGroupId || uuidv4(); // Use existing group ID or create a new one
-        
-        if (!existingGroupId) {
-          // If the group doesn't exist, create a new group
-          return this.projectService.createGroup(groupId, project.group, this.profileService.profile.idDomaine)
-            .then(() => groupId); // Return the created group ID
-        }
-        return groupId; // Return existing group ID
-      })
-      .then(groupId => {
-       
-       // Check if the brand already exists or create a new one
-       return this.projectService.findBrandByNameAndGroup(project.brand, groupId)
-       .then(existingBrandId => {
-         const brandId = existingBrandId || uuidv4(); // Use existing brand ID or create a new one
+  private inviteproject(project): void {
+    if (project) {
+      const managerId = project.manager;
+      const users = [...project.users, managerId];
 
-         if (!existingBrandId) {
-           // If the brand doesn't exist, create a new brand
-           return this.projectService.createBrand(brandId, project.brand, groupId)
-             .then(() => brandId); // Return the created brand ID
-         }
-         return brandId; // Return existing brand ID
-       })
-       .then(brandId => {
-         // Check if the product already exists or create a new one
-         return this.projectService.findProductByNameAndBrand(project.product, groupId, brandId)
-           .then(existingProductId => {
-             const productId = existingProductId || uuidv4(); // Use existing product ID or create a new one
-
-             if (!existingProductId) {
-               // If the product doesn't exist, create a new product
-               return this.projectService.createProduct(productId, project.product, groupId, brandId)
-                 .then(() => productId); // Return the created product ID
-             }
-             return productId; // Return existing product ID
-           }) .then(productId => {
-           // Check if the Marque already exists or create a new one
-           return this.projectService.findMarqueByNameAndProduct(project.marque, groupId, brandId, productId)
-           .then(existingMarqueId => {
-             const marqueId = existingMarqueId || uuidv4(); // Use existing marque ID or create a new one
-
-             if (!existingMarqueId) {
-               // If the marque doesn't exist, create a new marque
-               return this.projectService.createMarque(marqueId, project.marque, groupId, brandId, productId)
-                 .then(() => marqueId); // Return the created marque ID
-             }
-             return marqueId; // Return existing marque ID
-           })
-           .then(marqueId => {  // Check if the media already exists or create a new one
-            return this.projectService.findMediaByNameAndMarque(project.media, groupId, brandId, productId, marqueId)
-              .then(existingMediaId => {
-                const mediaId = existingMediaId || uuidv4(); // Use existing media ID or create a new one
-
-                if (!existingMediaId) {
-                  // If the media doesn't exist, create a new media
-                  return this.projectService.createMedia(mediaId, project.media, groupId, brandId, productId, marqueId)
-                    .then(() => mediaId); // Return the created media ID
-                }
-                return mediaId; // Return existing media ID
-              })
-              .then(mediaId => {
-                project.id = uuidv4();
-            return Promise.all(
-              project.users.map(li =>
-                this.projectService.addNewProject(project.id,project.name,li,managerId,users,groupId,brandId,productId,marqueId,mediaId,project.group,project.brand,project.product,project.marque,project.media
-                )
-              )
-            );
-          });
-          
-  });});
-});
-      })
-      .then(() => {
-        this.fetchAll();
-        handleResponseSuccessWithAlerts(
-          this.transloco.translate('features.projects.success.title'),
-          '',
-          this.transloco.translate('common.close'),
-          () => {}
-        );
-      })
-      .catch(error => {
-        console.error('Error during project invitation process:', error);
-      });
+      this.projectService.findGroupByNameAndDomain(project.group, this.profileService.profile.idDomaine)
+        .then(existingGroupId => {
+          let groupId = existingGroupId || uuidv4();
+          if (!existingGroupId) {
+            return this.projectService.createGroup(groupId, project.group, this.profileService.profile.idDomaine)
+              .then(() => groupId);
+          }
+          return groupId;
+        })
+        .then(groupId => {
+          return this.projectService.findBrandByNameAndGroup(project.brand, groupId)
+            .then(existingBrandId => {
+              const brandId = existingBrandId || uuidv4();
+              if (!existingBrandId) {
+                return this.projectService.createBrand(brandId, project.brand, groupId)
+                  .then(() => brandId);
+              }
+              return brandId;
+            })
+            .then(brandId => {
+              return this.projectService.findProductByNameAndBrand(project.product, groupId, brandId)
+                .then(existingProductId => {
+                  const productId = existingProductId || uuidv4();
+                  if (!existingProductId) {
+                    return this.projectService.createProduct(productId, project.product, groupId, brandId)
+                      .then(() => productId);
+                  }
+                  return productId;
+                })
+                .then(productId => {
+                  return this.projectService.findMarqueByNameAndProduct(project.marque, groupId, brandId, productId)
+                    .then(existingMarqueId => {
+                      const marqueId = existingMarqueId || uuidv4();
+                      if (!existingMarqueId) {
+                        return this.projectService.createMarque(marqueId, project.marque, groupId, brandId, productId)
+                          .then(() => marqueId);
+                      }
+                      return marqueId;
+                    })
+                    .then(marqueId => {
+                      return this.projectService.findMediaByNameAndMarque(project.media, groupId, brandId, productId, marqueId)
+                        .then(existingMediaId => {
+                          const mediaId = existingMediaId || uuidv4();
+                          if (!existingMediaId) {
+                            return this.projectService.createMedia(mediaId, project.media, groupId, brandId, productId, marqueId)
+                              .then(() => mediaId);
+                          }
+                          return mediaId;
+                        })
+                        .then(mediaId => {
+                          project.id = uuidv4();
+                          return Promise.all(
+                            project.users.map(li =>
+                              this.projectService.addNewProject(project.id, project.name, li, managerId, users, groupId, brandId, productId, marqueId, mediaId, project.group, project.brand, project.product, project.marque, project.media)
+                            )
+                          );
+                        });
+                    });
+                });
+            });
+        })
+        .then(() => {
+          this.fetchAll();
+          handleResponseSuccessWithAlerts(
+            this.transloco.translate('features.projects.success.title'),
+            '',
+            this.transloco.translate('common.close'),
+            () => { }
+          );
+        })
+        .catch(error => {
+          console.error('Error during project invitation process:', error);
+        });
+    }
   }
-}
 
   public addproject(): void {
     this.bottomSheet
@@ -397,38 +382,60 @@ showFilters: boolean = false;
       .pipe(filter((project) => !!project))
       .subscribe((project: Partial<any>) => this.inviteproject(project));
   }
-  ///////////////////////
+
   async loadGroups() {
-    const domainId = this.profileService.profile.idDomaine; // Replace with the actual ID you need
+    const domainId = this.profileService.profile.idDomaine;
     this.groups = await this.projectService.getGroupsByDomain(domainId);
   }
 
   async onGroupSelected() {
+    this.selectedBrand = '';
+    this.selectedProduct = '';
+    this.selectedMarque = '';
+    this.selectedMedia = '';
     if (this.selectedGroup) {
       this.brands = await this.projectService.getBrandsByGroup(this.selectedGroup);
-      
+    } else {
+      this.brands = [];
     }
+    this.products = [];
+    this.marques = [];
+    this.medias = [];
   }
 
   async onBrandSelected() {
+    this.selectedProduct = '';
+    this.selectedMarque = '';
+    this.selectedMedia = '';
     if (this.selectedGroup && this.selectedBrand) {
       this.products = await this.projectService.getProductsByBrand(this.selectedGroup, this.selectedBrand);
-      
+    } else {
+      this.products = [];
     }
+    this.marques = [];
+    this.medias = [];
   }
+
   async onProductSelected() {
+    this.selectedMarque = '';
+    this.selectedMedia = '';
     if (this.selectedGroup && this.selectedBrand && this.selectedProduct) {
-      this.marques = await this.projectService.getMarquesByProduct(this.selectedGroup, this.selectedBrand,this.selectedProduct);
-    
+      this.marques = await this.projectService.getMarquesByProduct(this.selectedGroup, this.selectedBrand, this.selectedProduct);
+    } else {
+      this.marques = [];
     }
+    this.medias = [];
   }
 
   async onMarqueSelected() {
+    this.selectedMedia = '';
     if (this.selectedGroup && this.selectedBrand && this.selectedProduct && this.selectedMarque) {
-      this.medias = await this.projectService.getMediaByMarque(this.selectedGroup, this.selectedBrand,this.selectedProduct,this.selectedMarque);
+      this.medias = await this.projectService.getMediaByMarque(this.selectedGroup, this.selectedBrand, this.selectedProduct, this.selectedMarque);
+    } else {
+      this.medias = [];
     }
   }
- 
+
   applyFilters() {
     this.fetchAll();
   }
@@ -438,7 +445,11 @@ showFilters: boolean = false;
     this.selectedBrand = '';
     this.selectedProduct = '';
     this.selectedMarque = '';
-    this.selectedMedia = ''; 
+    this.selectedMedia = '';
+    this.brands = [];
+    this.products = [];
+    this.marques = [];
+    this.medias = [];
     this.fetchAll();
   }
 }
