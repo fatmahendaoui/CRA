@@ -70,7 +70,7 @@
           <mat-icon>event_note</mat-icon>
           {{ 'features.timeshet.Time_Sheet' | transloco }}
         </button>
-        <button class="custom-icon" routerLink="users" *ngIf="isAdmin">
+        <button class="custom-icon" routerLink="users" *ngIf="isNotManager">
           <mat-icon>manage_accounts</mat-icon>
           {{ 'layout.menu.users' | transloco }}
         </button>

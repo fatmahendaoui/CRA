@@ -18,6 +18,7 @@ import { Observable } from "rxjs";
 import { AsyncPipe } from '@angular/common';
 import { startWith, map } from 'rxjs/operators';
 import { v4 as uuidv4 } from 'uuid';
+import { Brand, Group, Marque, Media, Product } from "../models/Project.model";
 
 @Component({
   standalone: true,
@@ -34,7 +35,7 @@ import { v4 as uuidv4 } from 'uuid';
         </button>
       </mat-toolbar-row>
     </mat-toolbar>
-
+   
     <form class="invite-user-form" [formGroup]="formGroup" (ngSubmit)="inviteUser()">
       <!-- Origine Autocomplete -->
   <mat-form-field appearance="outline">
@@ -177,29 +178,24 @@ export class addNewProjectComponent implements OnInit {
   public formGroup: FormGroup;
   users: Profile[]
   usersMan: Profile[];
-// Data for autocomplete options
-public groups = ['Locaux', 'Etranger'];
-public brands = ['DU DIGITAL', 'PGH', 'ROAD HERO', 'JII Sport', 'HBG', 'Glovo','Doghri','Ealan','La Paix'];
-public products = [
-  'Mazraa', 'Medoil', 'GIPA', 'Nety', 'City Market', 'Mazraa Market', 
-  'YAB', 'Goldenchips', 'Ice Vegas', 'Le Patissier', 'Kiabi', 'Koton', 
-  'Carte Assurace', 'Road Hero', 'Du Digital', 'JII', 'Glovo','Ealan','La Paix'
-];
-public marques = [
-  'Mazraa', 'Jadida', 'Selja', 'Ola', 'Nety', 'MyPets', 'City Market', 
-  'Mazraa Market', 'YAB', 'Goldenchips', 'Ice Vegas', 'Le Patissier', 
-  'Kiabi', 'Koton', 'Carte', 'Road Hero', 'JII', 'Glovo','Du Digital','Ealan','El Medina','Diar el Medina','Regency','Solaria','Belisaire','White Elephant','Carthageland'
-];
-public mediaTypes = ['Conseil', 'Digital', 'Martech', 'Produit', 'Offline','Internal','Pitch'];
-public projectNames = [
-  'Account Mgt', 'Audit DATA', 'Audit SEO', 'Audit Technique', 'Branding', 'CAPI', 
-  'Chatbot - IA', 'Content', 'Content- Radio', 'Content- TV', 'DASHBOARDING', 
-  'Data Management & Reporting', 'Display', 'Etude et recherche "SURVEY"', 'Generative AI', 
-  'Influenceur', 'Kepler MMM', 'Kepler Scoring', 'Kepler Segmentation', 
-  'LISTENING & E-REPUTATION', 'OOH', 'Performance - Google Ads', 'Performance - Paid Social', 
-  'Presse', 'Programmatic', 'Radio', 'Social Media Mgt', 'Strategie', 'Training', 'TV', 'UGC', 
-  'UX UI','Activities','HR House','Offline','Performance','Social','Product','Martech Solution','Presentation'
-];
+  public groups: Group[] = [];
+  public brands: Brand[] = [];
+  public products: Product[] = [];
+  public marques: Marque[] = [];
+  public mediaTypes = ['Conseil', 'Digital', 'Martech', 'Produit', 'Offline','Internal','Pitch'];
+  public dataLoaded = false;   
+  private allProjectNames = [
+    'Account Mgt', 'Audit DATA', 'Audit SEO', 'Audit Technique', 'Branding', 'CAPI', 
+    'Chatbot - IA', 'Content', 'Content- Radio', 'Content- TV', 'DASHBOARDING', 
+    'Data Management & Reporting', 'Display', 'Etude et recherche "SURVEY"', 'Generative AI', 
+    'Influenceur', 'Kepler MMM', 'Kepler Scoring', 'Kepler Segmentation', 
+    'LISTENING & E-REPUTATION', 'OOH', 'Performance - Google Ads', 'Performance - Paid Social', 
+    'Presse', 'Programmatic', 'Radio', 'Social Media Mgt', 'Strategie', 'Training', 'TV', 'UGC', 
+    'UX UI','Activities','HR House','Offline','Performance','Social','Product','Martech Solution','Presentation'
+  ];
+
+  // Project names filtered by media type
+  public projectNames: string[] = this.allProjectNames;
 
   // Filtered autocomplete options
   public filteredGroups: Observable<string[]>;
@@ -208,34 +204,88 @@ public projectNames = [
   public filteredMarques: Observable<string[]>;
   public filteredMedia: Observable<string[]>;
   public filteredNames: Observable<string[]>;
-   /**
-   * Initialization logic
-   */
+
   public ngOnInit(): void {
-    this.usersService.fetchAllUsers().subscribe(list => {
-      this.users = list
-      // Filtrer les utilisateurs ayant le rôle "manager"
-      this.usersMan = list.filter(user => user.role === 'manager');
-    })
     this.formGroup = this.formBuilder.group({
       name: ['', Validators.required],
       users: [[], Validators.required],
-      manager: ['', Validators.required] ,
+      manager: ['', Validators.required],
       group: ['', Validators.required],
       brand: ['', Validators.required],
       product: ['', Validators.required],
       marque: ['', Validators.required],
-      media: ['', Validators.required]  // New MEDIA field
+      media: ['', Validators.required]
+    });
+    this.formGroup.disable();
 
-     });
-      // Setup filtering for each field using a generalized method
-    this.filteredGroups = this._setupFilter('group', this.groups);
-    this.filteredBrands = this._setupFilter('brand', this.brands);
-    this.filteredProducts = this._setupFilter('product', this.products);
-    this.filteredMarques = this._setupFilter('marque', this.marques);
-    this.filteredMedia = this._setupFilter('media', this.mediaTypes);
-    this.filteredNames = this._setupFilter('name', this.projectNames);
+    this.projectService.getHierarchyByDomain(this.profileService.profile.idDomaine)
+      .then(hierarchy => {
+        this.groups = hierarchy.groups;
+        this.brands = hierarchy.brands;
+        this.products = hierarchy.products;
+        this.marques = hierarchy.marques;
+             
+        this.filteredGroups = this._setupFilter('group', this.groups.map(g => g.name));
+        this.filteredBrands = this._setupFilter('brand', this.brands.map(b => b.name));
+        this.filteredProducts = this._setupFilter('product', this.products.map(p => p.name));
+        this.filteredMarques = this._setupFilter('marque', this.marques.map(m => m.name));
+        this.filteredMedia = this._setupFilter('media', this.mediaTypes);
+        this.filteredNames = this._setupFilter('name', this.projectNames);
+        this.dataLoaded = true;
+        
+          this.formGroup.enable();
+        
+        // Subscribe to media changes to update project names
+        this.formGroup.get('media')?.valueChanges.subscribe(media => {
+          this.updateProjectNamesBasedOnMedia(media);
+        });
+      })
+      .catch(err => {
+        console.error('Hierarchy error:', err);
+        this.dataLoaded = false;
+        this.formGroup.disable();
+
+      });
+
+    this.usersService.fetchAllUsers().subscribe(list => {
+      this.users = list
+      this.usersMan = list.filter(user => user.role === 'manager');
+    })
+
+  
+  
+  }
+
+  private updateProjectNamesBasedOnMedia(media: string): void {
+    if (media === 'Conseil') {
+      this.projectNames = ['Strategie', 'Account Mgt', 'Training'];
+    } else if (media === 'Digital') {
+      this.projectNames = [
+        'Social Media Mgt',
+        'Performance - Paid Social',
+        'Performance - Google Ads',
+        'Content',
+        'Influenceur'
+      ];
+    }  else if (media === 'Martech') {
+      this.projectNames = ['UGC'];
+    } else if (media === 'Produit') {
+      this.projectNames = ['DASHBOARDING'];
+    }else if (media === 'Offline') {
+      this.projectNames = ['Content- Radio', 'Content- TV', 'OOH', 'Radio', 'TV', 'Presse'];
+    }else if (media === 'Internal') {
+      this.projectNames = ['Activities','HR House'];
+    }else if (media === 'Pitch') {
+      this.projectNames = ['Offline','Performance','Social','Product','Martech Solution','Presentation','Strategie'];
+    }else{
+      this.projectNames = this.allProjectNames;
     }
+    
+    // Update the filtered names observable
+    this.filteredNames = this._setupFilter('name', this.projectNames);
+    // Reset the name field to ensure the dropdown shows the correct options
+    this.formGroup.get('name')?.setValue('');
+  }
 
      /**
    * Helper to set up a filter for an autocomplete field
@@ -252,17 +302,17 @@ public projectNames = [
  /**
    * Generalized filtering function
    */
- private _filterItems(value: string, list: string[]): string[] {
-  const filterValue = value.toLowerCase();
-  return list.filter(item => item.toLowerCase().includes(filterValue));
-}
+  private _filterItems(value: string, list: string[]): string[] {
+    const filterValue = value.toLowerCase();
+    return list.filter(item => item.toLowerCase().includes(filterValue));
+  }
 
     /**
    * Handle form submission and project creation
    */
   public inviteUser(): void {
     const projectData = this.formGroup.value;
-    const idproject = uuidv4()||""; // Replace with actual ID logic if needed
+    const idproject = uuidv4()||"";
 
     this.projectService.addNewProject(
       idproject,

@@ -1,3 +1,4 @@
+import { map } from 'rxjs/operators';
 import { Project } from './../models/Project.model';
 import { Injectable, inject } from '@angular/core';
 import { ProfileService } from '../../../services/profile.service';
@@ -551,7 +552,7 @@ async createMedia(idMedia: string, mediaName: string, groupId: string, brandId: 
 
     return allProjects;
   }
-  public async fetchAllProjects(
+  /*public async fetchAllProjects(
     selectedMedia?: string): Promise<any[]> {
     const usersList: Profile[] = [];
     const allProjects: any[] = [];
@@ -567,7 +568,7 @@ async createMedia(idMedia: string, mediaName: string, groupId: string, brandId: 
     });
 
     for await (const user of usersList) {
-      console.log(usersList);
+      //console.log(usersList);
 
       const projects = await this.fetchProjects(user.uid);
     //  allProjects.push(...projects.filter((project) => project.name !== "Disponible" && project.name !== "Maladie" && project.name !== "Vacances"));
@@ -585,12 +586,52 @@ async createMedia(idMedia: string, mediaName: string, groupId: string, brandId: 
 });
 
 allProjects.push(...filteredProjects);
+//console.log("allPojects",allProjects);
 }
 
     return allProjects;
-  }
+  }*/
 
-
+    public async fetchAllProjects(selectedMedia?: string): Promise<Project[]> {
+      try {
+        // Récupérer tous les utilisateurs du domaine
+        const usersQuery = query(
+          collection(this.firestore, 'membership_CRA'),
+          where('idDomaine', '==', this.profileService.profile.idDomaine)
+        );
+        const usersSnapshot = await getDocs(usersQuery);
+        const usersList = usersSnapshot.docs.map(doc => doc.data() as Profile);
+    
+        // Créer les promesses pour récupérer les projets
+        const projectPromises = usersList.map(user => 
+          getDocs(collection(this.firestore, 'membership_CRA', user.uid, 'Projects'))
+        );
+    
+        // Exécuter en parallèle
+        const projectsSnapshots = await Promise.all(projectPromises);
+    
+        // Traiter les résultats avec le bon typage
+        const allProjects: Project[] = projectsSnapshots.flatMap((snapshot, index) => {
+          return snapshot.docs
+            .map(doc => ({
+              ...doc.data() as Project,
+              id: doc.id, // Conversion explicite en type Project
+              displayName: usersList[index].displayName // Ajout optionnel
+            }))
+            .filter(project => 
+              project.name !== "Disponible" && 
+              project.name !== "Maladie" && 
+              project.name !== "Vacances" &&
+              (!selectedMedia || project.mediaId === selectedMedia)
+            );
+        });
+    console.log("allProjects", allProjects);
+        return allProjects;
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+        return [];
+      }
+    }
   public async fetchAllProjectswithuser(): Promise<any[]> {
     const usersList: Profile[] = [];
     const allProjects: any[] = [];
@@ -1087,6 +1128,150 @@ async getDescription(uid, month, year): Promise<string | null> {
   } catch (error) {
     console.error('Error getting description:', error);
     return null; // Return null in case of an error
+  }
+}
+
+async getHierarchyByDomain(idDomaine: string): Promise<{
+  groups: Group[],
+  brands: Brand[],
+  products: Product[],
+  marques: Marque[],
+ // medias: Media[]
+}> {
+  try {
+    // Fonction helper pour dédupliquer par nom (insensible à la casse)
+    const removeDuplicatesByName = <T extends { name: string }>(items: T[]): T[] => {
+      const seen = new Set<string>();
+      return items.filter(item => {
+        const normalized = item.name.toLowerCase().trim();
+        if (seen.has(normalized)) {
+          return false;
+        }
+        seen.add(normalized);
+        return true;
+      });
+    };
+
+    // 1. Groups (dédupliqués par nom)
+    const groups = removeDuplicatesByName(await this.getGroupsByDomain(idDomaine));
+    const groupIds = groups.map(group => group.id);
+    console.log("Groups (dédupliqués par nom):", groups);
+
+    // 2. Brands (dédupliqués par nom)
+    const brandsPromises = groups.map(group => this.getBrandsByGroup(group.id));
+    const brandsArrays = await Promise.all(brandsPromises);
+    const brands = removeDuplicatesByName(brandsArrays.flat());
+    const brandIds = brands.map(brand => brand.id);
+    console.log("Brands (dédupliqués par nom):", brands);
+
+    // 3. Products (dédupliqués par nom)
+    const productsPromises = groupIds.flatMap(groupId => 
+      brandIds.map(brandId => this.getProductsByBrand(groupId, brandId))
+    );
+    const productsArrays = await Promise.all(productsPromises);
+    const products = removeDuplicatesByName(productsArrays.flat());
+    const productIds = products.map(product => product.id);
+    console.log("Products (dédupliqués par nom):", products);
+
+    // 4. Marques (dédupliqués par nom)
+    const marquesPromises = groupIds.flatMap(groupId => 
+      brandIds.flatMap(brandId => 
+        productIds.map(productId => this.getMarquesByProduct(groupId, brandId, productId))
+      )
+    );
+    const marquesArrays = await Promise.all(marquesPromises);
+    const marques = removeDuplicatesByName(marquesArrays.flat());
+    const marqueIds = marques.map(marque => marque.id);
+    console.log("Marques (dédupliqués par nom):", marques);
+
+    // 5. Medias (dédupliqués par nom)
+   /* const mediasPromises = groupIds.flatMap(groupId => 
+      brandIds.flatMap(brandId => 
+        productIds.flatMap(productId => 
+          marqueIds.map(marqueId => this.getMediaByMarque(groupId, brandId, productId, marqueId))
+      )
+    ));
+    const mediasArrays = await Promise.all(mediasPromises);
+    const medias = removeDuplicatesByName(mediasArrays.flat());
+    console.log("Medias (dédupliqués par nom):", medias);
+*/
+    return {
+      groups,
+      brands,
+      products,
+      marques,
+      //medias
+    };
+
+  } catch (error) {
+    console.error('Error fetching hierarchy by domain:', error);
+    throw error;
+  }
+}
+////
+public async fetchAllProjectsWithFilters(
+  groupId?: string,
+  brandId?: string,
+  productId?: string,
+  marqueId?: string,
+  mediaId?: string
+): Promise<Project[]> {
+  try {
+    // Récupérer tous les utilisateurs du domaine
+    const usersQuery = query(
+      collection(this.firestore, 'membership_CRA'),
+      where('idDomaine', '==', this.profileService.profile.idDomaine)
+    );
+    const usersSnapshot = await getDocs(usersQuery);
+    const usersList = usersSnapshot.docs.map(doc => doc.data() as Profile);
+
+    // Créer les promesses pour récupérer les projets
+    const projectPromises = usersList.map(user => 
+      getDocs(collection(this.firestore, 'membership_CRA', user.uid, 'Projects'))
+    );
+
+    // Exécuter en parallèle
+    const projectsSnapshots = await Promise.all(projectPromises);
+
+    // Traiter les résultats avec le bon typage
+    const allProjects: Project[] = projectsSnapshots.flatMap((snapshot, index) => {
+      return snapshot.docs
+        .map(doc => ({
+          ...doc.data() as Project,
+          id: doc.id,
+          displayName: usersList[index].displayName
+        }))
+        .filter(project => {
+          // Filtre de base pour exclure les projets spéciaux
+          let isValid = project.name !== "Disponible" && 
+                       project.name !== "Maladie" && 
+                       project.name !== "Vacances";
+
+          // Appliquer les filtres supplémentaires si ils sont définis
+          if (groupId && project.groupId !== groupId) {
+            isValid = false;
+          }
+          if (brandId && project.brandId !== brandId) {
+            isValid = false;
+          }
+          if (productId && project.productId !== productId) {
+            isValid = false;
+          }
+          if (marqueId && project.marqueId !== marqueId) {
+            isValid = false;
+          }
+          if (mediaId && project.mediaId !== mediaId) {
+            isValid = false;
+          }
+
+          return isValid;
+        });
+    });
+
+    return allProjects;
+  } catch (error) {
+    console.error('Error fetching projects with filters:', error);
+    return [];
   }
 }
 }
