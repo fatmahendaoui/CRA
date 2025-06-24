@@ -118,7 +118,13 @@
                             <h4 class="texte">{{ 'features.profile.NumbConger_pay' | transloco }}</h4>
                             <img src="assets/images/Badge.png" class="card-image">
                         </div>
-                        <p class="solde-conge">{{ profileForm.value.conge }}</p>
+                        <ng-container *ngIf="!loadingConge; else loadingCongeTemplate">
+                            <p class="solde-conge">{{ profileForm.value.conge }}</p>
+                        </ng-container>
+                        <ng-template #loadingCongeTemplate>
+                            <div class="spinner-container">
+                            <mat-spinner diameter="30"></mat-spinner></div>
+                        </ng-template>
                     </mat-card>
                     <br>
                     <!-- Nombre de congé maladie -->
@@ -127,7 +133,14 @@
                             <h4 class="texte">{{ 'features.profile.NumbConger_Mal' | transloco }}</h4>
                             <img src="assets/images/Badge.png" class="card-image">
                         </div>
-                        <p class="solde-conge">{{ profileForm.value.maladie }}</p>
+                        <ng-container *ngIf="!loadingMaladie; else loadingMaladieTemplate">
+                            <p class="solde-conge">{{ profileForm.value.maladie }}</p>
+                        </ng-container>
+                        <ng-template #loadingMaladieTemplate>
+                            <div class="spinner-container">
+                            <mat-spinner diameter="30"></mat-spinner>
+                            </div>
+                        </ng-template>
                     </mat-card>
                 </div>
                 <!-- Statistic 

@@ -17,6 +17,7 @@ import { NgApexchartsModule } from "ng-apexcharts";
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { AngularFireModule } from '@angular/fire/compat';
 import { environment } from 'src/environments/environment';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 
@@ -52,7 +53,8 @@ const routes: Routes = [
     ReactiveFormsModule,
     NgApexchartsModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFireStorageModule
+    AngularFireStorageModule,
+    MatProgressSpinnerModule
 
   ], exports: [RouterModule],
 

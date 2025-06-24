@@ -16,15 +16,12 @@ export class ProfilService {
 
   // Fonction pour convertir les heures en jours et heures
   public convertToDaysAndHours(hours: number): string {
-    const days = Math.floor(hours / 8);
-    const remainingHours = hours % 8;
+    const days =hours / 8;
+      console.log("day/ : ",days)
     let result: string;
   
-    if (remainingHours === 0) {
-      result = `${days} jours`;
-    } else {
-      result = `${days} jours et ${remainingHours} heures`;
-    }
+      result = `${parseFloat(days.toFixed(2))} jours `;
+      console.log("result",result)
   
     return result;
   }
@@ -80,7 +77,6 @@ export class ProfilService {
         // Convertir les champs conge et maladie en jours et heures
         const conge = data['conge'] ? this.convertToDaysAndHours(data['conge']) : null;
         const maladie = data['maladie'] ? this.convertToDaysAndHours(data['maladie']) : null;
-
         return {
           displayName: data['displayName'],
           email: data['email'],

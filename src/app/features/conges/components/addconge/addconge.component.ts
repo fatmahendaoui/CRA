@@ -83,7 +83,30 @@ export class AddcongeComponent implements OnInit {
     if (this.isSubmitting) {
       return; // Prevent multiple submissions
     }
-  
+   // Vérification des dates pour le cas "Plus d'1 jour"
+   if (this.dureeConge === 'Plus d\'1 jour') {
+    if (!this.dateDebut || !this.dateFin) {
+      this.alertVisible = true;
+      this.alertMessage = 'Veuillez sélectionner à la fois la date de début et la date de fin pour un congé de plusieurs jours.';
+      return;
+    }
+    
+    // Vérifier que la date de fin est après la date de début
+    if (this.dateFin < this.dateDebut) {
+      this.alertVisible = true;
+      this.alertMessage = 'La date de fin doit être postérieure à la date de début.';
+      return;
+    }
+  } else {
+    // Pour les autres durées, vérifier que la date de début est sélectionnée
+    if (!this.dateDebut) {
+      this.alertVisible = true;
+      this.alertMessage = 'Veuillez sélectionner une date de début.';
+      return;
+    }
+    // Pour les durées autres que "Plus d'1 jour", la date de fin est égale à la date de début
+    this.dateFin = this.dateDebut;
+  }
     this.isSubmitting = true; // Disable the button
     const userId = this.user ? this.user.uid : null;
     let nombreJours: number = differenceInDays(this.dateFin, this.dateDebut) + 1;
@@ -126,6 +149,7 @@ export class AddcongeComponent implements OnInit {
         break;
       default:
         console.error("Durée de congé invalide:", this.dureeConge);
+        this.isSubmitting = false;
         return;
     }
   console.log("nature de conge .....",this.natureConge);
