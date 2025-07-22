@@ -387,13 +387,32 @@ export class ListcongeComponent<T> implements OnInit {
   }
   // Méthode pour formater la durée du congé
   formatDuree(conge: any): string {
-    if (conge.duree === "Demi journée - le matin" || conge.duree === "Demi journée - l'après midi" || conge.duree === "Début de journée" || conge.duree === "Fin de journée") {
-      return "1/2 ";
-    } else {
-      const difference = differenceInDays(conge.dateFin.toDate(), conge.dateDebut.toDate()) + 1;
-      return `${difference} `;
+    if (
+      conge.duree === "Demi journée - le matin" ||
+      conge.duree === "Demi journée - l'après midi" ||
+      conge.duree === "Début de journée" ||
+      conge.duree === "Fin de journée"
+    ) {
+      return "1/2";
     }
+  
+    const startDate = conge.dateDebut.toDate();
+    const endDate = conge.dateFin.toDate();
+  
+    let count = 0;
+    let currentDate = new Date(startDate);
+  
+    while (currentDate <= endDate) {
+      const day = currentDate.getDay();
+      if (day !== 0 && day !== 6) { // 0 = dimanche, 6 = samedi
+        count++;
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+  
+    return `${count} `;
   }
+  
   // methode pour telcharge certif 
   openFile(url: string): void {
     window.open(url, '_blank');

@@ -119,7 +119,7 @@
                             <img src="assets/images/Badge.png" class="card-image">
                         </div>
                         <ng-container *ngIf="!loadingConge; else loadingCongeTemplate">
-                            <p class="solde-conge">{{ profileForm.value.conge }}</p>
+                            <p class="solde-conge">{{ congePaye }}</p>
                         </ng-container>
                         <ng-template #loadingCongeTemplate>
                             <div class="spinner-container">

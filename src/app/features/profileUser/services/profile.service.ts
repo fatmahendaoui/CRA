@@ -17,11 +17,11 @@ export class ProfilService {
   // Fonction pour convertir les heures en jours et heures
   public convertToDaysAndHours(hours: number): string {
     const days =hours / 8;
-      console.log("day/ : ",days)
+      //console.log("day/ : ",days)
     let result: string;
   
       result = `${parseFloat(days.toFixed(2))} jours `;
-      console.log("result",result)
+      //console.log("result",result)
   
     return result;
   }

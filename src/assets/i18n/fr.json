@@ -56,7 +56,9 @@
       "Project-by-user": "Projet par mois par utilisateur",
       "User-by-project": "Utilisateur par mois par projet",
       "Search_User": "Rechercher un utilisateur",
-      "Search_Project": "Rechercher un projet"
+      "Search_Project": "Rechercher un projet",
+      "projectDetails":" Détails de tous les clients par utilisateur en",
+      "Project-details":"Détails de tous les clients"
     },
     "users": {
       "title": "Gestion des utilisateurs",
@@ -235,6 +237,9 @@
       "nature": "Nature de congé",
       "paid_leave": "Congé Payé",
       "sick_leave": "Congé de maladie",
+      "special_leave": "Congé Spécial",
+      "birthday_leave": "Journée Célébration",
+      "weekend_compensation": "Compensation weekend",
       "exit_permission": "Autorisation de sortie",
       "leave_duration": "Durée de congé",
       "half_day_morning": "Demi journée - le matin",
@@ -250,7 +255,13 @@
       "reject_confirm": "Êtes-vous sûr de vouloir refuser ce congé ?",
       "enter_comment": "Ajouter un commentaire",
       "Request": "Demandes",
-      "file_error": "Veuillez joindre votre certificat médical pour cette demande."
+      "file_error": "Veuillez joindre votre certificat médical pour cette demande.",
+      "missingDates": "Veuillez sélectionner à la fois la date de début et la date de fin pour un congé de plusieurs jours.",
+    "invalidEndDate": "La date de fin doit être postérieure à la date de début.",
+    "missingStartDate": "Veuillez sélectionner une date de début.",
+    "sickLeaveLimitExceeded": "Vous avez dépassé la limite de 8 jours pour le congé de maladie ! Vous avez actuellement ",
+    "day":" jours.",
+    "birthdayLeaveUsed": "Vous avez déjà utilisé votre congé d'anniversaire cette année."
     },
     "liste_conge": {
       "title": "Liste des congés",

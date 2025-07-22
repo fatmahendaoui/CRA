@@ -98,10 +98,13 @@ export class Day_offService {
                   const month2 = monthNames[date.getMonth()];
                   if (date != 'Invalid Date') {
                     dayoffs.push({ date: date, name: li[jour + '_' + month2 + '_' + annee] })
+
                   }
                 }
               }
             })
+            console.log('dayoffs', dayoffs);
+            dayoffs.sort((a, b) => b.date.getTime() - a.date.getTime());
             return dayoffs;
           })
         );

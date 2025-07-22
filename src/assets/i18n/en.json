@@ -56,7 +56,9 @@
       "Project-by-user": "Project By Month by user",
       "User-by-project": "User By Month by project",
       "Search_User": "Search User",
-      "Search_Project": "Search Project"
+      "Search_Project": "Search Project",
+      "projectDetails":"All Client Details by User in Year",
+      "Project-details":"Client Details"
     },
     "users": {
       "title": "Users",
@@ -234,7 +236,10 @@
       "titre": "Create a Request",
       "nature": "Nature of leave",
       "paid_leave": "Paid Leave",
-      "sick_leave": "Sick Leave ",
+      "sick_leave": "Sick Leave",
+      "special_leave": "Special Leave",
+      "birthday_leave": "Celebration Day",
+      "weekend_compensation": "Weekend work compensation",
       "exit_permission": "Exit Permission ",
       "leave_duration": "Leave Duration",
       "half_day_morning": "Half Day - Morning",
@@ -250,7 +255,13 @@
       "reject_confirm": "Are you sure you want to reject this leave?",
       "enter_comment": "Add a comment",
       "Request": "Request",
-      "file_error": "Please attach your medical certificate for this request."
+      "file_error": "Please attach your medical certificate for this request.",
+      "missingDates": "Please select both start and end dates for a multi-day leave.",
+      "invalidEndDate": "The end date must be after the start date.",
+      "missingStartDate": "Please select a start date.",
+      "sickLeaveLimitExceeded": "You have exceeded the limit of 8 days for sick leave! You currently have ",
+      "day": "days.",
+      "birthdayLeaveUsed": "You have already used your birthday leave this year."
     },
     "liste_conge": {
       "title": "List of leave",
