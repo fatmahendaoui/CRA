@@ -1,3 +1,4 @@
+import { user } from '@angular/fire/auth';
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { AuthService } from 'src/app/features/sign-in/services/auth.service';
@@ -10,6 +11,7 @@ import { ProfilService } from '../../services/profile.service';
 import { CongeService } from 'src/app/features/conges/services/conge.service';
 import { ca } from 'date-fns/locale';
 import { TranslocoService } from '@ngneat/transloco';
+import { co } from '@fullcalendar/core/internal-common';
 
 
 
@@ -38,7 +40,9 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
   congesUtilisateurConnecte: any[] = [];
   private readonly transloco = inject(TranslocoService);
   showPopup = false;
-
+  loadingConge: boolean = true;
+  loadingMaladie: boolean = true;
+  congePaye:string="0 jours";
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -136,7 +140,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
       typeContrat: [''],
       dateEmbauche: [''],
       poste: [''],
-      conge: [''],
+      conge: ['0'],
       maladie: [''],
       photoURL: [''],
 
@@ -193,7 +197,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
         projectData[monthKey].forEach((day: any) => {
           // Ensure nbHeure is a number
           const hours = Number(day.nbHeure);
-          if (!isNaN(hours)) {
+          if (!isNaN(hours) && hours !== 2) {
             totalHours += hours;
           }
         });
@@ -335,7 +339,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
           typeContrat: profileData.contratType || '',
           dateEmbauche: profileData.dateEmbauche || null,
           poste: profileData.poste || '',
-          conge: profileData.conge || '',
+          conge: profileData.conge || '0',
           maladie: profileData.maladie || '',
           photoURL: profileData.photoURL || '',
           this: profileData.role || '',
@@ -394,6 +398,8 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
       console.error('User ID is null or undefined.');
       return;
     }
+    this.loadingMaladie = true;
+
     let remainingHours = 0; // Définir le nombre total d'heures de congé de maladie par défaut
 
     // Récupérer les projets associés à l'utilisateur
@@ -414,22 +420,72 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
           }
         }).catch(error => {
           console.error(`Error fetching details for project ID ${maladieProjectId}:`, error);
+        }).finally(() => {
+          this.loadingMaladie = false;
         });
+      } else {
+        this.loadingMaladie = false;
       }
     }).catch(error => {
       console.error('Error fetching projects:', error);
+      this.loadingMaladie = false;
+
     });
   }
 
   //recuperer les conges payes de l'utilisateur
-  getcongePaye(userId: string): void {
+  async getcongePaye(userId: string): Promise<void> {
     if (!userId) {
       console.error('User ID is null or undefined.');
       return;
     }
+  
+    this.loadingConge = true;
+    let remainingHours = 0;
+  
+    try {
+      // Récupérer tous les congés payés de l'utilisateur
+      const congesPayes = await this.getCongePayeCourant(userId);
+      console.log('Congés payés récupérés 11111 :', congesPayes);
+      if (congesPayes ) {
+        // Calculer le total des heures de tous les congés payés
+        const totalHours = congesPayes.reduce((sum, conge) => {
+          // Convertir la durée du congé en heures et ajouter au total
+          const congeHours = conge.nombreHeures || 0;
+          console.log('Durée du congé en heures:', congeHours);
+          return sum + congeHours;
+        }, 0);
+  console.log('Total paid leave hours:', totalHours);
+        const congeDays = this.profileForm.value.conge || 0;
+        console.log('Congé days from form:', congeDays);
+        const congeHours = this.convertCongeToHours(congeDays);
+        console.log('Converted congé hours:', congeHours);
+        remainingHours = congeHours - totalHours;
+        console.log('Remaining paid leave hours:', remainingHours);
+        // Convertir les heures restantes en jours et heures
+        const remainingHoursText = this.profilService.convertToDaysAndHours(remainingHours);
+        console.log('Remaining paid leave hours:', remainingHoursText);
+        this.congePaye= remainingHoursText;
 
-    let remainingHours = 0; // Définir le nombre total d'heures de congé de maladie par défaut
-
+        // Mettre à jour le champ conge dans le formulaire
+        //this.profileForm.patchValue({ conge: remainingHoursText });
+      } else {
+        console.log('No paid leaves found for user');
+      }
+    } catch (error) {
+      console.error('Error fetching paid leaves:', error);
+    } finally {
+      this.loadingConge = false;
+    }
+  }
+  /*
+  async getcongePaye(userId: string): Promise<void> {
+    if (!userId) {
+      console.error('User ID is null or undefined.');
+      return;
+    }
+    this.loadingConge = true;
+    let remainingHours = 0;
     // Récupérer les projets associés à l'utilisateur
     this.profilService.getProjects(userId).then(projectIds => {
       const vacancesProjectId = projectIds.find(projectId => projectId === 'Vacances');
@@ -438,21 +494,91 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
           if (projectData) {
             // Calculer le total des heures du congé de maladie pour ce projet
             const totalHours = this.calculateTotalHours(projectData, vacancesProjectId);
+            //console.log("totale heurs conger", totalHours)
+            const congeDays = this.profileForm.value.conge || 0;
+            //console.log("conger day ", congeDays)
+            // Convertir les jours en heures
+            const congeHours = this.convertCongeToHours(congeDays);
+            // console.log("conger heure  ", congeHours)
+            //console.log("heur conger proner" ,totalHours)
+            remainingHours = congeHours - totalHours;
+            //console.log("remainingHours", remainingHours)
 
-
-            remainingHours = 176 - totalHours;
             // Convertir les heures restantes en jours et heures
             const remainingHoursText = this.profilService.convertToDaysAndHours(remainingHours);
+            //console.log("remainingHoursText", remainingHoursText)
+
             // Mettre à jour le champ maladie dans le formulaire
             this.profileForm.patchValue({ conge: remainingHoursText });
           }
         }).catch(error => {
           console.error(`Error fetching details for project ID ${vacancesProjectId}:`, error);
+        }).finally(() => {
+          this.loadingConge = false;
         });
+      } else {
+        this.loadingConge = false;
       }
     }).catch(error => {
       console.error('Error fetching projects:', error);
+      this.loadingConge = false;
+
     });
+  }*/
+/**
+ * Récupère le congé payé (nature "Congé Payé") pour l'utilisateur courant et le domaine courant
+ * @param userId ID de l'utilisateur
+ * @param idDomain ID du domaine (optionnel)
+ * @returns Promise<any> Le congé payé correspondant ou null si non trouvé
+ */
+async getCongePayeCourant(userId: string): Promise<any[]> {
+  try {
+    if (!userId) {
+      console.error('User ID is required');
+      return [];
+    }
+console.log('Fetching current paid leave for user:', userId);
+    // Récupérer tous les congés de l'utilisateur
+    const allConges = await this.congeService.getAllConges();
+    console.log('All congés:', allConges);
+    // Filtrer pour trouver le congé payé courant
+    const congePaye = allConges.filter(conge => 
+      conge.userId === userId 
+      && conge.nature === "Congé Payé" && conge.status === 1
+    );
+
+    console.log('Current paid leave found:', congePaye);
+    return congePaye || [];
+  } catch (error) {
+    console.error('Error fetching current paid leave:', error);
+    return [];
+  }
+}
+  // convertire days to hours
+  /** 
+   * Convertit n’importe quelle saisie « congé » (nombre ou texte) en heures.
+   * – 1 jour = 8 heures
+   * – Les heures ≥ 8 sont automatiquement converties en jours supplémentaires.
+   */
+  convertCongeToHours(value: number | string): number {
+    // 1. Si la valeur est déjà numérique (entier ou décimal) --------------
+    if (typeof value === 'number') {
+      return value * 8;                       // 3.5  ➜ 28 h
+    }
+
+    // 2. On normalise la chaîne (virgule → point) et on capture les nombres
+    const numbers = value.replace(',', '.').match(/(\d+(?:\.\d+)?)/g);
+    if (!numbers) { return 0; }               // rien de valable trouvé
+
+    const days = parseFloat(numbers[0]);               // premier nombre = jours
+    const hours = numbers[1] ? parseFloat(numbers[1])   // second nombre = heures
+      : 0;
+
+    // 3. Si l’utilisateur écrit plus de 8 h on bascule l’excédent en jours
+    const extraDays = Math.floor(hours / 8);
+    const remainingHs = hours % 8;
+
+    return (days + extraDays) * 8 + remainingHs;        // total en heures
   }
 
 
@@ -471,7 +597,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
           dateDebut: conge.dateDebut.toDate(), // Conversion du timestamp en Date
           dateFin: conge.dateFin.toDate() // Conversion du timestamp en Date
         }));
-
+        console.log('Fetched congés:',this.congesUtilisateurConnecte);
     } catch (error) {
       console.error('Error fetching congés:', error);
     }
@@ -498,7 +624,7 @@ export class ProfileUserComponent implements OnInit, AfterViewInit {
     }
   }
   async onAnnulerConger(conge: any) {
-    console.log('Annulation du congé :', conge);
+   // console.log('Annulation du congé :', conge);
     try {
       await this.congeService.anulerConger(conge);
       this.fetchConges();

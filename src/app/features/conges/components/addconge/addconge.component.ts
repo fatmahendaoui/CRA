@@ -24,7 +24,7 @@ export class AddcongeComponent implements OnInit {
   dateDebut: Date = new Date(); // Initialisation date lyom
   dateFin: Date = new Date();
   commentaires: string;
-  selectedFile: File | null = null; 
+  selectedFile: File | null = null;
   user: any; // variable pour stocker l'utilisateur connecté
   domainId: string; //  variable pour stocker l'ID de domaine
   periode: any[] = [null, null];
@@ -36,7 +36,7 @@ export class AddcongeComponent implements OnInit {
   private readonly profileService = inject(ProfileService);
   private readonly auth = inject(AuthService);
   fileError: boolean = false; // Variable to track file validation error
-
+congePaye:string;
   congesParUtilisateur: any;
   leavesByUser: any;
   congesLengths: { [userId: string]: number } = {};
@@ -49,7 +49,7 @@ export class AddcongeComponent implements OnInit {
     private router: Router,
   ) { }
   isSickLeaveEligible: boolean = false; // Déclarer la propriété
-  alertVisible: boolean = false; 
+  alertVisible: boolean = false;
   alertMessage: string = '';
   async ngOnInit(): Promise<void> {
     this.isSickLeaveEligible = await this.isEligibleForMoreSickLeave();
@@ -69,21 +69,44 @@ export class AddcongeComponent implements OnInit {
       .catch((error) => {
         console.error('Erreur lors de la récupération de l\'utilisateur et de l\'ID de domaine:', error);
       });
-      
-     }
+
+  }
 
   async onSubmit(): Promise<void> {
     this.fileError = false;
-  
+
     if (this.natureConge === 'Congé de maladie (1 jour)' && !this.selectedFile) {
       this.fileError = true;
-      return; 
+      return;
     }
-  
+
     if (this.isSubmitting) {
       return; // Prevent multiple submissions
     }
-  
+    // Vérification des dates pour le cas "Plus d'1 jour"
+    if (this.dureeConge === 'Plus d\'1 jour') {
+      if (!this.dateDebut || !this.dateFin) {
+        this.alertVisible = true;
+        this.alertMessage = this.translocoService.translate('features.conge.missingDates');
+        return;
+      }
+
+      // Vérifier que la date de fin est après la date de début
+      if (this.dateFin < this.dateDebut) {
+        this.alertVisible = true;
+        this.alertMessage = this.translocoService.translate('features.conge.invalidEndDate');
+        return;
+      }
+    } else {
+      // Pour les autres durées, vérifier que la date de début est sélectionnée
+      if (!this.dateDebut) {
+        this.alertVisible = true;
+        this.alertMessage = this.translocoService.translate('features.conge.missingStartDate');
+        return;
+      }
+      // Pour les durées autres que "Plus d'1 jour", la date de fin est égale à la date de début
+      this.dateFin = this.dateDebut;
+    }
     this.isSubmitting = true; // Disable the button
     const userId = this.user ? this.user.uid : null;
     let nombreJours: number = differenceInDays(this.dateFin, this.dateDebut) + 1;
@@ -92,7 +115,7 @@ export class AddcongeComponent implements OnInit {
     console.log(`Total Congé de maladie days for user: ${nombreCongesMaladie}`);
     const currentDate = new Date();
     let joursWeekend = 0;
-  
+
     // Exclude weekends from leave duration
     for (let i = 0; i < nombreJours; i++) {
       const currentDate = addDays(this.dateDebut, i);
@@ -100,11 +123,11 @@ export class AddcongeComponent implements OnInit {
         joursWeekend++;
       }
     }
-  
+
     if (joursWeekend > 0) {
       nombreJours -= joursWeekend;
     }
-  
+
     // Calculate total hours based on leave duration type
     switch (this.dureeConge) {
       case "Demi journée - le matin":
@@ -124,24 +147,43 @@ export class AddcongeComponent implements OnInit {
         this.dateFin = this.dateDebut;
         nombreHeures = 2;
         break;
+      case "Congé d'anniversaire":
+        this.dateFin = this.dateDebut;
+        nombreHeures = 8;
+        break;
+      case "Compensation weekend":
+        this.dateFin = this.dateDebut;
+        nombreHeures = 8;
+        break;
       default:
         console.error("Durée de congé invalide:", this.dureeConge);
+        this.isSubmitting = false;
         return;
     }
-  console.log("nature de conge .....",this.natureConge);
+    console.log("nature de conge .....", this.natureConge);
     // Check if the leave type is "Congé de maladie"
     if (this.natureConge === "Congé de maladie (1 jour)") {
       const totalLeaves = nombreCongesMaladie + nombreJours;
       if (totalLeaves > 8) {
         this.alertVisible = true; // Afficher l'alerte.
-        this.alertMessage = `Vous avez dépassé la limite de 8 jours pour le Congé de maladie ! Vous avez actuellement ${nombreCongesMaladie} jours.`;
+        this.alertMessage = this.translocoService.translate('features.conge.sickLeaveLimitExceeded') +nombreCongesMaladie + this.translocoService.translate('features.conge.day');
         this.isSubmitting = false; // Re-enable the button
         return; // Exit the function
       }
     }
-  
+    // Check if the leave type is "Congé Spécial"
+    if (this.natureConge === "Congé Spécial") {
+      const hasUsedBirthdayLeave = await this.hasUsedBirthdayLeaveThisYear(userId);
+      if (this.dureeConge === "Congé d'anniversaire" && hasUsedBirthdayLeave) {
+        this.alertVisible = true;
+        this.alertMessage = this.translocoService.translate('features.conge.birthdayLeaveUsed');
+        this.isSubmitting = false;
+        console.log("nature de conge .....", this.natureConge);
+        return;
+      }
+    }
     let photourl = await this.profileService.getUserPhotoURL(userId);
-  
+
     const conge: any = {
       nature: this.natureConge,
       duree: this.dureeConge,
@@ -158,7 +200,7 @@ export class AddcongeComponent implements OnInit {
       dateEnvoi: currentDate.toISOString().split('T')[0],
       heureEnvoi: currentDate.toLocaleTimeString(),
     };
-  
+
     try {
       // Étape 1 : Enregistrer rapidement le congé dans Firestore
       const congeId = await this.congeService.addConge(conge);
@@ -168,27 +210,27 @@ export class AddcongeComponent implements OnInit {
           try {
             const path = `sertif_conge/${congeId}/${this.selectedFile.name}`;
             const uploadTask = this.fireStorage.upload(path, this.selectedFile);
-      
+
             const snapshot = await uploadTask;
             const downloadURL = await snapshot.ref.getDownloadURL();
-      
+
             await this.congeService.updateCongeWithFileURLAndCongeId(downloadURL, congeId);
             conge.url_certif = downloadURL;
           } catch (error) {
             console.error('Erreur lors du téléchargement du fichier:', error);
           }
-      
+
         }
-      // Traiter les tâches secondaires de manière asynchrone
-      this.processAdditionalTasks(conge, congeId);
+        // Traiter les tâches secondaires de manière asynchrone
+        this.processAdditionalTasks(conge, congeId);
         // Afficher immédiatement la confirmation
         handleResponseSuccessWithAlerts(
           this.translocoService.translate('features.projects.dialog.success.title'),
           '',
           this.translocoService.translate('common.close'),
-          () => {}
+          () => { }
         );
-  
+
 
         // Réinitialiser les champs du formulaire après l'ajout du congé
         this.natureConge = '';
@@ -196,8 +238,8 @@ export class AddcongeComponent implements OnInit {
         this.dateDebut = new Date();
         this.dateFin = new Date();
         this.commentaires = '';
-  
-    
+
+
       } else {
         console.error('Erreur lors de l\'ajout du congé.');
       }
@@ -209,9 +251,33 @@ export class AddcongeComponent implements OnInit {
       this.alertVisible = false;
     }
   }
+
   
-  private async processAdditionalTasks(conge: any, congeId: string): Promise<void> {
+  // Check if user has already used birthday leave this year
+  async hasUsedBirthdayLeaveThisYear(userId: string): Promise<boolean> {
+    const firestore = getFirestore();
+    const congesCollectionRef = collection(firestore, 'conge');
+    const currentYear = new Date().getFullYear();
     
+    try {
+      const q = query(
+        congesCollectionRef,
+        where('userId', '==', userId),
+        where('nature', '==', 'Congé Spécial'),
+        where('duree', '==', 'Congé d\'anniversaire'),
+        where('year', '==', currentYear),
+        where('status', '==', 1) // Only count approved leaves
+      );
+      
+      const querySnapshot = await getDocs(q);
+      return !querySnapshot.empty;
+    } catch (error) {
+      console.error('Error checking birthday leave usage:', error);
+      return false;
+    }
+  }
+  private async processAdditionalTasks(conge: any, congeId: string): Promise<void> {
+
     // Envoi d'email
     try {
       let data = {
@@ -224,7 +290,7 @@ export class AddcongeComponent implements OnInit {
         commentaires: this.commentaires || '',
         congeId: congeId
       };
-  
+
       await this.congeService.submitCongeWithEmail(data);
     } catch (error) {
       console.error('Erreur lors de l\'envoi de l\'email:', error);
@@ -239,19 +305,19 @@ export class AddcongeComponent implements OnInit {
     const congesCollectionRef = collection(firestore, 'conge');
     const currentYear = new Date().getFullYear();
     const nombreCongesMaladie = await this.getNombreCongesMaladie(this.user.uid);
-console.log(`Total Congé de maladie days for user: ${nombreCongesMaladie}`);
+    console.log(`Total Congé de maladie days for user: ${nombreCongesMaladie}`);
     // Tableau pour stocker les congés filtrés
     const congesFiltres: DocumentData[] = [];
     try {
       const q = query(congesCollectionRef,
         where('status', '==', 1),
-        where('year', '==', currentYear), 
+        where('year', '==', currentYear),
         where('nature', '==', 'Congé de maladie (1 jour)')
       );
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        congesFiltres.push(data); 
+        congesFiltres.push(data);
       });
 
       // Créer un objet pour stocker les congés de chaque utilisateur
@@ -259,20 +325,20 @@ console.log(`Total Congé de maladie days for user: ${nombreCongesMaladie}`);
 
       // Parcourir les congés filtrés
       congesFiltres.forEach(conge => {
-        const userId = conge['userId']; 
-         console.log("userId firbase ",userId);
+        const userId = conge['userId'];
+        console.log("userId firbase ", userId);
         if (!congesParUtilisateur[userId]) {
           console.log("userId firbase ");
-          console.log("conge :: ",conge);
+          console.log("conge :: ", conge);
           congesParUtilisateur[userId] = [];
         }
         congesParUtilisateur[userId].push(conge);
       });
       console.log(congesParUtilisateur)
-      console.log("userId firbase ",this.user.uid);
+      console.log("userId firbase ", this.user.uid);
       for (const userId in congesParUtilisateur) {
-        console.log("userId firbase ",congesParUtilisateur);
-        if (Object.prototype.hasOwnProperty.call(congesParUtilisateur, userId) && userId==this.user.uid) {
+        console.log("userId firbase ", congesParUtilisateur);
+        if (Object.prototype.hasOwnProperty.call(congesParUtilisateur, userId) && userId == this.user.uid) {
           // Calculate the total number of hours from the user's leave records
           const totalHours = congesParUtilisateur[userId].reduce((acc, conge) => acc + conge['nombreHeures'], 0);
           const congesLengths = totalHours / 8;
@@ -280,7 +346,7 @@ console.log(`Total Congé de maladie days for user: ${nombreCongesMaladie}`);
           console.log('Nombre de congés pour l\'utilisateur', userId, ':', congesLengths, "tttttt", congesParUtilisateur[userId]);
         }
       }
-     
+
     } catch (error) {
       console.error('Erreur lors du chargement et du stockage des congés filtrés depuis Firestore:', error);
     }
@@ -341,62 +407,62 @@ console.log(`Total Congé de maladie days for user: ${nombreCongesMaladie}`);
   }
 
   // Method to calculate and return the number of "Congé de maladie" (sick leave) days for the current user
-async getNombreCongesMaladie(userId: string): Promise<number> {
-  const firestore = getFirestore();
-  const congesCollectionRef = collection(firestore, 'conge');
-  
-  try {
-    // Query to get all "Congé de maladie (1 jour)" for the current year and the user
-    const currentYear = new Date().getFullYear();
-    const q = query(
-      congesCollectionRef,
-      where('status', '==', 1), // Assuming status 1 indicates a valid leave
-      where('nature', '==', 'Congé de maladie (1 jour)'), // Filter by sick leave type
-      where('year', '==', currentYear),
-      where('userId', '==', userId) // Filter by the current user's ID
-    );
-    
-    const querySnapshot = await getDocs(q);
-    let totalCongesMaladie = 0;
-    
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      totalCongesMaladie += data['nombreHeures'] / 8; // Assuming each day is counted as 8 hours
-    });
-    
-    return totalCongesMaladie;
-  } catch (error) {
-    console.error('Erreur lors du calcul du nombre de congés de maladie:', error);
-    return 0; // Return 0 in case of error
-  }
-}
+  async getNombreCongesMaladie(userId: string): Promise<number> {
+    const firestore = getFirestore();
+    const congesCollectionRef = collection(firestore, 'conge');
 
-// Method to check if the current user is eligible for more sick leave
-async isEligibleForMoreSickLeave(): Promise<boolean> {
-  try {
-    const currentUserId = await this.auth.getCurrentUserId(); // Get the current user's ID
-    console.log("currentUserId", currentUserId);
+    try {
+      // Query to get all "Congé de maladie (1 jour)" for the current year and the user
+      const currentYear = new Date().getFullYear();
+      const q = query(
+        congesCollectionRef,
+        where('status', '==', 1), // Assuming status 1 indicates a valid leave
+        where('nature', '==', 'Congé de maladie (1 jour)'), // Filter by sick leave type
+        where('year', '==', currentYear),
+        where('userId', '==', userId) // Filter by the current user's ID
+      );
 
-    // Check if currentUserId is null
-    if (!currentUserId) {
-      console.error('Error: currentUserId is null');
-      return false; // Default to not eligible if user ID is null
+      const querySnapshot = await getDocs(q);
+      let totalCongesMaladie = 0;
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        totalCongesMaladie += data['nombreHeures'] / 8; // Assuming each day is counted as 8 hours
+      });
+
+      return totalCongesMaladie;
+    } catch (error) {
+      console.error('Erreur lors du calcul du nombre de congés de maladie:', error);
+      return 0; // Return 0 in case of error
     }
-
-    // Get the total number of sick leave days
-    const totalSickLeaveDays = await this.getNombreCongesMaladie(currentUserId);
-
-    // Check if the user has fewer than 8 sick leave days
-    if (totalSickLeaveDays >= 8) {
-      return false; // Not eligible
-    } else {
-      return true; // Eligible
-    }
-  } catch (error) {
-    console.error('Error checking sick leave eligibility:', error);
-    return false; // Default to not eligible in case of error
   }
-}
+
+  // Method to check if the current user is eligible for more sick leave
+  async isEligibleForMoreSickLeave(): Promise<boolean> {
+    try {
+      const currentUserId = await this.auth.getCurrentUserId(); // Get the current user's ID
+      console.log("currentUserId", currentUserId);
+
+      // Check if currentUserId is null
+      if (!currentUserId) {
+        console.error('Error: currentUserId is null');
+        return false; // Default to not eligible if user ID is null
+      }
+
+      // Get the total number of sick leave days
+      const totalSickLeaveDays = await this.getNombreCongesMaladie(currentUserId);
+
+      // Check if the user has fewer than 8 sick leave days
+      if (totalSickLeaveDays >= 8) {
+        return false; // Not eligible
+      } else {
+        return true; // Eligible
+      }
+    } catch (error) {
+      console.error('Error checking sick leave eligibility:', error);
+      return false; // Default to not eligible in case of error
+    }
+  }
 
 
 }
