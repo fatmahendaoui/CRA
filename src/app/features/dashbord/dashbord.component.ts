@@ -16,6 +16,27 @@ import { Brand, Group, Marque, Media, Product } from '../projects/models/Project
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { DateAdapter } from '@angular/material/core';
 import { user } from '@angular/fire/auth';
+interface UserHours {
+  hours: number;
+  percentage: string;
+}
+interface GroupedRow {
+  origin: string;    
+  group: string;     
+  client: string;    
+  brand: string;     
+  media: string;    
+  project: string;   
+  users: { [key: string]: UserHours };
+  totalHours: number;
+  totalPercentage: string;
+}
+interface GroupedData {
+  users: string[];
+  rows: GroupedRow[];
+  totals: { [key: string]: UserHours };
+  grandTotal: UserHours;
+}
 
 @Component({
   selector: 'app-dashbord',
@@ -80,6 +101,9 @@ marquess: { id: string; name: string }[] = [];
 mediass: { id: string; name: string }[] = [];
   // Dans votre composant
   showAllRows: boolean = true;
+  // Ajouter cette propriété à la classe
+  groupedData: GroupedData | null = null;
+  filteredGroupedRows: GroupedRow[] = [];
 
   shouldDisplayRow(project: any): boolean {
     // Si showAllRows est true, afficher toutes les lignes
@@ -136,6 +160,9 @@ mediass: { id: string; name: string }[] = [];
     this.filteredUsers = this.listuser;
     this.getAllProjectsForAllUsers()
     //this.getallProjectwithsommeNumber();
+    if (this.groupedData) {
+      this.filteredGroupedRows = [...this.groupedData.rows];
+    }
   }
   listuser: any[] = [];
   // Date range picker
@@ -191,7 +218,7 @@ mediass: { id: string; name: string }[] = [];
   }
 
   // Fetch all projects for all users
-  getAllProjectsForAllUsers() {
+  /*getAllProjectsForAllUsers() {
     this.data = null;
     let result: { name: string; data: { x: string; y: number }[] }[] = [];
     let projectUserMap: { [uniqueProjectKey: string]: { [userName: string]: number } } = {};
@@ -369,10 +396,10 @@ mediass: { id: string; name: string }[] = [];
           },
         },
       };*/
-
+/*
     });
   }
-
+*/
   // Fetch all projects for all users selon la date
   getAllProjectsForAllUserFiltDate(startMonthIndex: number, endMonthIndex: number, startYear: number, endYear: number) {
     this.data = null;
@@ -1441,6 +1468,9 @@ console.log("this.groupss",this.groupss)
       case 'csv':
         this.exportTableToCSV();
         break;
+      case 'csv1':
+        this.exportTableToCSV1();
+        break;
       case 'svg':
         this.exportTableToSVG();
         break;
@@ -1617,4 +1647,517 @@ console.log("this.groupss",this.groupss)
       tableContainer.style.height = originalHeight;
     });
   }
+  // Fetch all projects for all users
+  getAllProjectsForAllUsers() {
+    this.data = null;
+    let result: { name: string; data: { x: string; y: number }[] }[] = [];
+    let projectUserMap: { [uniqueProjectKey: string]: { [userName: string]: number } } = {};
+    let allProjects: Set<string> = new Set();
+    let allUsers: Set<string> = new Set();
+    this.groupedData = null;
+
+
+    this.projectService.fetchAllProjectswithuser().then((projects) => {
+      this.allvalues = projects;
+      // Construire la map projet-utilisateur en différenciant les projets par leur nom et ID
+      projects.forEach((project) => {
+        const userName = project.displayName;
+        const projectName = project.name;
+        const projectId = project.id;
+        const groupId= project.groupId ;
+        const groupName = project.groupName ;
+        const productId = project.productId ;
+        const productName = project.productName ;
+        const marqueId = project.marqueId ;
+        const marqueName = project.marqueName ;
+        const mediaId = project.mediaId ;
+        const mediaName = project.mediaName ;
+        // Ajouter chaque utilisateur et projet unique
+        allUsers.add(userName);
+        const uniqueProjectKey = `${projectName} (${projectId})`;
+        allProjects.add(uniqueProjectKey);
+
+
+        if (!this.listuser.includes(userName)) {
+          this.listuser.push(userName);
+        }
+
+
+        if (!projectUserMap[uniqueProjectKey]) {
+          projectUserMap[uniqueProjectKey] = {};
+        }
+
+
+        let totalHoursForUser = 0;
+
+
+        // Calculer les heures totales de l'utilisateur pour le projet
+        for (let monthIndex = 0; monthIndex < 12; monthIndex++) {
+          const monthName = this.months[monthIndex];
+
+
+          if (project[`${monthName}_${this.year}`]) {
+            const totalHours = project[`${monthName}_${this.year}`].reduce((sum, entry) => sum + +entry.nbHeure, 0);
+            totalHoursForUser += totalHours;
+          }
+        }
+
+
+        // Ajouter les heures pour ce projet et cet utilisateur
+        projectUserMap[uniqueProjectKey][userName] =
+          (projectUserMap[uniqueProjectKey][userName] || 0) + totalHoursForUser;
+      });
+
+
+      // Créer la structure de données pour les projets
+      Array.from(allProjects).forEach((uniqueProjectKey) => {
+        const [projectName, projectId] = uniqueProjectKey.split(' (');
+        const cleanProjectId = projectId.replace(')', '');
+
+
+        let projectData: { name: string; data: { x: string; y: number }[] } = {
+          name: uniqueProjectKey,
+          data: [],
+        };
+        let projectTotalHours = 0;
+
+
+        // Ajouter les données de chaque utilisateur pour chaque projet
+        Array.from(allUsers).forEach((userName) => {
+          const hours = projectUserMap[uniqueProjectKey]?.[userName] || 0;
+          projectTotalHours += hours;
+          projectData.data.push({ x: userName, y: hours });
+        });
+
+
+        // Ajouter la colonne "Total" pour les projets
+        projectData.data.push({ x: "Total", y: projectTotalHours });
+
+
+        result.push(projectData);
+      });
+
+
+      // Ajouter une ligne "Total" pour les utilisateurs
+      let totalPerUser = Array.from(allUsers).map((userName) => {
+        return result.reduce((sum, projectData) => {
+          const userData = projectData.data.find((item) => item.x === userName);
+          return sum + (userData ? userData.y : 0);
+        }, 0);
+      });
+
+
+      result.unshift({
+        name: "Total",
+        data: Array.from(allUsers)
+          .map((userName, index) => ({
+            x: userName,
+            y: totalPerUser[index],
+          }))
+          .concat({
+            x: "Total",
+            y: totalPerUser.reduce((sum, val) => sum + val, 0),
+          }),
+      });
+
+
+      this.data = this.processProjects(result);
+      this.generateGroupedData(); // Générer les données groupées
+      // Calculate dynamic dimensions based on data size
+      const baseWidth = 1250;
+      const baseHeight = 800;
+      const additionalWidthPerUser = 50;
+      const additionalHeightPerProject = 30;
+
+
+      const calculatedWidth = Math.max(
+        baseWidth,
+        allUsers.size * additionalWidthPerUser
+      );
+      const calculatedHeight = Math.max(
+        baseHeight,
+        allProjects.size * additionalHeightPerProject
+      );
+
+      if (this.groupedData) {
+        this.filteredGroupedRows = [...this.groupedData.rows];
+      }
+      // Configurer les options du graphique
+      /*this.chartOptions = {
+        series: this.data,
+        chart: {
+          height:  calculatedHeight,
+          width: calculatedWidth,
+          type: "heatmap",
+          background: "#FFFFFF",
+        },
+        tooltip: {
+          enabled: true,
+          shared: false,
+          intersect: false,
+          x: {
+            show: true,
+            format: "dd.MM.yyyy hh:mm:ss",
+          },
+        },
+        stroke: {
+          width: 0,
+        },
+        colors: ["#FFFFFF", "#fec1db"],
+        plotOptions: {
+          heatmap: {
+            colorScale: {
+              ranges: [],
+            },
+            enableShades: false,
+          },
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: function (val, { seriesIndex, dataPointIndex, w }) {
+                // Vérifier si c'est la ligne ou la colonne "Total"
+                const isTotal = val === "Total" || seriesIndex === 0 || dataPointIndex === w.config.series[0].data.length - 1;
+                // Appliquer le style en gras si c'est "Total", sinon le style normal
+                w.config.dataLabels.style.fontWeight = isTotal ? 'bold' : 'normal';
+                // Appliquer le style de la police uniquement pour la ligne ou la colonne "Total"
+                w.config.dataLabels.style.fontFamily = isTotal ? '60px' : undefined;
+            const data = w.config.series[seriesIndex].data[dataPointIndex];
+            return `${val} h (${data.percentage}%)`;
+          },
+          style: {
+            colors: ["#193F77"],
+          },
+        },
+        xaxis: {
+          type: "category",
+          position: "top",
+          tooltip: {
+            enabled: false,
+          },
+          labels: {
+            show: true,
+            floating: true,
+            style: {
+              colors: "#193F77",
+              fontSize: "12px",
+              fontFamily: "Arial",
+              fontWeight: "bold",
+            },
+          },
+        },
+        title: {
+          text: this.transloco.translate("features.projects.projectByUser") + " " + this.year,
+          style: {
+            color: "#E50060",
+            margin: "20px 0",
+          },
+        },
+      };*/
+
+
+    });
+  }
+
+ // Ajouter cette méthode pour générer les données groupées
+ generateGroupedData() {
+  if (!this.allvalues) return;
+
+  const users = new Set<string>();
+  const rows: GroupedRow[] = [];
+  const totals: { [key: string]: UserHours } = {};
+  let grandTotalHours = 0;
+
+  // Première passe pour collecter tous les utilisateurs et initialiser les totaux
+  this.allvalues.forEach(project => {
+    users.add(project.displayName);
+    totals[project.displayName] = { hours: 0, percentage: '0%' };
+  });
+
+  // Deuxième passe pour créer les lignes groupées
+  const groupedProjects = this.groupProjects(this.allvalues);
+
+  groupedProjects.forEach(group => {
+    const row: GroupedRow = {
+      origin: group.origin,          // groupName
+      group: group.groupName,        // brandName
+      client: group.clientName,      // productName
+      brand: group.brandName,        // marqueName
+      media: group.mediaName,        // mediaName
+      project: group.projectName,    // name
+      users: {},
+      totalHours: 0,
+      totalPercentage: '0%'
+    };
+
+    // Calculer les heures par utilisateur
+    group.projects.forEach(project => {
+      let userHours = 0;
+      for (let monthIndex = 0; monthIndex < 12; monthIndex++) {
+        const monthName = this.months[monthIndex];
+        if (project[`${monthName}_${this.year}`]) {
+          userHours += project[`${monthName}_${this.year}`].reduce((sum, entry) => sum + +entry.nbHeure, 0);
+        }
+      }
+
+      row.users[project.displayName] = {
+        hours: userHours,
+        percentage: '0%'
+      };
+      row.totalHours += userHours;
+      totals[project.displayName].hours += userHours;
+      grandTotalHours += userHours;
+    });
+
+    rows.push(row);
+  });
+
+  // Calculer les pourcentages
+  rows.forEach(row => {
+    row.totalPercentage = grandTotalHours > 0 ? ((row.totalHours / grandTotalHours) * 100).toFixed(2) + '%' : '0%';
+   
+    Object.keys(row.users).forEach(user => {
+      const userTotal = totals[user].hours;
+      row.users[user].percentage = userTotal > 0 ? ((row.users[user].hours / userTotal) * 100).toFixed(2) + '%' : '0%';
+    });
+  });
+
+  // Calculer les pourcentages des totaux
+  Object.keys(totals).forEach(user => {
+    totals[user].percentage = grandTotalHours > 0 ? ((totals[user].hours / grandTotalHours) * 100).toFixed(2) + '%' : '0%';
+  });
+
+  this.groupedData = {
+    users: Array.from(users),
+    rows,
+    totals,
+    grandTotal: {
+      hours: grandTotalHours,
+      percentage: '100%'
+    }
+  };
+}
+// Méthode pour grouper les projets par origine/groupe/client/marque/média
+groupProjects(projects: any[]): Array<{
+  origin: string;        // groupName
+  groupName: string;     // brandName
+  clientName: string;    // productName
+  brandName: string;     // marqueName
+  mediaName: string;     // mediaName
+  projectName: string;   // name
+  projects: any[];
+}> {
+  const groups: {
+    [key: string]: {
+      origin: string;
+      groupName: string;
+      clientName: string;
+      brandName: string;
+      mediaName: string;
+      projectName: string;
+      projects: any[];
+    }
+  } = {};
+
+
+  projects.forEach(project => {
+    const key = `${project.groupId}_${project.brandId}_${project.productId}_${project.marqueId}_${project.mediaId}_${project.id}`;
+   
+    if (!groups[key]) {
+      groups[key] = {
+        origin: project.groupName || 'N/A',
+        groupName: project.brandName || 'N/A',
+        clientName: project.productName || 'N/A',
+        brandName: project.marqueName || 'N/A',
+        mediaName: project.mediaName || 'N/A',
+        projectName: project.name || 'N/A',
+        projects: []
+      };
+    }
+   
+    groups[key].projects.push(project);
+  });
+
+
+  return Object.values(groups);
+}
+// Méthode pour filtrer les lignes
+shouldDisplayGroupedRow(row: GroupedRow): boolean {
+  if (this.showAllRows) return true;
+ 
+  return row.totalHours > 0 ||
+    Object.values(row.users).some(user => user.hours > 0);
+}
+
+////////
+// Méthode pour appliquer les filtres
+applyGroupedFilters() {
+  if (!this.groupedData) return;
+
+  this.filteredGroupedRows = this.groupedData.rows.filter(row => {
+    // Filtre par groupe
+    if (this.selectedGroup && row.origin !== this.getGroupName(this.selectedGroup)) {
+      return false;
+    }
+    
+    // Filtre par marque
+    if (this.selectedBrand && row.group !== this.getBrandName(this.selectedBrand)) {
+      return false;
+    }
+    
+    // Filtre par client
+    if (this.selectedProduct && row.client !== this.getProductName(this.selectedProduct)) {
+      return false;
+    }
+    
+    // Filtre par marque
+    if (this.selectedMarque && row.brand !== this.getMarqueName(this.selectedMarque)) {
+      return false;
+    }
+    
+    // Filtre par média
+    if (this.selectedMedia && this.selectedMedia !== 'All' && row.media !== this.getMediaName(this.selectedMedia)) {
+      return false;
+    }
+    
+    return true;
+  });
+}
+
+// Méthode pour réinitialiser les filtres
+resetGroupedFilters() {
+  this.selectedGroup = '';
+  this.selectedBrand = '';
+  this.selectedProduct = '';
+  this.selectedMarque = '';
+  this.selectedMedia = '';
+  
+  if (this.groupedData) {
+    this.filteredGroupedRows = [...this.groupedData.rows];
+  }
+}
+
+// Méthodes utilitaires pour obtenir les noms
+getGroupName(id: string): string {
+  const group = this.groups.find(g => g.id === id);
+  return group ? group.name : '';
+}
+
+getBrandName(id: string): string {
+  const brand = this.brands.find(b => b.id === id);
+  return brand ? brand.name : '';
+}
+
+getProductName(id: string): string {
+  const product = this.products.find(p => p.id === id);
+  return product ? product.name : '';
+}
+
+getMarqueName(id: string): string {
+  const marque = this.marques.find(m => m.id === id);
+  return marque ? marque.name : '';
+}
+
+getMediaName(id: string): string {
+  const media = this.medias.find(m => m.id === id);
+  return media ? media.name : '';
+}
+exportTableToCSV1() {
+  const table = document.getElementById('exportTable');
+  if (!table) return;
+
+  const rows = table.querySelectorAll('tr');
+  const data: string[][] = [];
+
+  // Add title
+  const title = document.querySelector('.table-title')?.textContent?.trim();
+  if (title) {
+    data.push([title]);
+    data.push([]); // Empty row after title
+  }
+
+  // Process header row
+  const headerRow: string[] = [];
+  const headerCells = rows[0].querySelectorAll('th');
+  headerCells.forEach((cell, index) => {
+    // Skip the first 5 sticky columns for the header
+    if (index >= 5) {
+      headerRow.push(cell.textContent?.trim() || '');
+    }
+  });
+  // Add empty cells for the first 6 columns
+  data.push([...Array(5).fill(''), ...headerRow]);
+
+  // Process data rows
+  for (let i = 1; i < rows.length - 1; i++) { // Skip header and footer
+    const row = rows[i];
+    const rowData: string[] = [];
+    const cells = row.querySelectorAll('td');
+
+    cells.forEach((cell, index) => {
+      let cellText = '';
+
+      // Extract hour and percentage if present
+      const hourElem = cell.querySelector('.hour');
+      const percentElem = cell.querySelector('.percent, .percent-total');
+
+      if (hourElem && percentElem) {
+        const hourText = hourElem.textContent?.trim() || '';
+        const percentText = percentElem.textContent?.trim() || '';
+        cellText = `${hourText} ${percentText}`.trim();
+      } else {
+        cellText = cell.textContent?.trim() || '';
+      }
+
+      // Keep all cells for data rows
+      rowData.push(cellText);
+    });
+
+    data.push(rowData);
+  }
+
+  // Process footer row (total row) with 5 column offset
+  if (rows.length > 1) {
+    const footerRow = rows[rows.length - 1];
+    const footerData: string[] = Array(5).fill(''); 
+    
+    const cells = footerRow.querySelectorAll('td');
+    cells.forEach((cell, index) => {
+      let cellText = '';
+
+      // Extract hour and percentage if present
+      const hourElem = cell.querySelector('.hour');
+      const percentElem = cell.querySelector('.percent, .percent-total');
+
+      if (hourElem && percentElem) {
+        const hourText = hourElem.textContent?.trim() || '';
+        const percentText = percentElem.textContent?.trim() || '';
+        cellText = `${hourText} ${percentText}`.trim();
+      } else {
+        cellText = cell.textContent?.trim() || '';
+      }
+
+      // Add data after the 5 empty columns
+      footerData.push(cellText);
+    });
+
+    data.push(footerData);
+  }
+
+  // Create CSV content
+  const csvContent = data.map(row =>
+    row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(',')
+  ).join('\n');
+
+  // Download CSV
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'table.csv');
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
 }

@@ -302,5 +302,129 @@
             </div>
 
         </mat-tab>
+         
+        <mat-tab class="mat-tab" label="{{ 'features.projects.groupedView' | transloco }}">
+            <div class="cra">
+                <div class="col-12 header-timesheet">
+                    <div class="filter" *ngIf="groupedData">
+                        <mat-form-field class="field" appearance="outline">
+                            <mat-label>{{ 'features.projects.add-dialog.origine' | transloco }}</mat-label>
+                            <mat-select [(value)]="selectedGroup" (selectionChange)="onGroupSelected()">
+                                <mat-option *ngFor="let group of groups" [value]="group.id">{{ group.name }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>{{ 'features.projects.add-dialog.group' | transloco }}</mat-label>
+                            <mat-select [(value)]="selectedBrand" (selectionChange)="onBrandSelected()">
+                                <mat-option *ngFor="let brand of brands" [value]="brand.id">{{ brand.name }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>{{ 'features.projects.add-dialog.client' | transloco }}</mat-label>
+                            <mat-select [(value)]="selectedProduct" (selectionChange)="onProductSelected()">
+                                <mat-option *ngFor="let product of products" [value]="product.id">{{ product.name }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>{{ 'features.projects.add-dialog.marque' | transloco }}</mat-label>
+                            <mat-select [(value)]="selectedMarque" (selectionChange)="onMarqueSelected()">
+                                <mat-option *ngFor="let marque of marques" [value]="marque.id">{{ marque.name }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>{{ 'features.projects.add-dialog.media' | transloco }}</mat-label>
+                            <mat-select [(value)]="selectedMedia" (selectionChange)="onMarqueSelected()">
+                                <mat-option value="All">{{ 'features.projects.add-dialog.all' | transloco }}</mat-option>
+                                <mat-option *ngFor="let media of medias" [value]="media.id">{{ media.name }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <div class="button-row">
+                            <button mat-raised-button style="background-color: #E50060; color:white"
+                                (click)="applyGroupedFilters()">
+                                {{ 'features.projects.apply' | transloco }}
+                            </button>
+                            <button mat-raised-button style="color: #193F66;" (click)="resetGroupedFilters()">
+                                {{ 'features.projects.reset' | transloco }}
+                            </button>
+                            <button mat-raised-button style="color: #193F66;" (click)="showAllRows = !showAllRows">
+                                {{ showAllRows ? ('features.projects.hide_zero' | transloco) :
+                                ('features.projects.show_all' | transloco) }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="groupedData" class="table-header">
+                <div class="table-title">
+                    {{ 'features.projects.groupedView' | transloco }} in year {{ year }}
+                </div>
+                <div>
+                    <button mat-raised-button style="color: #193F66;" [matMenuTriggerFor]="exportMenu">
+                        Exporter
+                    </button>
+                    <mat-menu #exportMenu="matMenu">
+                        <button mat-menu-item (click)="exportTable('csv1')">Exporter en CSV</button>
+                    </mat-menu>
+                </div>
+            </div>
+            <div *ngIf="groupedData" class="table-container">
+                <table *ngIf="groupedData" class="project-table" id="exportTable">
+                    <thead>
+                      <tr class="sticky-header">
+                        <th class="sticky-col">{{ 'features.projects.add-dialog.origine' | transloco }}</th>
+                        <th class="sticky-col-2">{{ 'features.projects.add-dialog.marque' | transloco }}</th>
+                        <th class="sticky-col-3">{{ 'features.projects.add-dialog.client' | transloco }}</th>
+                        <th class="sticky-col-4">{{ 'features.projects.add-dialog.marque' | transloco }}</th>
+                        <th class="sticky-col-5">{{ 'features.projects.add-dialog.media' | transloco }}</th>
+                        <th class="sticky-col-6">Projet</th>
+                        <th style="min-width: 120px;" *ngFor="let user of groupedData.users">{{ user }}</th>
+                        <th class="sticky-col-last">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let row of filteredGroupedRows" [ngClass]="{'hidden-row': !shouldDisplayGroupedRow(row)}">
+                        <td class="sticky-col">{{ row.origin }}</td>
+                        <td class="sticky-col-2">{{ row.group }}</td>
+                        <td class="sticky-col-3">{{ row.client }}</td>
+                        <td class="sticky-col-4">{{ row.brand }}</td>
+                        <td class="sticky-col-5">{{ row.media }}</td>
+                        <td class="sticky-col-6">{{ row.project }}</td>
+                        <td *ngFor="let user of groupedData.users" class="hour-percent-cell">
+                          <div class="hour">{{ formatHours(row.users[user]?.hours || 0) }}</div>
+                          <div class="percent">({{ row.users[user]?.percentage || '0%' }})</div>
+                        </td>
+                        <td class="sticky-col-last total-hour">
+                          <div class="hour">{{ formatHours(row.totalHours) }}</div>
+                          <div class="percent-total">({{ row.totalPercentage }}%)</div>
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr class="sticky-footer">
+                        <td class="sticky-col" colspan="6">Total</td>
+                        <td *ngFor="let user of groupedData.users" class="total-hour">
+                          <div class="hour">{{ formatHours(groupedData.totals[user]?.hours || 0) }}</div>
+                          <div class="percent-total">({{ groupedData.totals[user]?.percentage || '0%' }})</div>
+                        </td>
+                        <td class="sticky-col-last total-hour">
+                          <div class="hour">{{ formatHours(groupedData.grandTotal.hours) }}</div>
+                          <div class="percent-total">({{ groupedData.grandTotal.percentage }}%)</div>
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+            </div>
+            <ng-container *ngIf="!groupedData">
+              <app-loader>Chargement ...</app-loader>
+            </ng-container>
+          </mat-tab>
+
+
     </mat-tab-group>
 </div>

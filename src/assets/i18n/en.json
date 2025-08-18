@@ -120,6 +120,7 @@
       "apply": "Apply",
       "hide_zero": "Hide 0h/0%",
       "show_all": "Show All",
+      "groupedView":"Global Summary Table",
     "reset": "Reset",
       "table": {
         "name": "Tasks",

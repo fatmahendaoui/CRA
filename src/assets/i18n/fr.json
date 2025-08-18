@@ -120,6 +120,8 @@
       "apply": "Appliquer",
       "hide_zero": "Masquer 0h/0%",
       "show_all": "Tout afficher",
+      "groupedView":"Tableau récapitulatif global",
+
     "reset": "Réinitialiser",
       "table": {
         "name": "Tache",
