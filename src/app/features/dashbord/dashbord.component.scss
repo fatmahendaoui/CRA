@@ -5,10 +5,10 @@
 
 }
 .mat-mdc-card{
-  justify-content: center; /* Centrer horizontalement */
-  align-items: center; /* Centrer verticalement */
+  justify-content: center; 
+  align-items: center; 
   background-color: white;
-  max-width: 100%; /* Assurez-vous que la table ne dépasse pas la largeur maximale */
+  max-width: 100%;
 
 }
 .cra {
@@ -20,14 +20,14 @@
 .filter-field {
   width: 99.2%;
   display: flex;
-  align-items: center; /* Centrer verticalement */
-  justify-content: center; /* Centrer horizontalement */
+  align-items: center; 
+  justify-content: center; 
 }
 
 .filter-wrapper {
   display: flex;
-  align-items: center; /* Centrer verticalement */
-  justify-content: center; /* Centrer horizontalement */
+  align-items: center; 
+  justify-content: center; 
 }
 
 .mat-form-field-flex {
@@ -37,7 +37,7 @@
 }
 
 .mat-form-field-infix {
-  padding-right: 0; /* Pour retirer l'espacement par défaut entre le champ de saisie et le bouton */
+  padding-right: 0; 
 }
 
 .form-field-content {
@@ -46,7 +46,7 @@
 }
 
 .custom-select {
-  margin-left: 10px; /* Ajustez la marge selon vos besoins */
+  margin-left: 10px;
 }
 
 
@@ -59,7 +59,7 @@
 
   .filter-table {
     display: flex;
-    justify-content: right; /* Centrer horizontalement */
+    justify-content: right; 
   }
 
   .filter-table .justify-end {
@@ -140,7 +140,7 @@
 .year {
   display: flex;
   align-items: center;
-  gap: 8px; /* Espace entre les boutons et l'année */
+  gap: 8px; 
 }
 
 //filter
@@ -160,13 +160,13 @@
   }
 
   mat-form-field {
-    flex: 1; // Allows fields to adjust dynamically
-    min-width: 200px; // Ensures a minimum size
+    flex: 1; 
+    min-width: 200px; 
   }
 
   @media (max-width: 768px) {
-    flex-direction: column; // Stack elements in mobile view
-    align-items: stretch; // Full width items
+    flex-direction: column; 
+    align-items: stretch; 
 
     mat-form-field {
       width: 100%;
@@ -194,8 +194,8 @@
 
 .project-table {
   border-collapse: collapse;
-  min-width: 100%; /* Adapter la table à l'écran */
-  table-layout: auto; /* Permettre une largeur flexible */
+  min-width: 100%; 
+  table-layout: auto; 
 }
 
 /* Colonnes fixes */
@@ -205,9 +205,57 @@
   background: #f8f9fa;
   font-weight: bold;
   border: 1px solid #dee2e6 !important;
-  white-space: nowrap; /* Éviter le retour à la ligne */
+  white-space: nowrap; 
 }
 
+.sticky-col, 
+.sticky-col-2, 
+.sticky-col-3, 
+.sticky-col-4, 
+.sticky-col-5, 
+.sticky-col-6 {
+  position: sticky;
+  z-index: 2;
+  background: #f0f0f0 !important; /* Gris clair pour toutes les colonnes fixes */
+  font-weight: bold;
+  border: 1px solid #dee2e6 !important;
+  white-space: nowrap;
+  color: #193F66;
+  width: 90px;
+  min-width: 135px;
+  max-width: 240px;
+}
+
+/* Positions spécifiques pour chaque colonne fixe */
+.sticky-col {
+  left: 0;
+  box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1);
+}
+
+.sticky-col-2 {
+  left: 8.19rem;
+  box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1);
+}
+
+.sticky-col-3 {
+  left: 15.7rem;
+  box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1);
+}
+
+.sticky-col-4 {
+  left: 24.2rem;
+  box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1);
+}
+
+.sticky-col-5 {
+  left: 33.4rem;
+  box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1);
+}
+
+.sticky-col-6 {
+  left: 42rem;
+  box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1);
+}
 .sticky-col {
   left: 0;
   color: #193F66;
@@ -216,7 +264,7 @@
 
 .sticky-col-last {
   right: 0;
-  background: #fec1db;
+  background: #fec1db !important; /* Gardez la couleur rose pour la colonne Total */
   color: #193F66;
   box-shadow: -2px 0 5px -2px rgba(0,0,0,0.1);
 }
@@ -224,7 +272,7 @@
 /* En-tête et pied de tableau fixes */
 .sticky-header, .sticky-footer {
   position: sticky;
-  z-index: 3;
+  z-index: 6;
   background: #193F66;
   color: white;
   font-weight: bold;
@@ -249,21 +297,21 @@ th, td {
   padding: 10px;
   border: 1px solid #dee2e6 !important;
   text-align: center;
-  min-width: 100px; /* Ajuster pour les petits écrans */
+  min-width: 0px; 
   background: white;
 }
 .table-title {
-  font-family: 'Roboto', sans-serif; /* Utilisez une police moderne */
-  font-size: 16px; /* Taille de police par défaut (pour les écrans larges) */
-  font-weight: 600; /* Graisse plus épaisse */
-  color: #E50060; /* Couleur principale */
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px; 
+  font-weight: 600; 
+  color: #E50060; 
   padding: 4px 22px; 
 }
 .table-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px; /* Espacement entre le titre et la table */
+  margin-bottom: 16px; 
   margin-right: 25px;
 }
 
@@ -271,15 +319,15 @@ th, td {
 /* Adapter la police pour mobile */
 @media (max-width: 768px) {
   th, td {
-    font-size: 12px; /* Réduction de la taille de la police */
+    font-size: 12px; 
     padding: 8px;
     min-width: 80px;
   }
 
  .table-title {
-    font-size: 16px; /* Taille de police réduite pour les tablettes */
-    margin: 15px 0; /* Espacement vertical réduit */
-    padding: 8px 12px; /* Espacement interne réduit */
+    font-size: 16px; 
+    margin: 15px 0; 
+    padding: 8px 12px; 
   }
 }
 
