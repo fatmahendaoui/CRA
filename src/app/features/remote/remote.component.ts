@@ -265,18 +265,43 @@ showImageChoices(userId: string, dateKey: string) {
     });
     console.log("this.selectedImage[i][previousWeekDay]:", this.selectedImage[i][formattedDate]);
     console.log("this.selectedImage[i][formattedDate]:", this.selectedImage[i][formattedDate].image === 'remote');
-    if (this.selectedImage[i] && this.selectedImage[i][formattedDate] && this.selectedImage[i][formattedDate].image === 'remote') {
+    if (!this.isAdmin && this.selectedImage[i] && this.selectedImage[i][formattedDate] && this.selectedImage[i][formattedDate].image === 'remote') {
       Swal.fire({
-        icon: 'error',
-        title: 'Restriction de télétravail',
+        icon: 'warning',
+        iconColor: 'rgb(239, 64, 100)',
+        //title: 'Restriction de télétravail',
         text: `Vous ne pouvez pas sélectionner le même jour de télétravail deux semaines de suite (${j}).`,
-        confirmButtonText: 'OK'
+        input: 'textarea',
+        inputPlaceholder: this.translocoService.translate('features.remote.comment'),
+        showCancelButton: true,
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Annuler',
+        confirmButtonColor: 'rgb(239, 64, 100)' ,
+        cancelButtonColor: '#193F77',
+      }).then((result) => {
+        if (result.isConfirmed && result.value) {
+          const comment = result.value;
+          let userName = '';
+          this.filteredDisplayNames.forEach((displayName) => {
+            if (i === displayName.id) {
+               userName = displayName.name;
+            }
+          });
+          console.log("userName",userName);
+          console.log("comment",comment);
+          console.log("j :",j);
+          let data ={ 
+            Name:userName, 
+            Comment:comment,
+            Date: j }
+         this.remoteService.sendEmailRemoteExeption(data);
+        }
       });
       return;
     }
  this.loadPreviousWeekRemoteDays(i,j);
     const remoteDaysCount = this.calculateRemoteTotalForDay(j);
-    if (!this.isAdmin && remoteDaysCount >= 5) {
+    if (!this.isAdmin && remoteDaysCount >= 3) {
       Swal.fire({
         icon: 'warning',
         iconColor: 'rgb(239, 64, 100)',
