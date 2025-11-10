@@ -644,7 +644,7 @@ calculateRemoteTotalForDay(dayDate: string): number {
     // Vérifier si le résultat de la requête contient des documents et si le rôle de l'utilisateur est "admin"
     this.isAdmin =
       queryResult.docs.length > 0 &&
-      queryResult.docs[0].data()['role'] === 'admin' || queryResult.docs[0].data()['role'] === 'manager';
+      queryResult.docs[0].data()['role'] === 'admin' ;//|| queryResult.docs[0].data()['role'] === 'manager';
     this.isNotManager = queryResult.docs.length > 0 && queryResult.docs[0].data()['role'] === 'admin';
     // Retourner la valeur de isAdmin
     return this.isAdmin;
